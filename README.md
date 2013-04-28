@@ -16,6 +16,9 @@ We tried Jersey, but decided to give up the following:
 
 Supported Features
 ==================
+* [Tree-style mapping of resources in Configuration](#application-configuration)
+* [Path parameters with {paramname} style mapping](#path-parameters)
+* [Spring-style Interceptors](#interceptors)
 
 Application Configuration
 -------------------------
@@ -79,3 +82,11 @@ It creates and maps the following resource tree:
 * /api/{domain}/interceptor
 * /api/{domain}/interceptor/true
 * /api/{domain}/interceptor/false
+
+Path Parameters
+---------------
+
+
+Interceptors
+------------
+
