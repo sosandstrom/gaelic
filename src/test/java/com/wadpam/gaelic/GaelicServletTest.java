@@ -6,7 +6,6 @@ package com.wadpam.gaelic;
 
 import com.wadpam.gaelic.tree.UnitTestInterceptor;
 import java.io.IOException;
-import java.util.logging.Level;
 import javax.servlet.ServletException;
 import org.junit.After;
 import org.junit.Before;

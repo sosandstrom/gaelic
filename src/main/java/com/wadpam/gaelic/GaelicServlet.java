@@ -51,25 +51,28 @@ public class GaelicServlet extends HttpServlet {
         }
         
         // instantiate the config
-        try {
-            Class clazz = getClass().getClassLoader().loadClass(classname.trim());
-            GaelicConfig gaelicConfig = (GaelicConfig) clazz.newInstance();
-            
-            // initialize the config
-            rootNode = gaelicConfig.init(this, config);
-            rootNode.init(config);
-        } catch (Exception ex) {
-            throw new ServletException("Loading config", ex);
-        }
+        rootNode = loadAppConfig(classname, config);
         
         LOG.info("Successfully initialized {} ({}ms)", config.getServletName(), 
                 System.currentTimeMillis()-start);
     }
 
-    @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        // stack the request URI
+    protected Node loadAppConfig(String classname, ServletConfig config) throws ServletException {
+        try {
+            Class clazz = getClass().getClassLoader().loadClass(classname.trim());
+            GaelicConfig gaelicConfig = (GaelicConfig) clazz.newInstance();
+            
+            // initialize the config
+            final Node root = gaelicConfig.init(this, config);
+            root.init(config);
+            
+            return root;
+        } catch (Exception ex) {
+            throw new ServletException("Loading config", ex);
+        }
+    }
+    
+    protected static LinkedList<String> parsePath(HttpServletRequest request) {
         final LinkedList<String> pathStack = new LinkedList<String>();
         final String uri = request.getRequestURI();
         for (String p : uri.split("/")) {
@@ -78,41 +81,54 @@ public class GaelicServlet extends HttpServlet {
             }
         }
         request.setAttribute(REQUEST_ATTR_PATHSTACK, pathStack);
+        return pathStack;
+    }
+
+    protected void renderResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // respond with XML or JSON?
+        final Integer responseStatus = (Integer) request.getAttribute(REQUEST_ATTR_RESPONSESTATUS);
+        response.setStatus(null != responseStatus ? responseStatus : 200);
+        final Object responseBody = request.getAttribute(REQUEST_ATTR_RESPONSEBODY);
+        if (null != responseBody) {
+            final String accepts = request.getHeader("Accept");
+            String contentType = "application/json";
+            if (null != accepts && (accepts.contains("text/xml") || accepts.contains("application/xml"))) {
+                contentType = "application/xml";
+            }
+
+            LOG.debug("Rendering body with Content-Type: {}", contentType);
+            response.setContentType(contentType);
+            final PrintWriter writer = response.getWriter();
+            // TODO: serialize XML
+            MAPPER.writeValue(writer, responseBody);
+            writer.flush();
+            writer.close();
+        }
+    }
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // stack the request URI
+        final LinkedList<String> pathStack = parsePath(request);
 
         final Node handler = rootNode.getServingNode(request, pathStack, 0);
+        
         if (null != handler) {
             
             // populate and serve using handler
             request.setAttribute(REQUEST_ATTR_HANDLERNODE, handler);
             LOG.debug("Mapped {} {} to Handler {}", new Object[] {
-                request.getMethod(), uri, handler
+                request.getMethod(), request.getRequestURI(), handler
             });
             
             rootNode.service(request, response);
-            
-            // respond with XML or JSON?
-            final Integer responseStatus = (Integer) request.getAttribute(REQUEST_ATTR_RESPONSESTATUS);
-            response.setStatus(null != responseStatus ? responseStatus : 200);
-            final Object responseBody = request.getAttribute(REQUEST_ATTR_RESPONSEBODY);
-            if (null != responseBody) {
-                final String accepts = request.getHeader("Accept");
-                String contentType = "application/json";
-                if (null != accepts && (accepts.contains("text/xml") || accepts.contains("application/xml"))) {
-                    contentType = "application/xml";
-                }
-
-                LOG.debug("Rendering body with Content-Type: {}", contentType);
-                response.setContentType(contentType);
-                final PrintWriter writer = response.getWriter();
-                // TODO: serialize XML
-                MAPPER.writeValue(writer, responseBody);
-                writer.flush();
-                writer.close();
-            }
         }
         else {
-            response.sendError(404, "Not Found");
+            request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSESTATUS, 404);
         }
+        
+        renderResponse(request, response);
     }
-    
+
 }
