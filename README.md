@@ -74,8 +74,8 @@ Here's a simple Config example:
 It creates and maps the following resource tree:
 
 * /api
-* * /{domain}
-* * * /endpoints
-* * * /interceptor
-* * * * /true
-* * * * /false
+* /api/{domain}
+* /api/{domain}/endpoints
+* /api/{domain}/interceptor
+* /api/{domain}/interceptor/true
+* /api/{domain}/interceptor/false
