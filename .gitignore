@@ -1,1 +1,8 @@
 target/
+*.releaseBackup
+release.properties
+bin/
+.settings/
+.classpath
+.project
+
