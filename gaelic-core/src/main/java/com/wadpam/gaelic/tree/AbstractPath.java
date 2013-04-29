@@ -39,6 +39,7 @@ public class AbstractPath extends Node {
 
     @Override
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, int pathIndex) {
+        currentRequest.set(request);
         servingChild.remove();
         final String path = pathList.get(pathIndex);
         String p;
@@ -53,13 +54,17 @@ public class AbstractPath extends Node {
                 candidate = child.getServingNode(request, pathList, pathIndex+1);
                 if (null != candidate) {
                     servingChild.set(child);
+                    
+                    // store path variable?
+                    if (p.startsWith("{") && p.endsWith("}")) {
+                        String name = p.substring(1, p.length()-1);
+                        setPathVariable(name, path);
+                    }
                 }
             }
         }
         return candidate;
     }
-    
-    
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

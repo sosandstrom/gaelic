@@ -62,6 +62,11 @@ public class GaelicServletTest {
         assertEquals("application/json", response.getContentType());
         assertEquals("{\"method\":\"GET\",\"uri\":\"/api/gaelic/endpoints\"}", response.getContentAsString());
         assertNull(request.getAttribute(UnitTestInterceptor.REQUEST_ATTR_INTERCEPTOR_PRE));
+        
+        Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
+        assertNotNull(handler);
+        String domain = handler.getPathVariable("domain");
+        assertEquals("gaelic", domain);
     }
 
     @Test

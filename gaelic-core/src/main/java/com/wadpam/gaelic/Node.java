@@ -4,11 +4,13 @@
 
 package com.wadpam.gaelic;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,8 @@ public class Node extends HttpServlet {
     
     private String name = null;
     protected Node parent = null;
+    protected static final ThreadLocal<HttpServletRequest> currentRequest = 
+            new ThreadLocal<HttpServletRequest>();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -33,10 +37,11 @@ public class Node extends HttpServlet {
     public void initNode(ServletConfig config, Node parent) throws ServletException {
         LOG.debug("Initializing node {}", toString());
     }
-    
+
     public Node getServingNode(HttpServletRequest request, 
             LinkedList<String> pathList,
             int pathIndex) {
+        currentRequest.set(request);
         return this;
     }
     
@@ -58,6 +63,18 @@ public class Node extends HttpServlet {
 
     public void setName(String nodeName) {
         this.name = nodeName;
+    }
+    
+    public static String getPathVariableKey(String name) {
+        return String.format("com.wadpam.gaelic.PathVariable.%s", name);
+    }
+    
+    public String getPathVariable(String name) {
+        return (String) currentRequest.get().getAttribute(getPathVariableKey(name));
+    }
+    
+    public void setPathVariable(String name, String value) {
+        currentRequest.get().setAttribute(getPathVariableKey(name), value);
     }
     
 }
