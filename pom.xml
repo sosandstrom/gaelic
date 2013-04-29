@@ -2,102 +2,67 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wadpam.gaelic</groupId>
-    <artifactId>path-gae</artifactId>
-    <version>1-SNAPSHOT</version>
-    <packaging>war</packaging>
-    <name>Gaelic webapp GAE</name>
+    <artifactId>gaelic</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <name>Gaelic Parent</name>
+    <url>https://github.com/sosandstrom/gaelic</url>
 
-    <!-- Specify hard-coded project properties here -->
-    <properties>
-        <mardao.version>2.3.0</mardao.version>
-        <gae.version>1.7.5</gae.version>
-        <gae.application.version>lab</gae.application.version>
-        <gae.application.id>broker-web</gae.application.id>
-        <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
-        <itest.include>**/*ITest.java</itest.include>
-        <surefire.default.skip>true</surefire.default.skip>
-        <downloadSources>true</downloadSources>
-        <logging.level>ALL</logging.level>
-    </properties>
+    <modules>
+        <module>gaelic-core</module>
+        <module>gaelic-test</module>
+    </modules>
 
-    <dependencies>
+    <distributionManagement>
+        <repository>
+            <id>sosandstrom-github-releases</id>
+            <name>sosandstrom GitHub releases repo</name>
+            <url>file:../mvn-repo/releases</url>
+            <!--            <url>https://github.com/sosandstrom/maven-repo/releases</url>-->
+        </repository>
+        <snapshotRepository>
+            <id>sosandstrom-github-snapshots</id>
+            <name>sosandstrom GitHub snapshots repo</name>
+            <url>file:../mvn-repo/snapshots</url>
+            <!--            <url>https://github.com/sosandstrom/maven-repo/snapshots</url>-->
+        </snapshotRepository>
+    </distributionManagement>
 
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
+    <scm>
+        <url>https://github.com/sosandstrom/gaelic</url>
+        <connection>scm:git:git://github.com/sosandstrom/gaelic.git</connection>
+        <developerConnection>scm:git:git@github.com:sosandstrom/gaelic.git</developerConnection>
+    </scm>
 
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-1.0-sdk</artifactId>
-            <version>${gae.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.sf.mardao</groupId>
-            <artifactId>mardao-gae</artifactId>
-            <version>${mardao.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.wadpam.openserver</groupId>
-            <artifactId>json</artifactId>
-            <version>22</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.2</version>
-        </dependency>
-        
+    <developers>
+        <developer>
+            <id>sosandstrom</id>
+            <email>s.o.sandstrom@gmail.com</email>
+            <url>http://www.linkedin.com/in/sosandstrom</url>
+            <organization>Wadpam AB</organization>
+            <organizationUrl>http://www.wadpam.com</organizationUrl>
+            <timezone>7</timezone>
+        </developer>
 
-        <!-- These dependencies are here just for enabling logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-<!--        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.6.1</version>
-            <scope>runtime</scope>
-        </dependency>-->
-        <!-- this is for Jetty and ITests 
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        -->
-                
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>3.2.0.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>3.2.0.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+        <developer>
+            <id>mattiaslevin</id>
+            <email>mattias.levin@gmail.com</email>
+            <organization>bassac.se</organization>
+            <organizationUrl>http://blog.bassac.se</organizationUrl>
+            <timezone>1</timezone>
+        </developer>
+    </developers>
 
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License</name>
+            <url>http://www.gnu.org/licenses/lgpl.html</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    
     <build>
         <plugins>
             <plugin>
@@ -240,124 +205,63 @@
 
     <profiles>
         <profile>
-            <id>mardao</id>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <executions>
-                            <!-- extra compile step of domain classes before mardao generator processing -->
-                            <execution>
-                                <id>compile-entities</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>compile</goal>
-                                </goals>
-                                <configuration>
-                                    <verbose>false</verbose>
-                                    <fork>true</fork>
-                                    <includes>
-                                        <include>**/domain/*.java</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-            
-                    <plugin>
-                        <groupId>net.sf.mardao</groupId>
-                        <artifactId>mardao-maven-plugin</artifactId>
-                        <version>${mardao.version}</version>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.8</version>
                         <executions>
                             <execution>
-                                <id>generate-generics</id>
-                                <phase>generate-sources</phase>
+                                <id>attach-javadoc</id>
                                 <goals>
-                                    <goal>generate-sources</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>generate-daos</id>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>process-classes</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <basePackage>com.wadpam.gaelic</basePackage>
-                            <targetFolder>${project.basedir}/src/main/java</targetFolder>
-                        </configuration>
-                    </plugin>
-                </plugins>                
-            </build>
-        </profile>
-        <profile>
-            <id>itest</id>
-            <properties>
-                <spring.profiles.active>itest</spring.profiles.active>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>net.kindleit</groupId>
-                        <artifactId>maven-gae-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>start-gae</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <!--<goal>stop</goal>-->
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>stop-gae</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
+                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.1.2</version>
                         <executions>
                             <execution>
-                                <id>surefire-itest</id>
-                                <phase>integration-test</phase>
+                                <id>attach-sources</id>
                                 <goals>
-                                    <goal>test</goal>
+                                    <goal>jar</goal>
                                 </goals>
-                                <configuration>
-                                    <skip>false</skip>
-                                    <includes>
-                                        <include>${itest.include}</include>
-                                    </includes>
-                                    <testFailureIgnore>true</testFailureIgnore>
-                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>test</id>
-            <properties>
-                <gae.application.version>test</gae.application.version>
-                <logging.level>INFO</logging.level>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <gae.application.version>${project.version}</gae.application.version>
-                <logging.level>INFO</logging.level>
-            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>sonatype-nexus-staging</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
         </profile>
     </profiles>
 

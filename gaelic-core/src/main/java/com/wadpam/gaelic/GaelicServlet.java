@@ -92,9 +92,9 @@ public class GaelicServlet extends HttpServlet {
         if (null != responseBody) {
             final String accepts = request.getHeader("Accept");
             String contentType = "application/json";
-            if (null != accepts && (accepts.contains("text/xml") || accepts.contains("application/xml"))) {
-                contentType = "application/xml";
-            }
+//            if (null != accepts && (accepts.contains("text/xml") || accepts.contains("application/xml"))) {
+//                contentType = "application/xml";
+//            }
 
             LOG.debug("Rendering body with Content-Type: {}", contentType);
             response.setContentType(contentType);
