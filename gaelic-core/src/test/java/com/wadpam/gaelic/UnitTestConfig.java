@@ -4,7 +4,6 @@
 
 package com.wadpam.gaelic;
 
-import com.wadpam.gaelic.config.ConfigBuilder;
 import com.wadpam.gaelic.tree.InterceptorAdapter;
 import com.wadpam.gaelic.tree.MethodUriLeaf;
 import com.wadpam.gaelic.tree.UnitTestInterceptor;
@@ -18,20 +17,21 @@ public class UnitTestConfig implements GaelicConfig {
 
     @Override
     public Node init(GaelicServlet gaelicServlet, ServletConfig servletConfig) {
-        final ConfigBuilder root = BUILDER.root();
-        
         // add /api/{domain}
-        ConfigBuilder domainFactory = root.path("api").add("{domain}", InterceptorAdapter.class);
-        
-        // add /endpoints
-        domainFactory.add("endpoints", MethodUriLeaf.class).named("getEndpoints()");
+        BUILDER.root()
+            .path("api")
+                .add("{domain}", InterceptorAdapter.class)
+                    // add /endpoints
+                    .add("endpoints", MethodUriLeaf.class).named("getEndpoints()");
 
-        // add /interceptor/{boolean}
-        ConfigBuilder interceptorFactory = domainFactory.add("interceptor", UnitTestInterceptor.class).named("appendURI");
-        Node bool = interceptorFactory.add("true", MethodUriLeaf.class).named("bool").build();
-        interceptorFactory.add("false", bool);
+                // add /interceptor/{boolean}
+                BUILDER.from("{domain}")
+                    .add("interceptor", UnitTestInterceptor.class).named("appendURI")
+                        .add("true", MethodUriLeaf.class).named("bool").build();
+                    BUILDER.from("interceptor")
+                        .add("false", "bool");
         
-        return root.build();
+        return BUILDER.get("root");
     }
     
 }

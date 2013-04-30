@@ -6,12 +6,16 @@ package com.wadpam.gaelic.config;
 
 import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.tree.Path;
+import java.util.TreeMap;
 
 /**
  *
  * @author sosandstrom
  */
 public class ConfigBuilder {
+    
+    protected static final TreeMap<String,ConfigBuilder> BUILDER_MAP = new TreeMap<String, ConfigBuilder>();
+    protected static final TreeMap<String,Node> NODE_MAP = new TreeMap<String, Node>();
     
     private final Node node;
     
@@ -37,10 +41,14 @@ public class ConfigBuilder {
     
     public ConfigBuilder add(String path, Class nodeClass) {
         try {
-            final Node returnValue = (Node) nodeClass.newInstance();
-            returnValue.setName(path);
-            ((Path) node).addChild(path, returnValue);
-            return to(returnValue);
+            final Node child = (Node) nodeClass.newInstance();
+            child.setName(path);
+            
+            ((Path) node).addChild(path, child);
+            final ConfigBuilder builder = new ConfigBuilder(child);
+            mapBuilder(builder);
+            
+            return builder;
         } catch (InstantiationException ex) {
             throw new RuntimeException("Building Config", ex);
         } catch (IllegalAccessException ex) {
@@ -53,14 +61,45 @@ public class ConfigBuilder {
         return to(child);
     }
     
+    public ConfigBuilder add(String path, String nodeName) {
+        Node child = get(nodeName);
+        return add(path, child);
+    }
+    
     public static ConfigBuilder root() {
+        NODE_MAP.clear();
+        BUILDER_MAP.clear();
         final Path root = new Path();
         root.setName("root");
-        return to(root);
+        ConfigBuilder builder = to(root);
+        mapBuilder(builder);
+        return builder;
+    }
+    
+    protected static void mapBuilder(ConfigBuilder builder) {
+        if (null != builder && null != builder.node) {
+            final String name = builder.node.getName();
+            if (null != name) {
+                NODE_MAP.put(name, builder.node);
+                BUILDER_MAP.put(name, builder);
+            }
+        }
     }
     
     public ConfigBuilder named(String name) {
         node.setName(name);
+        
+        // add by new name. remove old?
+        mapBuilder(this);
+        
         return this;
+    }
+    
+    public static ConfigBuilder from(String name) {
+        return BUILDER_MAP.get(name);
+    }
+    
+    public static Node get(String name) {
+        return NODE_MAP.get(name);
     }
 }
