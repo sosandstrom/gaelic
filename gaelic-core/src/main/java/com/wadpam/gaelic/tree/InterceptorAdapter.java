@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author sosandstrom
  */
-public class InterceptorAdapter extends AbstractPath implements Interceptor {
+public class InterceptorAdapter extends Path implements Interceptor {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

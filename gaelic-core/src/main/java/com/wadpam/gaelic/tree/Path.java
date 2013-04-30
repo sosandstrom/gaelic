@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author sosandstrom
  */
-public class AbstractPath extends Node {
+public class Path extends Node {
     
     private final TreeMap<String,Node> paths = new TreeMap<String,Node>();
     

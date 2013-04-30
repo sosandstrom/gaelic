@@ -4,7 +4,7 @@
 
 package com.wadpam.gaelic;
 
-import com.wadpam.gaelic.tree.AbstractPath;
+import com.wadpam.gaelic.tree.Path;
 import com.wadpam.gaelic.tree.InterceptorAdapter;
 import com.wadpam.gaelic.tree.MethodUriLeaf;
 import com.wadpam.gaelic.tree.UnitTestInterceptor;
@@ -18,10 +18,10 @@ public class UnitTestConfig implements GaelicConfig {
 
     @Override
     public Node init(GaelicServlet gaelicServlet, ServletConfig servletConfig) {
-        final AbstractPath root = new AbstractPath();
+        final Path root = new Path();
         root.setName("root");
         
-        final AbstractPath api = new AbstractPath();
+        final Path api = new Path();
         api.setName("api");
         root.addChild("api", api);
         
