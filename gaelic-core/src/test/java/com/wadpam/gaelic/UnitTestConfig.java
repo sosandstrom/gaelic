@@ -18,6 +18,8 @@ public class UnitTestConfig implements GaelicConfig {
 
     @Override
     public Node init(GaelicServlet gaelicServlet, ServletConfig servletConfig) {
+//        FACTORY.root().
+        
         final AbstractPath root = new AbstractPath();
         root.setName("root");
         
