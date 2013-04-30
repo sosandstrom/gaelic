@@ -27,11 +27,11 @@ public class UnitTestConfig implements GaelicConfig {
                 // add /interceptor/{boolean}
                 BUILDER.from("{domain}")
                     .add("interceptor", UnitTestInterceptor.class).named("appendURI")
-                        .add("true", MethodUriLeaf.class).named("bool").build();
+                        .add("true", MethodUriLeaf.class).named("bool");
                     BUILDER.from("interceptor")
                         .add("false", "bool");
         
-        return BUILDER.get("root");
+        return BUILDER.build();
     }
     
 }

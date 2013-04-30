@@ -13,7 +13,7 @@ import java.util.TreeMap;
  * @author sosandstrom
  */
 public class ConfigBuilder {
-    
+    protected static final String NAME_ROOT = "root";
     protected static final TreeMap<String,ConfigBuilder> BUILDER_MAP = new TreeMap<String, ConfigBuilder>();
     protected static final TreeMap<String,Node> NODE_MAP = new TreeMap<String, Node>();
     
@@ -28,7 +28,7 @@ public class ConfigBuilder {
     }
     
     public Node build() {
-        return node;
+        return node != null ? node : NODE_MAP.get(NAME_ROOT);
     }
     
     public static ConfigBuilder to(Node node) {
@@ -70,7 +70,7 @@ public class ConfigBuilder {
         NODE_MAP.clear();
         BUILDER_MAP.clear();
         final Path root = new Path();
-        root.setName("root");
+        root.setName(NAME_ROOT);
         ConfigBuilder builder = to(root);
         mapBuilder(builder);
         return builder;
