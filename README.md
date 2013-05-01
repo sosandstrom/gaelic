@@ -47,29 +47,22 @@ Here's a simple Config example:
 
         @Override
         public Node init(GaelicServlet gaelicServlet, ServletConfig servletConfig) {
-            final AbstractPath root = new AbstractPath();
-            root.setName("root");
 
-            final AbstractPath api = new AbstractPath();
-            api.setName("api");
-            root.addChild("api", api);
+            // add /api/{domain}
+            BUILDER.root()
+                .path("api")
+                    .interceptedPath("{domain}", new InterceptorAdapter())
+                        // add /endpoints
+                        .add("endpoints", MethodUriLeaf.class).named("getEndpoints()");
 
-            final InterceptorAdapter domain = new InterceptorAdapter();
-            domain.setName("{domain}");
-            api.addChild("{domain}", domain);
+                    // add /interceptor/{boolean}
+                    BUILDER.from("{domain}")
+                        .interceptedPath("interceptor", new UnitTestInterceptor()).named("appendURI")
+                            .add("true", MethodUriLeaf.class).named("bool");
+                        BUILDER.from("interceptor")
+                            .add("false", "bool");
 
-            final MethodUriLeaf endpoints = new MethodUriLeaf();
-            endpoints.setName("getEndpoints()");
-            domain.addChild("endpoints", endpoints);
-
-            final UnitTestInterceptor interceptor = new UnitTestInterceptor();
-            interceptor.setName("appendURI");
-            domain.addChild("interceptor", interceptor);
-            final MethodUriLeaf bool = new MethodUriLeaf("bool");
-            interceptor.addChild("true", bool);
-            interceptor.addChild("false", bool);
-
-            return root;
+            return BUILDER.build();
         }
 
     }
