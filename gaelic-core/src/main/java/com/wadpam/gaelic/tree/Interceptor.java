@@ -5,6 +5,8 @@
 package com.wadpam.gaelic.tree;
 
 import com.wadpam.gaelic.Node;
+import java.io.IOException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,12 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 public interface Interceptor {
     
     boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-            Node handler) throws Exception;
+            Node handler) throws ServletException, IOException;
     
     void postHandle(HttpServletRequest request, HttpServletResponse response,
-            Node handler, Object model) throws Exception;
+            Node handler, Object model) throws ServletException, IOException;
     
     void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-            Node handler, Exception ex) throws Exception;
+            Node handler, Exception ex) throws ServletException, IOException;
     
 }

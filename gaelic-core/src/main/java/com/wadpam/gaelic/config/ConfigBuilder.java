@@ -5,6 +5,8 @@
 package com.wadpam.gaelic.config;
 
 import com.wadpam.gaelic.Node;
+import com.wadpam.gaelic.tree.InterceptedPath;
+import com.wadpam.gaelic.tree.Interceptor;
 import com.wadpam.gaelic.tree.Path;
 import java.util.TreeMap;
 
@@ -58,12 +60,20 @@ public class ConfigBuilder {
     
     public ConfigBuilder add(String path, Node child) {
         ((Path) node).addChild(path, child);
-        return to(child);
+        ConfigBuilder builder = to(child);
+        mapBuilder(path, builder);
+        return builder;
     }
     
     public ConfigBuilder add(String path, String nodeName) {
         Node child = get(nodeName);
         return add(path, child);
+    }
+    
+    public ConfigBuilder interceptedPath(String path, Interceptor interceptor) {
+        InterceptedPath p = new InterceptedPath();
+        p.setInterceptor(interceptor);
+        return add(path, p);
     }
     
     public static ConfigBuilder root() {
@@ -78,10 +88,15 @@ public class ConfigBuilder {
     
     protected static void mapBuilder(ConfigBuilder builder) {
         if (null != builder && null != builder.node) {
-            final String name = builder.node.getName();
-            if (null != name) {
-                NODE_MAP.put(name, builder.node);
-                BUILDER_MAP.put(name, builder);
+            mapBuilder(builder.node.getName(), builder);
+        }
+    }
+    
+    protected static void mapBuilder(String path, ConfigBuilder builder) {
+        if (null != builder && null != builder.node) {
+            if (null != path) {
+                NODE_MAP.put(path, builder.node);
+                BUILDER_MAP.put(path, builder);
             }
         }
     }

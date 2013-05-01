@@ -4,8 +4,10 @@
 
 package com.wadpam.gaelic;
 
+import com.wadpam.gaelic.tree.Interceptor;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -26,6 +28,7 @@ public class GaelicServlet extends HttpServlet {
     public static final String INIT_PARAM_CONFIG = "com.wadpam.gaelic.Config";
     public static final String REQUEST_ATTR_PATHSTACK = "com.wadpam.gaelic.PathStack";
     public static final String REQUEST_ATTR_HANDLERNODE = "com.wadpam.gaelic.HandlerNode";
+    public static final String REQUEST_ATTR_INTERCEPTORS = "com.wadpam.gaelic.Interceptors";
     public static final String REQUEST_ATTR_RESPONSEBODY = "com.wadpam.gaelic.ResponseBody";
     public static final String REQUEST_ATTR_RESPONSESTATUS = "com.wadpam.gaelic.ResponseStatus";
     
@@ -106,29 +109,66 @@ public class GaelicServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Invoke interceptors
+     * @param request
+     * @param response
+     * @param handler
+     * @param exception 
+     */
+    protected void afterCompletion(HttpServletRequest request, HttpServletResponse response, Node handler, Exception exception) {
+        ArrayList<Interceptor> interceptors = (ArrayList<Interceptor>) request.getAttribute(GaelicServlet.REQUEST_ATTR_INTERCEPTORS);
+        if (null != interceptors) {
+            for (Interceptor i : interceptors) {
+                try {
+                    i.afterCompletion(request, response, handler, exception);
+                }
+                catch (ServletException ex) {
+                    LOG.warn("afterCompletion " + i, ex);
+                }
+                catch (IOException ex) {
+                    LOG.warn("afterCompletion " + i, ex);
+                }
+            }
+        }
+    }
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Exception exception = null;
 
         // stack the request URI
         final LinkedList<String> pathStack = parsePath(request);
 
         final Node handler = rootNode.getServingNode(request, pathStack, 0);
         
-        if (null != handler) {
-            
-            // populate and serve using handler
-            request.setAttribute(REQUEST_ATTR_HANDLERNODE, handler);
-            LOG.debug("Mapped {} {} to Handler {}", new Object[] {
-                request.getMethod(), request.getRequestURI(), handler
-            });
-            
-            rootNode.service(request, response);
+        try {
+            if (null != handler) {
+
+                // populate and serve using handler
+                request.setAttribute(REQUEST_ATTR_HANDLERNODE, handler);
+                LOG.debug("Mapped {} {} to Handler {}", new Object[] {
+                    request.getMethod(), request.getRequestURI(), handler
+                });
+
+                rootNode.service(request, response);
+            }
+            else {
+                request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSESTATUS, 404);
+            }
+            renderResponse(request, response);
         }
-        else {
-            request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSESTATUS, 404);
+        catch (ServletException ex) {
+            exception = ex;
+            throw ex;
         }
-        
-        renderResponse(request, response);
+        catch (IOException ex) {
+            exception = ex;
+            throw ex;
+        }
+        finally {
+            afterCompletion(request, response, handler, exception);
+        }
     }
 
 }

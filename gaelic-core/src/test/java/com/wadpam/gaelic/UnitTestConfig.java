@@ -20,17 +20,17 @@ public class UnitTestConfig implements GaelicConfig {
         // add /api/{domain}
         BUILDER.root()
             .path("api")
-                .add("{domain}", InterceptorAdapter.class)
+                .interceptedPath("{domain}", new InterceptorAdapter())
                     // add /endpoints
                     .add("endpoints", MethodUriLeaf.class).named("getEndpoints()");
 
                 // add /interceptor/{boolean}
                 BUILDER.from("{domain}")
-                    .add("interceptor", UnitTestInterceptor.class).named("appendURI")
+                    .interceptedPath("interceptor", new UnitTestInterceptor()).named("appendURI")
                         .add("true", MethodUriLeaf.class).named("bool");
                     BUILDER.from("interceptor")
                         .add("false", "bool");
-        
+                    
         return BUILDER.build();
     }
     
