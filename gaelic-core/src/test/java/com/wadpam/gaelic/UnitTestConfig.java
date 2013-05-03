@@ -4,6 +4,7 @@
 
 package com.wadpam.gaelic;
 
+import static com.wadpam.gaelic.GaelicConfig.BUILDER;
 import com.wadpam.gaelic.tree.InterceptorAdapter;
 import com.wadpam.gaelic.tree.MethodUriLeaf;
 import com.wadpam.gaelic.tree.UnitTestInterceptor;
@@ -30,6 +31,11 @@ public class UnitTestConfig implements GaelicConfig {
                         .add("true", MethodUriLeaf.class).named("bool");
                     BUILDER.from("interceptor")
                         .add("false", "bool");
+                    
+                // add /crud/v10
+                BUILDER.from("{domain}")
+                    .path("crud")
+                        .crud("v10", Long.class);
                     
         return BUILDER.build();
     }

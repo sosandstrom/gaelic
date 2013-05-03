@@ -77,6 +77,9 @@ public class GaelicServletTest {
 
         servlet.service(request, response);
         assertEquals(404, response.getStatus());
+        assertEquals("Not Found", response.getErrorMessage());
+        assertTrue(response.getContentAsString().startsWith(
+                "{\"code\":0,\"status\":404,\"message\":\"Not Found\",\"stackTrace\":\"com.wadpam.gaelic.exception.RestException.<clinit>:"));
     }
 
     @Test

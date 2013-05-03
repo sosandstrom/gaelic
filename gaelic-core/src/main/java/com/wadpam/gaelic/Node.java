@@ -4,13 +4,11 @@
 
 package com.wadpam.gaelic;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +17,10 @@ import org.slf4j.LoggerFactory;
  * @author sosandstrom
  */
 public class Node extends HttpServlet {
+    
+    public static final String METHOD_DELETE = "DELETE";
+    public static final String METHOD_GET = "GET";
+    public static final String METHOD_POST = "POST";
     
     protected static final Logger LOG = LoggerFactory.getLogger(Node.class);
     

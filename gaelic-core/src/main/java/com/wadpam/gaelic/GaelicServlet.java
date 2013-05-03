@@ -4,6 +4,8 @@
 
 package com.wadpam.gaelic;
 
+import com.wadpam.gaelic.exception.RestException;
+import com.wadpam.gaelic.json.JException;
 import com.wadpam.gaelic.tree.Interceptor;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,6 +33,12 @@ public class GaelicServlet extends HttpServlet {
     public static final String REQUEST_ATTR_INTERCEPTORS = "com.wadpam.gaelic.Interceptors";
     public static final String REQUEST_ATTR_RESPONSEBODY = "com.wadpam.gaelic.ResponseBody";
     public static final String REQUEST_ATTR_RESPONSESTATUS = "com.wadpam.gaelic.ResponseStatus";
+    
+    public static final int ERROR_CODE_SERVLET_EXCEPTION = 1;
+    public static final int ERROR_CODE_IO_EXCEPTION = 2;
+    public static final int ERROR_CODE_ID_LONG = 3;
+    
+    public static final int ERROR_CODE_APPLICATION_BASE = 1000;
     
     protected static final ObjectMapper MAPPER = new ObjectMapper();
     static {
@@ -87,12 +95,24 @@ public class GaelicServlet extends HttpServlet {
         return pathStack;
     }
 
-    protected void renderResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // respond with XML or JSON?
-        final Integer responseStatus = (Integer) request.getAttribute(REQUEST_ATTR_RESPONSESTATUS);
-        response.setStatus(null != responseStatus ? responseStatus : 200);
-        final Object responseBody = request.getAttribute(REQUEST_ATTR_RESPONSEBODY);
+    protected void renderResponse(HttpServletRequest request, 
+            HttpServletResponse response, 
+            RestException exception) throws IOException {
+        Object responseBody;
+        if (null != exception) {
+//            response.setStatus(exception.getStatus());
+            response.sendError(exception.getStatus(), exception.getMessage());
+            responseBody = new JException(exception);
+        }
+        else {
+            final Integer responseStatus = (Integer) request.getAttribute(REQUEST_ATTR_RESPONSESTATUS);
+            response.setStatus(null != responseStatus ? responseStatus : 200);
+            responseBody = request.getAttribute(REQUEST_ATTR_RESPONSEBODY);
+        }
+        
         if (null != responseBody) {
+            
+            // respond with XML or JSON?
             final String accepts = request.getHeader("Accept");
             String contentType = "application/json";
 //            if (null != accepts && (accepts.contains("text/xml") || accepts.contains("application/xml"))) {
@@ -135,7 +155,7 @@ public class GaelicServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Exception exception = null;
+        RestException exception = null;
 
         // stack the request URI
         final LinkedList<String> pathStack = parsePath(request);
@@ -154,19 +174,25 @@ public class GaelicServlet extends HttpServlet {
                 rootNode.service(request, response);
             }
             else {
-                request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSESTATUS, 404);
+                exception = RestException.NOT_FOUND;
+//                request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSESTATUS, 404);
             }
-            renderResponse(request, response);
+        }
+        catch (RestException rest) {
+            exception = rest;
         }
         catch (ServletException ex) {
-            exception = ex;
-            throw ex;
+            exception = new RestException(500, ex.getMessage(), 
+                    ERROR_CODE_SERVLET_EXCEPTION, null, null);
+//            throw ex;
         }
         catch (IOException ex) {
-            exception = ex;
-            throw ex;
+            exception = new RestException(500, ex.getMessage(), 
+                    ERROR_CODE_IO_EXCEPTION, null, null);
+//            throw ex;
         }
         finally {
+            renderResponse(request, response, exception);
             afterCompletion(request, response, handler, exception);
         }
     }

@@ -5,6 +5,7 @@
 package com.wadpam.gaelic.config;
 
 import com.wadpam.gaelic.Node;
+import com.wadpam.gaelic.tree.CrudLeaf;
 import com.wadpam.gaelic.tree.InterceptedPath;
 import com.wadpam.gaelic.tree.Interceptor;
 import com.wadpam.gaelic.tree.Path;
@@ -27,18 +28,6 @@ public class ConfigBuilder {
     
     protected ConfigBuilder(Node node) {
         this.node = node;
-    }
-    
-    public Node build() {
-        return node != null ? node : NODE_MAP.get(NAME_ROOT);
-    }
-    
-    public static ConfigBuilder to(Node node) {
-        return new ConfigBuilder(node);
-    }
-
-    public ConfigBuilder path(String path) {
-        return add(path, Path.class);
     }
     
     public ConfigBuilder add(String path, Class nodeClass) {
@@ -70,20 +59,27 @@ public class ConfigBuilder {
         return add(path, child);
     }
     
+    public Node build() {
+        return node != null ? node : NODE_MAP.get(NAME_ROOT);
+    }
+    
+    public ConfigBuilder crud(String version, Class idClass) {
+        CrudLeaf crud = new CrudLeaf(idClass, idClass, idClass);
+        return add(version, crud);
+    }
+    
+    public static ConfigBuilder from(String name) {
+        return BUILDER_MAP.get(name);
+    }
+    
+    public static Node get(String name) {
+        return NODE_MAP.get(name);
+    }
+
     public ConfigBuilder interceptedPath(String path, Interceptor interceptor) {
         InterceptedPath p = new InterceptedPath();
         p.setInterceptor(interceptor);
         return add(path, p);
-    }
-    
-    public static ConfigBuilder root() {
-        NODE_MAP.clear();
-        BUILDER_MAP.clear();
-        final Path root = new Path();
-        root.setName(NAME_ROOT);
-        ConfigBuilder builder = to(root);
-        mapBuilder(builder);
-        return builder;
     }
     
     protected static void mapBuilder(ConfigBuilder builder) {
@@ -110,11 +106,21 @@ public class ConfigBuilder {
         return this;
     }
     
-    public static ConfigBuilder from(String name) {
-        return BUILDER_MAP.get(name);
+    public ConfigBuilder path(String path) {
+        return add(path, Path.class);
     }
     
-    public static Node get(String name) {
-        return NODE_MAP.get(name);
+    public static ConfigBuilder root() {
+        NODE_MAP.clear();
+        BUILDER_MAP.clear();
+        final Path root = new Path();
+        root.setName(NAME_ROOT);
+        ConfigBuilder builder = to(root);
+        mapBuilder(builder);
+        return builder;
+    }
+    
+    public static ConfigBuilder to(Node node) {
+        return new ConfigBuilder(node);
     }
 }
