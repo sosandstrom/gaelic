@@ -5,6 +5,7 @@
 package com.wadpam.gaelic.config;
 
 import com.wadpam.gaelic.Node;
+import com.wadpam.gaelic.crud.CrudService;
 import com.wadpam.gaelic.tree.CrudLeaf;
 import com.wadpam.gaelic.tree.InterceptedPath;
 import com.wadpam.gaelic.tree.Interceptor;
@@ -63,9 +64,21 @@ public class ConfigBuilder {
         return node != null ? node : NODE_MAP.get(NAME_ROOT);
     }
     
-    public ConfigBuilder crud(String version, Class idClass) {
-        CrudLeaf crud = new CrudLeaf(idClass, idClass, idClass);
-        return add(version, crud);
+    public ConfigBuilder crud(String version, Class leafClass, Class serviceClass) {
+        try {
+            CrudService service = (CrudService) serviceClass.newInstance();
+            CrudLeaf leaf = (CrudLeaf) leafClass.newInstance();
+            return crud(version, leaf, service);
+        } catch (InstantiationException ex) {
+            throw new RuntimeException("instantiating", ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("access", ex);
+        }
+    }
+    
+    public ConfigBuilder crud(String version, CrudLeaf leaf, CrudService service) {
+        leaf.setService(service);
+        return add(version, leaf);
     }
     
     public static ConfigBuilder from(String name) {

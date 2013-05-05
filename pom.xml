@@ -11,6 +11,7 @@
 
     <modules>
         <module>gaelic-core</module>
+        <module>gaelic-mardao</module>
         <module>gaelic-test</module>
     </modules>
 

@@ -6,11 +6,15 @@ package com.wadpam.gaelic.tree;
 
 import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.Node;
+import com.wadpam.gaelic.converter.BaseConverter;
+import com.wadpam.gaelic.crud.CrudService;
 import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.json.JCursorPage;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
@@ -22,7 +26,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author sosandstrom
  */
-public class CrudLeaf<J extends Object, T extends Object, ID extends Serializable> extends Node {
+public class CrudLeaf<J extends Serializable, 
+        T, 
+        ID extends Serializable,
+        S extends CrudService<T, ID>> extends Node {
     
     public static final String REQUEST_ATTR_FILENAME = "com.wadpam.gaelic.CrudFilename";
     
@@ -32,6 +39,10 @@ public class CrudLeaf<J extends Object, T extends Object, ID extends Serializabl
     private final Class domainClass;
     private final Class idClass;
     private final Class jsonClass;
+    
+    protected S service;
+    
+    protected BaseConverter<J, T, ID> converter;
 
     public CrudLeaf(Class domainClass, Class idClass, Class jsonClass) {
         this.domainClass = domainClass;
@@ -39,6 +50,37 @@ public class CrudLeaf<J extends Object, T extends Object, ID extends Serializabl
         this.jsonClass = jsonClass;
     }
     
+    public void addInnerObjects(HttpServletRequest request, 
+            HttpServletResponse response,
+            String domain,
+            J jEntity) {
+        addInnerObjects(request, response, domain, 
+                Arrays.asList(jEntity));
+    }
+
+    /** This implementation does nothing, please override */
+    public void addInnerObjects(HttpServletRequest request, 
+            HttpServletResponse response,
+            String domain,
+            Iterable<J> jEntity) {
+        // do nothing
+    }
+    
+    // Convert iterable
+    public Collection<J> convertWithInner(HttpServletRequest request, HttpServletResponse response,
+            String domain, Iterable<T> from) {
+        if (null == from)
+            return new ArrayList<J>();
+
+        // basic conversion first
+        final Collection<J> returnValue = converter.convert(from);
+
+        // then add inner objects batch-style
+        addInnerObjects(request, response, domain, returnValue);
+        
+        return returnValue;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
@@ -54,18 +96,24 @@ public class CrudLeaf<J extends Object, T extends Object, ID extends Serializabl
 
     protected void getDetails(HttpServletRequest request, HttpServletResponse response,
             String filename) throws ServletException, IOException {
+        ID id;
         
         // if ID is Long, parse filename
         if (Long.class.equals(idClass)) {
             try {
-                long id = Long.parseLong(filename);
+                Long l = Long.parseLong(filename);
+                id = (ID) l;
             }
             catch (NumberFormatException notLong) {
                 throw new BadRequestException(GaelicServlet.ERROR_CODE_ID_LONG, filename, null);
             }
         }
+        else {
+            id = (ID) filename;
+        }
         
         // TODO: implement
+        T domain = service.get(null, id);
         setResponseBody(request, 200, filename);
     }
     
@@ -111,4 +159,16 @@ public class CrudLeaf<J extends Object, T extends Object, ID extends Serializabl
         return SUPPORTED_METHODS;
     }
     
+    protected J convertWithInner(HttpServletRequest request, HttpServletResponse response,
+            String domain, T from) {
+        final J to = converter.convertDomain(from);
+        addInnerObjects(request, response, domain, to);
+        return to;
+    }
+    
+    
+
+    public void setService(S service) {
+        this.service = service;
+    }
 }

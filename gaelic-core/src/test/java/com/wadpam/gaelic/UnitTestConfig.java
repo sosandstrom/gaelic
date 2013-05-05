@@ -5,6 +5,8 @@
 package com.wadpam.gaelic;
 
 import static com.wadpam.gaelic.GaelicConfig.BUILDER;
+import com.wadpam.gaelic.crud.DateService;
+import com.wadpam.gaelic.tree.DateLeaf;
 import com.wadpam.gaelic.tree.InterceptorAdapter;
 import com.wadpam.gaelic.tree.MethodUriLeaf;
 import com.wadpam.gaelic.tree.UnitTestInterceptor;
@@ -35,7 +37,7 @@ public class UnitTestConfig implements GaelicConfig {
                 // add /crud/v10
                 BUILDER.from("{domain}")
                     .path("crud")
-                        .crud("v10", Long.class);
+                        .crud("v10", DateLeaf.class, DateService.class);
                     
         return BUILDER.build();
     }
