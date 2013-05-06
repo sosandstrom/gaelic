@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
  */
 public class GaelicServlet extends HttpServlet {
     
+    public static final String MEDIA_TYPE_JSON = "application/json";
+    
     public static final String INIT_PARAM_CONFIG = "com.wadpam.gaelic.Config";
     public static final String REQUEST_ATTR_PATHSTACK = "com.wadpam.gaelic.PathStack";
     public static final String REQUEST_ATTR_HANDLERNODE = "com.wadpam.gaelic.HandlerNode";
@@ -42,7 +44,7 @@ public class GaelicServlet extends HttpServlet {
     public static final int ERROR_CODE_CRUD_BASE = 100;
     public static final int ERROR_CODE_APPLICATION_BASE = 1000;
     
-    protected static final ObjectMapper MAPPER = new ObjectMapper();
+    public static final ObjectMapper MAPPER = new ObjectMapper();
     static {
         MAPPER.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
     }
@@ -127,7 +129,7 @@ public class GaelicServlet extends HttpServlet {
             
             // respond with XML or JSON?
             final String accepts = request.getHeader("Accept");
-            String contentType = "application/json";
+            String contentType = MEDIA_TYPE_JSON;
 //            if (null != accepts && (accepts.contains("text/xml") || accepts.contains("application/xml"))) {
 //                contentType = "application/xml";
 //            }

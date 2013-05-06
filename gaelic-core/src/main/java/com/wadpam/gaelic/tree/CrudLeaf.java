@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -86,42 +87,46 @@ public class CrudLeaf<J extends Serializable,
         
         return returnValue;
     }
+    
+    protected void create(HttpServletRequest request, HttpServletResponse response,
+            J body) {
+        // TODO: implement
+        setResponseBody(request, 201, body);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final ID id = getId(request);
         
         // GET details or page?
-        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
-        if (null != filename) {
-            getDetails(request, response, filename);
+        if (null != id) {
+            getDetails(request, response, id);
         }
         else {
             getPage(request, response);
         }
     }
 
-    protected void getDetails(HttpServletRequest request, HttpServletResponse response,
-            String filename) throws ServletException, IOException {
-        ID id;
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final ID id = getId(request);
+        final J body = getRequestBody(request);
         
-        // if ID is Long, parse filename
-        if (Long.class.equals(idClass)) {
-            try {
-                Long l = Long.parseLong(filename);
-                id = (ID) l;
-            }
-            catch (NumberFormatException notLong) {
-                throw new BadRequestException(GaelicServlet.ERROR_CODE_ID_LONG, filename, null);
-            }
+        if (null != id) {
+            update(request, response, body, id);
         }
         else {
-            id = (ID) filename;
+            create(request, response, body);
         }
+    }
+
+    protected void getDetails(HttpServletRequest request, HttpServletResponse response,
+            ID id) throws ServletException, IOException {
         
-        // TODO: implement
         T domain = service.get(null, id);
         if (null != domain) {
-            setResponseBody(request, 200, filename);
+            J body = converter.convertDomain(domain);
+            setResponseBody(request, 200, body);
         }
         else {
             throw new NotFoundException(getErrorBaseCode()+ERR_OFFSET_DETAILS, toString(), null);
@@ -132,11 +137,45 @@ public class CrudLeaf<J extends Serializable,
         return GaelicServlet.ERROR_CODE_CRUD_BASE;
     }
     
+    protected ID getId(HttpServletRequest request) {
+        ID id = null;
+        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
+        
+        if (null != filename) {
+            // if ID is Long, parse filename
+            if (Long.class.equals(idClass)) {
+                try {
+                    Long l = Long.parseLong(filename);
+                    id = (ID) l;
+                }
+                catch (NumberFormatException notLong) {
+                    throw new BadRequestException(GaelicServlet.ERROR_CODE_ID_LONG, filename, null);
+                }
+            }
+            else {
+                id = (ID) filename;
+            }
+        }
+        
+        return id;
+    }
+    
     protected void getPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final JCursorPage page = new JCursorPage();
         
         // TODO: implement
         setResponseBody(request, 200, page);
+    }
+    
+    protected J getRequestBody(HttpServletRequest request) throws IOException {
+        J body = null;
+        
+        if (request.getContentType().startsWith(GaelicServlet.MEDIA_TYPE_JSON)) {
+            ServletInputStream in = request.getInputStream();
+            body = (J) GaelicServlet.MAPPER.readValue(in, jsonClass);
+        }
+        
+        return body;
     }
     
     @Override
@@ -183,6 +222,13 @@ public class CrudLeaf<J extends Serializable,
     protected Set<String> supportedMethods() {
         return SUPPORTED_METHODS;
     }
+
+    protected void update(HttpServletRequest request, HttpServletResponse response, 
+            J body, ID id) {
+        
+        // TODO: implement
+        setResponseBody(request, 200, body);
+    }
     
     protected J convertWithInner(HttpServletRequest request, HttpServletResponse response,
             String domain, T from) {
@@ -190,9 +236,15 @@ public class CrudLeaf<J extends Serializable,
         addInnerObjects(request, response, domain, to);
         return to;
     }
-    
-    
 
+    public BaseConverter<J, T, ID> getConverter() {
+        return converter;
+    }
+
+    public void setConverter(BaseConverter<J, T, ID> converter) {
+        this.converter = converter;
+    }
+    
     public void setService(S service) {
         this.service = service;
     }

@@ -5,6 +5,7 @@
 package com.wadpam.gaelic.tree;
 
 import com.wadpam.gaelic.*;
+import com.wadpam.gaelic.json.JDate;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import org.junit.After;
@@ -120,7 +121,11 @@ public class CrudLeafTest {
         assertEquals("gaelic", domain);
         
         assertEquals("42", request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
-        assertEquals("42", request.getAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY));
+        Object body = request.getAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY);
+        assertNotNull(body);
+        assertTrue(body instanceof JDate);
+        JDate jDate = (JDate) body;
+        assertEquals("42", jDate.getId());
     }
 
     @Test
@@ -138,7 +143,11 @@ public class CrudLeafTest {
         assertEquals("gaelic", domain);
         
         assertEquals("42", request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
-        assertEquals("42", request.getAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY));
+        Object body = request.getAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY);
+        assertNotNull(body);
+        assertTrue(body instanceof JDate);
+        JDate jDate = (JDate) body;
+        assertEquals("42", jDate.getId());
     }
 
     @Test
@@ -163,8 +172,9 @@ public class CrudLeafTest {
         servlet.service(request, response);
         assertEquals(400, response.getStatus());
         assertEquals("Bad Request", response.getErrorMessage());
+        LOG.info(response.getContentAsString());
         assertTrue(response.getContentAsString().startsWith(
-                "{\"code\":3,\"status\":400,\"message\":\"Bad Request\",\"developerMessage\":\"notLong\",\"stackTrace\":\"com.wadpam.gaelic.tree.CrudLeaf.getDetails:"));
+                "{\"code\":3,\"status\":400,\"message\":\"Bad Request\",\"developerMessage\":\"notLong\",\"stackTrace\":\"com.wadpam.gaelic.tree.CrudLeaf.getId:"));
     }
 
     @Test
