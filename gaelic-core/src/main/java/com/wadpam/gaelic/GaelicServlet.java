@@ -4,6 +4,7 @@
 
 package com.wadpam.gaelic;
 
+import com.wadpam.gaelic.exception.MethodNotAllowedException;
 import com.wadpam.gaelic.exception.RestException;
 import com.wadpam.gaelic.json.JException;
 import com.wadpam.gaelic.tree.Interceptor;
@@ -87,6 +88,7 @@ public class GaelicServlet extends HttpServlet {
     protected static LinkedList<String> parsePath(HttpServletRequest request) {
         final LinkedList<String> pathStack = new LinkedList<String>();
         final String uri = request.getRequestURI();
+//        LOG.debug("splitting requestURI {}", uri);
         for (String p : uri.split("/")) {
             if (!"".equals(p)) {
                 pathStack.add(p);
@@ -101,7 +103,17 @@ public class GaelicServlet extends HttpServlet {
             RestException exception) throws IOException {
         Object responseBody;
         if (null != exception) {
-//            response.setStatus(exception.getStatus());
+            LOG.debug("Handling exception: {}", exception);
+            
+            if (RestException.STATUS_METHOD_NOT_ALLOWED == exception.getStatus() &&
+                    exception instanceof MethodNotAllowedException) {
+                // The response MUST include an Allow header containing a list of valid methods for the requested resource.
+                String allow = ((MethodNotAllowedException) exception).getAllow().toString();
+                allow = null != allow ? allow.substring(1, allow.length()-1) : null;
+                LOG.info("Allow: {}", allow);
+                response.setHeader("Allow", allow);
+            }
+
             response.sendError(exception.getStatus(), exception.getMessage());
             responseBody = new JException(exception);
         }
@@ -120,7 +132,7 @@ public class GaelicServlet extends HttpServlet {
 //                contentType = "application/xml";
 //            }
 
-            LOG.debug("Rendering body with Content-Type: {}", contentType);
+            LOG.debug("Rendering body {} with Content-Type: {}", responseBody, contentType);
             response.setContentType(contentType);
             final PrintWriter writer = response.getWriter();
             // TODO: serialize XML
@@ -160,10 +172,10 @@ public class GaelicServlet extends HttpServlet {
 
         // stack the request URI
         final LinkedList<String> pathStack = parsePath(request);
-
-        final Node handler = rootNode.getServingNode(request, pathStack, 0);
+        Node handler = null;
         
         try {
+            handler = rootNode.getServingNode(request, pathStack, 0);
             if (null != handler) {
 
                 // populate and serve using handler
@@ -176,7 +188,6 @@ public class GaelicServlet extends HttpServlet {
             }
             else {
                 exception = RestException.NOT_FOUND;
-//                request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSESTATUS, 404);
             }
         }
         catch (RestException rest) {
@@ -185,12 +196,10 @@ public class GaelicServlet extends HttpServlet {
         catch (ServletException ex) {
             exception = new RestException(500, ex.getMessage(), 
                     ERROR_CODE_SERVLET_EXCEPTION, null, null);
-//            throw ex;
         }
         catch (IOException ex) {
             exception = new RestException(500, ex.getMessage(), 
                     ERROR_CODE_IO_EXCEPTION, null, null);
-//            throw ex;
         }
         finally {
             renderResponse(request, response, exception);

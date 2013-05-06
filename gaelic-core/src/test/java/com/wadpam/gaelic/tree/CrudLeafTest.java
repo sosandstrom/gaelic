@@ -51,6 +51,26 @@ public class CrudLeafTest {
         LOG.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 
+//    @Test
+//    public void testCreate()  throws ServletException, IOException {
+//        request.setMethod("POST");
+//        request.setRequestURI("/api/gaelic/crud/v10");
+//        request.setQueryString("_expects=201");
+//        request.setContentType("application/json");
+//        request.setContent("{\"startDate\":12345678}".getBytes());
+//        LOG.info("---------------- testCreate() -------------------------------");
+//
+//        servlet.service(request, response);
+//        assertEquals(201, response.getStatus());
+//        
+//        Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
+//        assertNotNull(handler);
+//        String domain = handler.getPathVariable("domain");
+//        assertEquals("gaelic", domain);
+//        
+//        assertNotNull(response.getContentAsString());
+//    }
+    
     @Test
     public void testGetPage() throws ServletException, IOException {
         request.setMethod("GET");
@@ -147,4 +167,19 @@ public class CrudLeafTest {
                 "{\"code\":3,\"status\":400,\"message\":\"Bad Request\",\"developerMessage\":\"notLong\",\"stackTrace\":\"com.wadpam.gaelic.tree.CrudLeaf.getDetails:"));
     }
 
+    @Test
+    public void testMethodNotAllowed()  throws ServletException, IOException {
+        request.setMethod("PUT");
+        request.setRequestURI("/api/gaelic/crud/v10");
+        request.setQueryString("_expects=201");
+        request.setContentType("application/json");
+        request.setContent("{\"startDate\":12345678}".getBytes());
+        LOG.info("---------------- testMethodNotAllowed() -------------------------------");
+
+        servlet.service(request, response);
+        assertEquals(405, response.getStatus());
+        assertEquals("DELETE, GET, POST", response.getHeader("Allow"));
+        assertNotNull(response.getContentAsString());
+    }
+    
 }

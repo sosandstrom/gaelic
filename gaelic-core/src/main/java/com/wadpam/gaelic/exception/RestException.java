@@ -14,6 +14,7 @@ public class RestException extends RuntimeException {
     public static final int STATUS_UNAUTHORIZED = 401;
     public static final int STATUS_FORBIDDEN = 403;
     public static final int STATUS_NOT_FOUND = 404;
+    public static final int STATUS_METHOD_NOT_ALLOWED = 405;
     public static final int STATUS_CONFLICT = 409;
     public static final int STATUS_INTERNAL_SERVER_ERROR = 500;
     
@@ -36,6 +37,12 @@ public class RestException extends RuntimeException {
     public RestException(int status, String message) {
         super(message);
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{status:%d, message:%s, code:%d, devMsg:%s}", 
+                getClass().getSimpleName(), status, getMessage(), code, developerMessage);
     }
     
     public int getStatus() {

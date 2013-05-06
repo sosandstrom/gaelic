@@ -9,6 +9,7 @@ import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.converter.BaseConverter;
 import com.wadpam.gaelic.crud.CrudService;
 import com.wadpam.gaelic.exception.BadRequestException;
+import com.wadpam.gaelic.exception.MethodNotAllowedException;
 import com.wadpam.gaelic.exception.NotFoundException;
 import com.wadpam.gaelic.json.JCursorPage;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class CrudLeaf<J extends Serializable,
     
     public static final int ERR_OFFSET_PAGE = 1;
     public static final int ERR_OFFSET_DETAILS = 2;
+    public static final int ERR_OFFSET_METHOD = 3;
     
     public static final String REQUEST_ATTR_FILENAME = "com.wadpam.gaelic.CrudFilename";
     
@@ -144,20 +146,30 @@ public class CrudLeaf<J extends Serializable,
             method, request.getRequestURI(), pathIndex, pathList.size()
         });
         
-        if (supportedMethods().contains(method)) {
             
-            // support '' and /
-            if (pathIndex == pathList.size() || 
-                    (pathIndex == pathList.size()-1 && pathList.getLast().isEmpty())) {
+        // support '' and /
+        if (pathIndex == pathList.size() || 
+                (pathIndex == pathList.size()-1 && pathList.getLast().isEmpty())) {
+            if (supportedMethods().contains(method)) {
                 return this;
             }
-            
-            // support /{id} and /{id}/ 
-            if ((pathIndex == pathList.size()-1) ||
-                    (pathIndex == pathList.size()-2 && pathList.getLast().isEmpty())) {
-                
-                request.setAttribute(REQUEST_ATTR_FILENAME, pathList.get(pathIndex));
+            else {
+                throw new MethodNotAllowedException(getErrorBaseCode() + ERR_OFFSET_METHOD, 
+                        method, null, supportedMethods());
+            }
+        }
+
+        // support /{id} and /{id}/ 
+        if ((pathIndex == pathList.size()-1) ||
+                (pathIndex == pathList.size()-2 && pathList.getLast().isEmpty())) {
+
+            request.setAttribute(REQUEST_ATTR_FILENAME, pathList.get(pathIndex));
+            if (supportedMethods().contains(method)) {
                 return this;
+            }
+            else {
+                throw new MethodNotAllowedException(getErrorBaseCode() + ERR_OFFSET_METHOD, 
+                        method, null, supportedMethods());
             }
         }
         
