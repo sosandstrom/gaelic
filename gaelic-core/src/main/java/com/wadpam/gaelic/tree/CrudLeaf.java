@@ -9,6 +9,7 @@ import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.converter.BaseConverter;
 import com.wadpam.gaelic.crud.CrudService;
 import com.wadpam.gaelic.exception.BadRequestException;
+import com.wadpam.gaelic.exception.NotFoundException;
 import com.wadpam.gaelic.json.JCursorPage;
 import java.io.IOException;
 import java.io.Serializable;
@@ -30,6 +31,9 @@ public class CrudLeaf<J extends Serializable,
         T, 
         ID extends Serializable,
         S extends CrudService<T, ID>> extends Node {
+    
+    public static final int ERR_OFFSET_PAGE = 1;
+    public static final int ERR_OFFSET_DETAILS = 2;
     
     public static final String REQUEST_ATTR_FILENAME = "com.wadpam.gaelic.CrudFilename";
     
@@ -114,7 +118,16 @@ public class CrudLeaf<J extends Serializable,
         
         // TODO: implement
         T domain = service.get(null, id);
-        setResponseBody(request, 200, filename);
+        if (null != domain) {
+            setResponseBody(request, 200, filename);
+        }
+        else {
+            throw new NotFoundException(getErrorBaseCode()+ERR_OFFSET_DETAILS, toString(), null);
+        }
+    }
+    
+    protected int getErrorBaseCode() {
+        return GaelicServlet.ERROR_CODE_CRUD_BASE;
     }
     
     protected void getPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

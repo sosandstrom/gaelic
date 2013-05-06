@@ -38,6 +38,7 @@ public class GaelicServlet extends HttpServlet {
     public static final int ERROR_CODE_IO_EXCEPTION = 2;
     public static final int ERROR_CODE_ID_LONG = 3;
     
+    public static final int ERROR_CODE_CRUD_BASE = 100;
     public static final int ERROR_CODE_APPLICATION_BASE = 1000;
     
     protected static final ObjectMapper MAPPER = new ObjectMapper();
