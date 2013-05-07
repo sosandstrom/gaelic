@@ -7,6 +7,8 @@ package com.wadpam.gaelic.crud;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.wadpam.gaelic.*;
+import com.wadpam.gaelic.domain.DDate;
+import com.wadpam.gaelic.json.JCursorPage;
 import com.wadpam.gaelic.json.JDate;
 import com.wadpam.gaelic.tree.CrudLeaf;
 import java.io.IOException;
@@ -121,6 +123,11 @@ public class MardaoCrudTest {
     
     @Test
     public void testGetPage() throws ServletException, IOException {
+        JDate jDate = doCreate();
+        assertEquals(201, response.getStatus());
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
         request.setMethod("GET");
         request.setRequestURI("/api/gaelic/crud/v10");
         LOG.info("---------------- testGetPage() -------------------------------");
@@ -128,12 +135,13 @@ public class MardaoCrudTest {
         servlet.service(request, response);
         assertEquals(200, response.getStatus());
         
-        Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
-        assertNotNull(handler);
-        String domain = handler.getPathVariable("domain");
-        assertEquals("gaelic", domain);
-        
         assertNull(request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
+        
+        assertNotNull(response.getContentAsString());
+        JDatePage page = GaelicServlet.MAPPER.readValue(response.getContentAsByteArray(), JDatePage.class);
+        assertNull(page.getCursorKey());
+        assertEquals(1, page.getItems().size());
+        assertEquals(1, page.getTotalSize().intValue());
     }
 
     @Test
@@ -262,4 +270,5 @@ public class MardaoCrudTest {
         assertTrue(read.getCreatedDate() < read.getUpdatedDate());
     }
 
+    static final class JDatePage extends JCursorPage<DDate> {}
 }

@@ -5,6 +5,7 @@
 package com.wadpam.gaelic.converter;
 
 import com.wadpam.gaelic.json.JBaseObject;
+import com.wadpam.gaelic.json.JCursorPage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -98,7 +99,7 @@ public abstract class BaseConverter<J extends Serializable,
     }
     
     // Convert iterable
-    public Collection<J> convert(Iterable<T> from) {
+    public Collection<J> convertDomains(Iterable<T> from) {
         if (null == from)
             return new ArrayList<J>();
 
@@ -113,16 +114,42 @@ public abstract class BaseConverter<J extends Serializable,
         return returnValue;
     }
 
-//    public JCursorPage<J> convertPage(CursorPage<T, ID> from) {
-//        final JCursorPage<J> to = new JCursorPage<J>();
-//        
-//        to.setPageSize(from.getItems().size());
-//        to.setCursorKey(from.getCursorKey());
-//        to.setTotalSize(from.getTotalSize());
-//        to.setItems(convert(from.getItems()));
-//        
-//        return to;
-//    }
+    public ArrayList<T> convertJSONs(Iterable<J> from) {
+        final ArrayList<T> returnValue = new ArrayList<T>();
+        if (null == from) {
+            return returnValue;
+        }
+
+        T to;
+        for (J o : from) {
+            to = convertJson(o);
+            returnValue.add(to);
+        }
+        
+        return returnValue;
+    }
+
+    public JCursorPage<J> convertDomainPage(JCursorPage<T> from) {
+        final JCursorPage<J> to = new JCursorPage<J>();
+        
+        to.setPageSize(from.getItems().size());
+        to.setCursorKey(from.getCursorKey());
+        to.setTotalSize(from.getTotalSize());
+        to.setItems(convertDomains(from.getItems()));
+        
+        return to;
+    }
+
+    public JCursorPage<T> convertJsonPage(JCursorPage<J> from) {
+        final JCursorPage<T> to = new JCursorPage<T>();
+        
+        to.setPageSize(from.getItems().size());
+        to.setCursorKey(from.getCursorKey());
+        to.setTotalSize(from.getTotalSize());
+        to.setItems(convertJSONs(from.getItems()));
+        
+        return to;
+    }
 
     protected Collection<String> getInnerParameterNames() {
         return Collections.EMPTY_LIST;

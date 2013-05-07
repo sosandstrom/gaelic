@@ -5,7 +5,8 @@
 package com.wadpam.gaelic.crud;
 
 import com.wadpam.gaelic.domain.DDate;
-import java.util.Date;
+import com.wadpam.gaelic.json.JCursorPage;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
@@ -39,6 +40,22 @@ public class DateService extends CrudServiceAdapter<DDate, Long> {
         }
         
         return DATES.get(id);
+    }
+
+    @Override
+    public JCursorPage<DDate> getPage(int pageSize, String cursorKey) {
+        JCursorPage<DDate> page = new JCursorPage<DDate>();
+        if (null == cursorKey) {
+            page.setTotalSize(DATES.size());
+        }
+        ArrayList<DDate> items = new ArrayList<DDate>(DATES.values());
+        page.setItems(items);
+        while (pageSize < items.size())
+        {
+            items.remove(pageSize);
+            page.setCursorKey(Integer.toString(pageSize));
+        }
+        return page;
     }
 
     @Override

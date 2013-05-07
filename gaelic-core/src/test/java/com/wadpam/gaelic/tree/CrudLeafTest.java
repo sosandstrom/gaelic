@@ -5,6 +5,7 @@
 package com.wadpam.gaelic.tree;
 
 import com.wadpam.gaelic.*;
+import com.wadpam.gaelic.json.JCursorPage;
 import com.wadpam.gaelic.json.JDate;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -108,6 +109,11 @@ public class CrudLeafTest {
     
     @Test
     public void testGetPage() throws ServletException, IOException {
+        JDate jDate = doCreate();
+        assertEquals(201, response.getStatus());
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
         request.setMethod("GET");
         request.setRequestURI("/api/gaelic/crud/v10");
         LOG.info("---------------- testGetPage() -------------------------------");
@@ -115,12 +121,13 @@ public class CrudLeafTest {
         servlet.service(request, response);
         assertEquals(200, response.getStatus());
         
-        Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
-        assertNotNull(handler);
-        String domain = handler.getPathVariable("domain");
-        assertEquals("gaelic", domain);
-        
         assertNull(request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
+        
+        assertNotNull(response.getContentAsString());
+        JDatePage page = GaelicServlet.MAPPER.readValue(response.getContentAsByteArray(), JDatePage.class);
+        assertNull(page.getCursorKey());
+        assertEquals(1, page.getItems().size());
+        assertEquals(1, page.getTotalSize().intValue());
     }
 
     @Test
@@ -273,4 +280,5 @@ public class CrudLeafTest {
         assertEquals((Long)millis, read.getStartDate());
     }
 
+    static final class JDatePage extends JCursorPage<JDate> {}
 }

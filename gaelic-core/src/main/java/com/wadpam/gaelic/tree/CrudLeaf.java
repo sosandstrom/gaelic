@@ -85,7 +85,7 @@ public class CrudLeaf<J extends Serializable,
             return new ArrayList<J>();
 
         // basic conversion first
-        final Collection<J> returnValue = converter.convert(from);
+        final Collection<J> returnValue = converter.convertDomains(from);
 
         // then add inner objects batch-style
         addInnerObjects(request, response, domain, returnValue);
@@ -195,10 +195,16 @@ public class CrudLeaf<J extends Serializable,
     }
     
     protected void getPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final JCursorPage page = new JCursorPage();
         
-        // TODO: implement
-        setResponseBody(request, 200, page);
+        final String pageSize = request.getParameter("pageSize");
+        int size = null != pageSize ? Integer.parseInt(pageSize) : 10;
+        
+        final String cursorKey = request.getParameter("cursorKey");
+        
+        final JCursorPage<T> page = service.getPage(size, cursorKey);
+        final JCursorPage<J> body = converter.convertDomainPage(page);
+        
+        setResponseBody(request, 200, body);
     }
     
     protected J getRequestBody(HttpServletRequest request) throws IOException {
