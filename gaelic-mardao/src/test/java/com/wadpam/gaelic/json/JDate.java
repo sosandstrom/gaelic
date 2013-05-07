@@ -10,17 +10,9 @@ import java.io.Serializable;
  *
  * @author sosandstrom
  */
-public class JDate implements Serializable {
-    private String id;
+public class JDate extends JBaseObject implements Serializable {
+
     private Long startDate;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public Long getStartDate() {
         return startDate;

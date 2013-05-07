@@ -34,11 +34,15 @@ public class CrudLeaf<J extends Serializable,
         ID extends Serializable,
         S extends CrudService<T, ID>> extends Node {
     
+    public static final int STATUS_OK = 200;
+    public static final int STATUS_CREATED = 201;
+    
     public static final int ERR_OFFSET_PAGE = 1;
     public static final int ERR_OFFSET_DETAILS = 2;
     public static final int ERR_OFFSET_METHOD = 3;
     
     public static final String REQUEST_ATTR_FILENAME = "com.wadpam.gaelic.CrudFilename";
+    public static final String REQUEST_PARAM_EXPECTS = "_expects";
     
     private static final TreeSet<String> SUPPORTED_METHODS = new TreeSet<String>(
             Arrays.asList(METHOD_DELETE, METHOD_GET, METHOD_POST));
@@ -89,9 +93,18 @@ public class CrudLeaf<J extends Serializable,
     }
     
     protected void create(HttpServletRequest request, HttpServletResponse response,
-            J body) {
+            J body, T domain) {
         // TODO: implement
-        setResponseBody(request, 201, body);
+        if (null != domain) {
+            final ID id = service.create(domain);
+            if ("302".equals(request.getParameter(REQUEST_PARAM_EXPECTS))) {
+                
+            }
+            else {
+                final J responseBody = converter.convertDomain(domain);
+                setResponseBody(request, STATUS_CREATED, responseBody);
+            }
+        }
     }
 
     @Override
@@ -111,12 +124,13 @@ public class CrudLeaf<J extends Serializable,
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final ID id = getId(request);
         final J body = getRequestBody(request);
+        final T domain = converter.convertJson(body);
         
         if (null != id) {
-            update(request, response, body, id);
+            update(request, response, body, domain, id);
         }
         else {
-            create(request, response, body);
+            create(request, response, body, domain);
         }
     }
 
@@ -224,7 +238,7 @@ public class CrudLeaf<J extends Serializable,
     }
 
     protected void update(HttpServletRequest request, HttpServletResponse response, 
-            J body, ID id) {
+            J body, T domain, ID id) {
         
         // TODO: implement
         setResponseBody(request, 200, body);

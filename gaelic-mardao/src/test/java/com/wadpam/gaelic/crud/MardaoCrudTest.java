@@ -7,6 +7,7 @@ package com.wadpam.gaelic.crud;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.wadpam.gaelic.*;
+import com.wadpam.gaelic.json.JDate;
 import com.wadpam.gaelic.tree.CrudLeaf;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -61,24 +62,24 @@ public class MardaoCrudTest {
         helper.tearDown();
     }
     
-//    @Test
-//    public void testCreate()  throws ServletException, IOException {
-//        request.setMethod("POST");
-//        request.setRequestURI("/api/gaelic/crud/v10?_expects=201");
-//        request.setContentType("application/json");
-//        request.setContent("{\"startDate\":12345678}".getBytes());
-//        LOG.info("---------------- testCreate() -------------------------------");
-//
-//        servlet.service(request, response);
-//        assertEquals(201, response.getStatus());
-//        
-//        Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
-//        assertNotNull(handler);
-//        String domain = handler.getPathVariable("domain");
-//        assertEquals("gaelic", domain);
-//        
-//        assertNotNull(response.getContentAsString());
-//    }
+    @Test
+    public void testCreate()  throws ServletException, IOException {
+        request.setMethod("POST");
+        request.setRequestURI("/api/gaelic/crud/v10");
+        request.setContentType("application/json");
+        request.setContent("{\"startDate\":12345678}".getBytes());
+        LOG.info("---------------- testCreate() -------------------------------");
+
+        servlet.service(request, response);
+        assertEquals(201, response.getStatus());
+        assertNotNull(response.getContentAsString());
+        
+        JDate jDate = GaelicServlet.MAPPER.readValue(response.getContentAsString(), JDate.class);
+        assertNotNull(jDate.getId());
+        assertEquals((Long)12345678L, jDate.getStartDate());
+        assertNotNull(jDate.getCreatedDate());
+        assertEquals(jDate.getCreatedDate(), jDate.getUpdatedDate());
+    }
 
     @Test
     public void testGetPage() throws ServletException, IOException {
@@ -172,8 +173,9 @@ public class MardaoCrudTest {
         servlet.service(request, response);
         assertEquals(400, response.getStatus());
         assertEquals("Bad Request", response.getErrorMessage());
+//        assertEquals("{}", response.getContentAsString());
         assertTrue(response.getContentAsString().startsWith(
-                "{\"code\":3,\"status\":400,\"message\":\"Bad Request\",\"developerMessage\":\"notLong\",\"stackTrace\":\"com.wadpam.gaelic.tree.CrudLeaf.getDetails:"));
+                "{\"code\":3,\"status\":400,\"message\":\"Bad Request\",\"developerMessage\":\"notLong\",\"stackTrace\":\"com.wadpam.gaelic.tree.CrudLeaf.getId:"));
     }
 
 }

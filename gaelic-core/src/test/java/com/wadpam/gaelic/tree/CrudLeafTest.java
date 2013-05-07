@@ -52,25 +52,21 @@ public class CrudLeafTest {
         LOG.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 
-//    @Test
-//    public void testCreate()  throws ServletException, IOException {
-//        request.setMethod("POST");
-//        request.setRequestURI("/api/gaelic/crud/v10");
-//        request.setQueryString("_expects=201");
-//        request.setContentType("application/json");
-//        request.setContent("{\"startDate\":12345678}".getBytes());
-//        LOG.info("---------------- testCreate() -------------------------------");
-//
-//        servlet.service(request, response);
-//        assertEquals(201, response.getStatus());
-//        
-//        Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
-//        assertNotNull(handler);
-//        String domain = handler.getPathVariable("domain");
-//        assertEquals("gaelic", domain);
-//        
-//        assertNotNull(response.getContentAsString());
-//    }
+    @Test
+    public void testCreate()  throws ServletException, IOException {
+        request.setMethod("POST");
+        request.setRequestURI("/api/gaelic/crud/v10");
+        request.setContentType("application/json");
+        request.setContent("{\"startDate\":12345678}".getBytes());
+        LOG.info("---------------- testCreate() -------------------------------");
+
+        servlet.service(request, response);
+        assertEquals(201, response.getStatus());
+        assertNotNull(response.getContentAsString());
+        JDate jDate = GaelicServlet.MAPPER.readValue(response.getContentAsString(), JDate.class);
+        assertEquals("12345678", jDate.getId());
+        assertEquals((Long)12345678L, jDate.getStartDate());
+    }
     
     @Test
     public void testGetPage() throws ServletException, IOException {

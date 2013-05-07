@@ -65,9 +65,8 @@ public abstract class MardaoCrudService<
     }
     
     protected Object beginTransaction() {
-        throw new RuntimeException("Not yet implemented.");
-        
 //        return dao.beginTransaction();
+        return null;
     }
     
     protected void commitTransaction(Object transaction) {

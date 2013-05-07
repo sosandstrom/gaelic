@@ -14,6 +14,14 @@ import java.util.Date;
 public class DateService extends CrudServiceAdapter<DDate, Long> {
 
     @Override
+    public Long create(DDate domain) {
+        final long millis = null != domain.getStartDate() ?
+                domain.getStartDate().getTime() : System.currentTimeMillis();
+        domain.setId(millis);
+        return millis;
+    }
+    
+    @Override
     public DDate get(String parentKeyString, Long id) {
         if (null == id) {
             return null;
