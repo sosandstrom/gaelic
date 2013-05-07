@@ -40,6 +40,7 @@ public class CrudLeaf<J extends Serializable,
     public static final int ERR_OFFSET_PAGE = 1;
     public static final int ERR_OFFSET_DETAILS = 2;
     public static final int ERR_OFFSET_METHOD = 3;
+    public static final int ERR_OFFSET_DELETE_ALL = 4;
     
     public static final String REQUEST_ATTR_FILENAME = "com.wadpam.gaelic.CrudFilename";
     public static final String REQUEST_PARAM_EXPECTS = "_expects";
@@ -104,6 +105,25 @@ public class CrudLeaf<J extends Serializable,
                 final J responseBody = converter.convertDomain(domain);
                 setResponseBody(request, STATUS_CREATED, responseBody);
             }
+        }
+    }
+    
+    protected void delete(HttpServletRequest request, HttpServletResponse response,
+            ID id) {
+        service.delete(null, id);
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final ID id = getId(request);
+        LOG.debug("doDelete {}", id);
+        
+        // GET details or page?
+        if (null != id) {
+            delete(request, response, id);
+        }
+        else {
+            throw new BadRequestException(getErrorBaseCode()+ERR_OFFSET_DELETE_ALL, toString(), null);
         }
     }
 

@@ -72,6 +72,38 @@ public class CrudLeafTest {
         assertNotNull(response.getContentAsString());
         assertEquals("12345678", jDate.getId());
         assertEquals((Long)12345678L, jDate.getStartDate());
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+    }
+    
+    @Test
+    public void testDelete()  throws ServletException, IOException {
+        LOG.info("---------------- testDelete() -------------------------------");
+
+        JDate jDate = doCreate();
+        assertEquals(201, response.getStatus());
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("DELETE");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        
+        servlet.service(request, response);
+        assertEquals(404, response.getStatus());
     }
     
     @Test
@@ -110,8 +142,10 @@ public class CrudLeafTest {
 
     @Test
     public void testGetDetailsEmptyFilename() throws ServletException, IOException {
+        JDate expected = doCreate();
+        
         request.setMethod("GET");
-        request.setRequestURI("/api/gaelic/crud/v10/42/");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s/", expected.getId()));
         LOG.info("---------------- testGetDetailsEmptyFilename() ------------------");
 
         servlet.service(request, response);
@@ -122,18 +156,20 @@ public class CrudLeafTest {
         String domain = handler.getPathVariable("domain");
         assertEquals("gaelic", domain);
         
-        assertEquals("42", request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
+        assertEquals(expected.getId(), request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
         Object body = request.getAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY);
         assertNotNull(body);
         assertTrue(body instanceof JDate);
         JDate jDate = (JDate) body;
-        assertEquals("42", jDate.getId());
+        assertEquals(expected.getId(), jDate.getId());
     }
 
     @Test
     public void testGetDetails() throws ServletException, IOException {
+        JDate expected = doCreate();
+        
         request.setMethod("GET");
-        request.setRequestURI("/api/gaelic/crud/v10/42");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", expected.getId()));
         LOG.info("---------------- testGetDetails() ------------------");
 
         servlet.service(request, response);
@@ -144,12 +180,12 @@ public class CrudLeafTest {
         String domain = handler.getPathVariable("domain");
         assertEquals("gaelic", domain);
         
-        assertEquals("42", request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
+        assertEquals(expected.getId(), request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
         Object body = request.getAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY);
         assertNotNull(body);
         assertTrue(body instanceof JDate);
         JDate jDate = (JDate) body;
-        assertEquals("42", jDate.getId());
+        assertEquals(expected.getId(), jDate.getId());
     }
 
     @Test

@@ -106,6 +106,7 @@ public abstract class MardaoCrudService<
         preDao();
         try {
             Object parentKey = dao.getPrimaryKey(parentKeyString);
+            LOG.debug("deleting {} with ID {}/{}", new Object[] {dao.getTableName(), parentKey, id});
             dao.delete(parentKey, id);
             commitTransaction(transaction);
         }

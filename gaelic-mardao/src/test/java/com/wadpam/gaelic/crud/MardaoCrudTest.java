@@ -85,8 +85,40 @@ public class MardaoCrudTest {
         assertEquals((Long)12345678L, jDate.getStartDate());
         assertNotNull(jDate.getCreatedDate());
         assertEquals(jDate.getCreatedDate(), jDate.getUpdatedDate());
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
     }
 
+    @Test
+    public void testDelete()  throws ServletException, IOException {
+        LOG.info("---------------- testDelete() -------------------------------");
+
+        JDate jDate = doCreate();
+        assertEquals(201, response.getStatus());
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("DELETE");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        
+        servlet.service(request, response);
+        assertEquals(404, response.getStatus());
+    }
+    
     @Test
     public void testGetPage() throws ServletException, IOException {
         request.setMethod("GET");

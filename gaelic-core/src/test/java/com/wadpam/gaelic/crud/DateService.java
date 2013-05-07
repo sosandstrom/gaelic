@@ -24,6 +24,13 @@ public class DateService extends CrudServiceAdapter<DDate, Long> {
         DATES.put(millis, domain);
         return millis;
     }
+
+    @Override
+    public void delete(String parentKeyString, Long id) {
+        if (DATES.containsKey(id)) {
+            DATES.remove(id);
+        }
+    }
     
     @Override
     public DDate get(String parentKeyString, Long id) {
@@ -31,12 +38,7 @@ public class DateService extends CrudServiceAdapter<DDate, Long> {
             return null;
         }
         
-        if (DATES.containsKey(id)) {
-            return DATES.get(id);
-        }
-        
-        DDate bean = new DDate(id, new Date());
-        return bean;
+        return DATES.get(id);
     }
 
     @Override
