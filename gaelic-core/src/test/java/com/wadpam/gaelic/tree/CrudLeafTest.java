@@ -51,19 +51,25 @@ public class CrudLeafTest {
     public void tearDown() {
         LOG.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
-
-    @Test
-    public void testCreate()  throws ServletException, IOException {
+    
+    protected JDate doCreate() throws ServletException, IOException {
         request.setMethod("POST");
         request.setRequestURI("/api/gaelic/crud/v10");
         request.setContentType("application/json");
         request.setContent("{\"startDate\":12345678}".getBytes());
+        
+        servlet.service(request, response);
+        return GaelicServlet.MAPPER.readValue(response.getContentAsString(), JDate.class);
+    }
+
+    @Test
+    public void testCreate()  throws ServletException, IOException {
         LOG.info("---------------- testCreate() -------------------------------");
 
-        servlet.service(request, response);
+        JDate jDate = doCreate();
+        
         assertEquals(201, response.getStatus());
         assertNotNull(response.getContentAsString());
-        JDate jDate = GaelicServlet.MAPPER.readValue(response.getContentAsString(), JDate.class);
         assertEquals("12345678", jDate.getId());
         assertEquals((Long)12345678L, jDate.getStartDate());
     }
@@ -188,4 +194,47 @@ public class CrudLeafTest {
         assertNotNull(response.getContentAsString());
     }
     
+    @Test
+    public void testUpdate()  throws ServletException, IOException {
+        LOG.info("---------------- testUpdate() -------------------------------");
+
+        JDate jDate = doCreate();
+        assertEquals(201, response.getStatus());
+
+        final long millis = System.currentTimeMillis();
+        assertTrue(jDate.getStartDate() < millis);
+        jDate.setStartDate(millis);
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("POST");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        request.setContentType("application/json");
+        byte[] requestBody = GaelicServlet.MAPPER.writeValueAsBytes(jDate);
+        request.setContent(requestBody);
+        
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+        assertNotNull(response.getContentAsString());
+        
+        JDate actual = GaelicServlet.MAPPER.readValue(response.getContentAsString(), JDate.class);
+        
+        assertEquals(jDate.getId(), actual.getId());
+        assertEquals((Long)millis, actual.getStartDate());
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+        assertNotNull(response.getContentAsString());
+        
+        JDate read = GaelicServlet.MAPPER.readValue(response.getContentAsString(), JDate.class);
+        
+        assertEquals(jDate.getId(), read.getId());
+        assertEquals((Long)millis, read.getStartDate());
+    }
+
 }

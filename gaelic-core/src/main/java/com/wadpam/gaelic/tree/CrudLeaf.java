@@ -94,11 +94,11 @@ public class CrudLeaf<J extends Serializable,
     
     protected void create(HttpServletRequest request, HttpServletResponse response,
             J body, T domain) {
-        // TODO: implement
+
         if (null != domain) {
             final ID id = service.create(domain);
             if ("302".equals(request.getParameter(REQUEST_PARAM_EXPECTS))) {
-                
+                throw new UnsupportedOperationException("Not supported yet.");
             }
             else {
                 final J responseBody = converter.convertDomain(domain);
@@ -240,8 +240,16 @@ public class CrudLeaf<J extends Serializable,
     protected void update(HttpServletRequest request, HttpServletResponse response, 
             J body, T domain, ID id) {
         
-        // TODO: implement
-        setResponseBody(request, 200, body);
+        if (null != domain && null != id) {
+            service.update(domain);
+            if ("302".equals(request.getParameter(REQUEST_PARAM_EXPECTS))) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+            else {
+                final J responseBody = converter.convertDomain(domain);
+                setResponseBody(request, STATUS_OK, responseBody);
+            }
+        }
     }
     
     protected J convertWithInner(HttpServletRequest request, HttpServletResponse response,
