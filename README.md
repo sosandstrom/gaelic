@@ -19,6 +19,7 @@ Supported Features
 * [Tree-style mapping of resources in Configuration](#application-configuration)
 * [Path parameters with {paramname} style mapping](#path-parameters)
 * [Spring-style Interceptors](#interceptors)
+* [Security](#security) out-of-the-box with Basic Authentication and OAuth2
 
 Application Configuration
 -------------------------
@@ -43,24 +44,36 @@ method is invoked. It should return your one root `Node` (subclass) instance.
 
 Here's a simple Config example:
     
-    public class UnitTestConfig implements GaelicConfig {
+    public class UnitTestConfig implements GaelicConfig, SecurityConfig {
 
         @Override
         public Node init(GaelicServlet gaelicServlet, ServletConfig servletConfig) {
 
+            DomainSecurityInterceptor securityInterceptor = new DomainSecurityInterceptor();
+
+            SecurityDetailsService detailsService = new UnitTestDetailsService();
+            securityInterceptor.setSecurityDetailsService(detailsService);
+
+            Collection<Map.Entry<String, Collection<String>>> basicWhitelist = WHITELIST_BUILDER
+                    .with("\\A/api/[^/]+/public\\z", GET)
+                    .build();
+            securityInterceptor.setWhitelistedMethods(basicWhitelist);
+
             // add /api/{domain}
             BUILDER.root()
                 .path("api")
-                    .interceptedPath("{domain}", new InterceptorAdapter())
+                    .interceptedPath("{domain}", securityInterceptor)
                         // add /endpoints
                         .add("endpoints", MethodUriLeaf.class).named("getEndpoints()");
 
-                    // add /interceptor/{boolean}
-                    BUILDER.from("{domain}")
-                        .interceptedPath("interceptor", new UnitTestInterceptor()).named("appendURI")
-                            .add("true", MethodUriLeaf.class).named("bool");
-                        BUILDER.from("interceptor")
-                            .add("false", "bool");
+            BUILDER.from("{domain}")
+                        // add public whitelisted
+                        .add("public", MethodUriLeaf.class).named("public");
+
+            BUILDER.from("{domain}")
+                        // add _admin
+                        .path("_admin")
+                            .add("task", MethodUriLeaf.class).named("AdminTask");
 
             return BUILDER.build();
         }
@@ -72,9 +85,13 @@ It creates and maps the following resource tree:
 * /api
 * /api/{domain}
 * /api/{domain}/endpoints
-* /api/{domain}/interceptor
-* /api/{domain}/interceptor/true
-* /api/{domain}/interceptor/false
+* /api/{domain}/public
+* /api/{domain}/_admin/task
+
+Where 
+* endpoints is a protected resource
+* GET public has public access
+* task should be Container-based secured via web.xml
 
 Path Parameters
 ---------------
@@ -82,4 +99,16 @@ Path Parameters
 
 Interceptors
 ------------
+Interceptors are implemented either by implementing the `Interceptor` interface,
+or by extending the `InterceptorAdapter` class.
+The interceptors should be injected into either `InterceptorDelegate` node,
+or into `InterceptedPath` path.
 
+Security
+------------
+Three security interceptors are provided by the Gaelic framework:
+    
+    SecurityInterceptor extends InterceptorAdapter
+    + - DomainSecurityInterceptor extends SecurityInterceptor
+        + - OAuth2Interceptor extends DomainSecurityInterceptor
+        
