@@ -1,7 +1,6 @@
 package com.wadpam.gaelic.security;
 
 import com.wadpam.gaelic.GaelicServlet;
-import com.wadpam.gaelic.Node;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import org.junit.After;
@@ -77,6 +76,26 @@ public class DomainSecurityInterceptorTest {
 
         servlet.service(request, response);
         assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void testAnonymous() throws ServletException, IOException {
+        request.setMethod("GET");
+        request.setRequestURI("/api/gaelic/public");
+        LOG.info("---------------- testAnonymous() --------------------");
+
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void testAnonymousPOST() throws ServletException, IOException {
+        request.setMethod("POST");
+        request.setRequestURI("/api/gaelic/public");
+        LOG.info("---------------- testAnonymousPOST() --------------------");
+
+        servlet.service(request, response);
+        assertEquals(403, response.getStatus());
     }
 
     @Test
