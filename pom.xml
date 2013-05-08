@@ -12,6 +12,8 @@
     <modules>
         <module>gaelic-core</module>
         <module>gaelic-mardao</module>
+        <module>gaelic-security</module>
+        <module>gaelic-appengine</module>
         <module>gaelic-test</module>
     </modules>
 
