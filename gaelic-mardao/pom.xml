@@ -12,8 +12,6 @@
 
     <!-- Specify hard-coded project properties here -->
     <properties>
-        <gae.version>1.7.7</gae.version>
-        <mardao.version>2.3.0</mardao.version>
     </properties>
 
     <dependencies>
@@ -151,13 +149,6 @@
                         <artifactId>mardao-maven-plugin</artifactId>
                         <version>${mardao.version}</version>
                         <executions>
-<!--                            <execution>
-                                <id>generate-generics</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>generate-sources</goal>
-                                </goals>
-                            </execution>-->
                             <execution>
                                 <id>generate-daos</id>
                                 <phase>process-sources</phase>

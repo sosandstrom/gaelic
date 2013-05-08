@@ -16,6 +16,11 @@
         <module>gaelic-appengine</module>
         <module>gaelic-test</module>
     </modules>
+    
+    <properties>
+        <gae.version>1.7.7</gae.version>
+        <mardao.version>2.3.0</mardao.version>
+    </properties>
 
     <distributionManagement>
         <repository>

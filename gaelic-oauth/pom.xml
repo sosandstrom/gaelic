@@ -6,9 +6,9 @@
         <artifactId>gaelic</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>gaelic-appengine</artifactId>
+    <artifactId>gaelic-oauth</artifactId>
     <packaging>jar</packaging>
-    <name>Gaelic Google App Engine</name>
+    <name>Gaelic OAuth</name>
 
     <!-- Specify hard-coded project properties here -->
     <properties>
@@ -25,14 +25,19 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>gaelic-core</artifactId>
+            <artifactId>gaelic-mardao</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-1.0-sdk</artifactId>
-            <version>${gae.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gaelic-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.mardao</groupId>
+            <artifactId>mardao-gae</artifactId>
+            <version>${mardao.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- These dependencies are here just for enabling logging -->
@@ -58,25 +63,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-testing</artifactId>
-            <version>${gae.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-labs</artifactId>
-            <version>${gae.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-stubs</artifactId>
-            <version>${gae.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -120,7 +106,7 @@
                                 <id>compile-entities</id>
                                 <phase>generate-sources</phase>
                                 <goals>
-                                    <goal>testCompile</goal>
+                                    <goal>compile</goal>
                                 </goals>
                                 <configuration>
                                     <verbose>false</verbose>
@@ -147,10 +133,8 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <basePackage>com.wadpam.gaelic</basePackage>
-                            <sourceFolder>${project.basedir}/src/test/java</sourceFolder>
-                            <targetFolder>${project.basedir}/src/test/java</targetFolder>
-                            <classpathElement>${basedir}/target/test-classes</classpathElement>
+                            <basePackage>com.wadpam.gaelic.oauth</basePackage>
+                            <targetFolder>${project.basedir}/src/main/java</targetFolder>
                         </configuration>
                     </plugin>
                 </plugins>                
