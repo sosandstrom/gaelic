@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 public class UnitTestDetailsService implements SecurityDetailsService {
 
     @Override
-    public Object loadUserDetailsByUsername(HttpServletRequest request, HttpServletResponse response, String uri, String authValue, String username) {
-        if ("username".equals(username)) {
+    public Object loadUserDetailsByUsername(HttpServletRequest request, HttpServletResponse response, String uri, String authValue, Object userKey) {
+        if ("username".equals(userKey)) {
             return "password";
         }
         return null;

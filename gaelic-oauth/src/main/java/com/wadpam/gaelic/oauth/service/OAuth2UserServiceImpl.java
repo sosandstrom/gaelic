@@ -21,16 +21,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OAuth2UserServiceImpl 
         extends MardaoCrudService<DOAuth2User, Long, DOAuth2UserDao>
-        implements OAuth2UserService {
+        implements OAuth2UserService, SecurityDetailsService {
 
     public OAuth2UserServiceImpl() {
         super(DOAuth2User.class, Long.class, DOAuth2UserDaoBean.class);
     }
     
-    
-    
     @Override
-    public String createUser(String email, String firstName, String lastName, 
+    public Object createUser(String email, String firstName, String lastName, 
             String name, String providerId, String providerUserId, String domain) {
         DOAuth2User user = createDomain();
         user.setDisplayName(name);
@@ -40,8 +38,8 @@ public class OAuth2UserServiceImpl
         final String role = String.format("ROLE_%s", providerId.toUpperCase());
         roles.add(role);
         user.setRoles(roles);
-        final Long userId = create(user);
-        return null != userId ? userId.toString() : null;
+        create(user);
+        return getPrimaryKey(user);
     }
 
     @Override
@@ -50,8 +48,11 @@ public class OAuth2UserServiceImpl
     }
 
     @Override
-    public Object loadUserDetailsByUsername(HttpServletRequest request, HttpServletResponse response, String uri, String authValue, String username) {
-        return get(null, Long.parseLong(username));
+    public Object loadUserDetailsByUsername(HttpServletRequest request, HttpServletResponse response, 
+            String uri, String authValue, Object userKey) {
+        
+        final Long userId = dao.getSimpleKeyByPrimaryKey(userKey);
+        return get(null, userId);
     }
 
 }

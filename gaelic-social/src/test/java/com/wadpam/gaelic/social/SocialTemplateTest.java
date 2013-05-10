@@ -33,10 +33,10 @@ public class SocialTemplateTest {
     public void tearDown() {
     }
 
-    @Test
-    public void testGetProfile() throws IOException {
-        SocialProfile actual = template.getProfile();
-        assertNotNull(actual);
-        assertNotNull(actual.getUsername());
-    }
+//    @Test
+//    public void testGetProfile() throws IOException {
+//        SocialProfile actual = template.getProfile();
+//        assertNotNull(actual);
+//        assertNotNull(actual.getUsername());
+//    }
 }

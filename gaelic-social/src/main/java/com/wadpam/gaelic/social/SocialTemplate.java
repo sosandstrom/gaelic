@@ -37,6 +37,13 @@ public class SocialTemplate {
         this.baseUrl = baseUrl;
     }
     
+    public static SocialTemplate create(String providerId, String access_token, String baseUrl) {
+        if ("facebook".equals(providerId)) {
+            return new SocialTemplate(access_token);
+        }
+        throw new IllegalArgumentException(String.format("No such provider %s.", providerId));
+    }
+    
     public SocialProfile getProfile() throws IOException {
         Map<String, Object> props = get(String.format("%s/me", getBaseUrl()));
         return parseProfile(props);

@@ -44,7 +44,7 @@ public interface SecurityDetailsService {
             HttpServletResponse response, 
             String uri, 
             String authValue, 
-            String username);
+            Object userKey);
     
     /**
      * Extracts the granted roles for the specified user details.
