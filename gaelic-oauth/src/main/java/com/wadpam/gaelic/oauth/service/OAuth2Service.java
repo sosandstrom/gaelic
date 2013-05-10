@@ -4,15 +4,18 @@
 
 package com.wadpam.gaelic.oauth.service;
 
+import com.wadpam.gaelic.crud.CrudObservable;
+import com.wadpam.gaelic.json.RestResponse;
+import com.wadpam.gaelic.oauth.domain.DConnection;
+
 /**
  *
  * @author sosandstrom
  */
-public interface OAuth2Service extends ConnectionFactoryLocator {
+public interface OAuth2Service extends CrudObservable {
     
     public static final String PROVIDER_ID_ITEST = "itest";
     public static final String PROVIDER_ID_FACEBOOK = "facebook";
-//    public static final String PROVIDER_ID_GEKKO = "gekko";
     public static final String PROVIDER_ID_GOOGLE = "google";
     public static final String PROVIDER_ID_SALESFORCE = "salesforce";
     public static final String PROVIDER_ID_TWITTER = "twitter";
@@ -28,9 +31,7 @@ public interface OAuth2Service extends ConnectionFactoryLocator {
      * @param expires_in
      * @return the userId associated with the Connection, null if new Connection
      */
-    @Idempotent
-    @Transactional
-    public ResponseEntity<DConnection> registerFederated(
+    public RestResponse<DConnection> registerFederated(
             String access_token, 
             String providerId,
             String providerUserId,
@@ -38,9 +39,6 @@ public interface OAuth2Service extends ConnectionFactoryLocator {
             Integer expiresInSeconds,
             String appArg0,
             String domain);    
-    
-    public void addListener(CrudListener listener);
-    public void removeListener(CrudListener listener);
     
     String getProviderUserId(String access_token, String providerId, String appArg0);
     
