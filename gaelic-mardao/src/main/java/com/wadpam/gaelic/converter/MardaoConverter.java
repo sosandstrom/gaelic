@@ -22,8 +22,8 @@ import net.sf.mardao.core.geo.DLocation;
  *
  * @author sosandstrom
  */
-public abstract class MardaoConverter<J extends Serializable, T, ID extends Serializable> 
-    extends BaseConverter<J, T, ID> {
+public abstract class MardaoConverter<J extends Serializable, T> 
+    extends BaseConverter<J, T> {
 
     public MardaoConverter(Class<J> jsonClass, Class<T> domainClass) {
         super(jsonClass, domainClass);

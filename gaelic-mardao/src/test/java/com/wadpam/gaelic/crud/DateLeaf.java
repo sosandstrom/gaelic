@@ -22,7 +22,7 @@ public class DateLeaf extends CrudLeaf<JDate, DDate, Long, DateService> {
         setConverter(CONVERTER);
     }
 
-    protected static class DateConverter extends MardaoConverter<JDate, DDate, Long> {
+    protected static class DateConverter extends MardaoConverter<JDate, DDate> {
 
         protected DateConverter() {
             super(JDate.class, DDate.class);
