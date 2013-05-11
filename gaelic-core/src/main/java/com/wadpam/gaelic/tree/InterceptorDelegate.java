@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author sosandstrom
  */
-public class InterceptorDelegate extends Node {
+public class InterceptorDelegate extends NodeDelegate {
     
     private Interceptor interceptor;
 

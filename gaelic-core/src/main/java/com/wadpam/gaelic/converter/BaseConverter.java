@@ -17,9 +17,7 @@ import java.util.Map;
  *
  * @author sosandstrom
  */
-public abstract class BaseConverter<J extends Serializable, 
-        T, 
-        ID extends Serializable> {
+public abstract class BaseConverter<J extends Serializable, T> {
     
     protected final Class<J> jsonClass;
     protected final Class<T> domainClass;

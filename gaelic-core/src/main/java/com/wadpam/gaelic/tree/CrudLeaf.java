@@ -54,7 +54,7 @@ public class CrudLeaf<J extends Serializable,
     
     protected S service;
     
-    protected BaseConverter<J, T, ID> converter;
+    protected BaseConverter<J, T> converter;
 
     public CrudLeaf(Class domainClass, Class idClass, Class jsonClass) {
         this.domainClass = domainClass;
@@ -285,11 +285,11 @@ public class CrudLeaf<J extends Serializable,
         return to;
     }
 
-    public BaseConverter<J, T, ID> getConverter() {
+    public BaseConverter<J, T> getConverter() {
         return converter;
     }
 
-    public void setConverter(BaseConverter<J, T, ID> converter) {
+    public void setConverter(BaseConverter<J, T> converter) {
         this.converter = converter;
     }
     

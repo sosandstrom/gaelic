@@ -9,6 +9,8 @@ import com.wadpam.gaelic.crud.CrudService;
 import com.wadpam.gaelic.tree.CrudLeaf;
 import com.wadpam.gaelic.tree.InterceptedPath;
 import com.wadpam.gaelic.tree.Interceptor;
+import com.wadpam.gaelic.tree.InterceptorDelegate;
+import com.wadpam.gaelic.tree.NodeDelegate;
 import com.wadpam.gaelic.tree.Path;
 import java.util.TreeMap;
 
@@ -88,6 +90,12 @@ public class ConfigBuilder {
     public static Node get(String name) {
         return NODE_MAP.get(name);
     }
+    
+    public ConfigBuilder interceptor(Interceptor interceptor) {
+        InterceptorDelegate delegate = new InterceptorDelegate();
+        delegate.setInterceptor(interceptor);
+        return new DelegateBuilder(delegate);
+    }
 
     public ConfigBuilder interceptedPath(String path, Interceptor interceptor) {
         InterceptedPath p = new InterceptedPath();
@@ -135,5 +143,19 @@ public class ConfigBuilder {
     
     public static ConfigBuilder to(Node node) {
         return new ConfigBuilder(node);
+    }
+    
+    class DelegateBuilder extends ConfigBuilder {
+
+        public DelegateBuilder(Node node) {
+            super(node);
+        }
+        
+        @Override
+        public ConfigBuilder add(String ignored, Node child) {
+            ((NodeDelegate) node).setDelegate(child);
+            return to(child);
+        }
+        
     }
 }
