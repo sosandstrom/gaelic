@@ -20,7 +20,7 @@ import com.wadpam.gaelic.oauth.domain.DFactory;
 /**
  * The DFactory domain-object specific finders and methods go in this POJO.
  * 
- * Generated on 2013-05-09T05:56:26.129+0700.
+ * Generated on 2013-05-11T20:15:45.419+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.String> 

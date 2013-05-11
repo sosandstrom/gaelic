@@ -14,11 +14,16 @@ import java.util.ArrayList;
  *
  * @author sosandstrom
  */
-public class ConnectionServiceImpl extends MardaoCrudService<DConnection, String, DConnectionDao> 
+public class ConnectionServiceImpl extends MardaoCrudService<DConnection, Long, DConnectionDao> 
     implements ConnectionService {
 
     public ConnectionServiceImpl() {
-        super(DConnection.class, String.class, DConnectionDaoBean.class);
+        super(DConnection.class, Long.class, DConnectionDaoBean.class);
+    }
+
+    @Override
+    public DConnection findByAccessToken(String accessToken) {
+        return dao.findByAccessToken(accessToken);
     }
 
     @Override

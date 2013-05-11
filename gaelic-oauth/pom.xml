@@ -39,6 +39,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gaelic-appengine</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.sf.mardao</groupId>
             <artifactId>mardao-gae</artifactId>
             <version>${mardao.version}</version>
@@ -122,9 +128,9 @@
                                 <configuration>
                                     <verbose>false</verbose>
                                     <fork>true</fork>
-                                    <testIncludes>
+                                    <includes>
                                         <include>**/domain/*.java</include>
-                                    </testIncludes>
+                                    </includes>
                                 </configuration>
                             </execution>
                         </executions>

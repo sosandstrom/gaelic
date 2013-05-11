@@ -100,12 +100,13 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
             throw new AuthenticationFailedException(503403, "Unauthorized federated side mismatch", null);
         }
         
-        final ArrayList<String> expiredTokens = new ArrayList<String>();
+        final Object transaction = getTransaction();
+
         // load connection from db async style (likely case is new token for existing user)
         final Iterable<DConnection> conns = dConnectionDao.queryByProviderUserId(providerUserId);
-        final Object transaction = getTransaction();
         
         try {
+            final ArrayList<Long> expiredTokens = new ArrayList<Long>();
 
             // load existing conn for token
             DConnection conn = dConnectionDao.findByPrimaryKey(access_token);
@@ -137,7 +138,7 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
                 }
 
                 conn = new DConnection();
-                conn.setId(access_token);
+                conn.setAccessToken(access_token);
                 conn.setDisplayName(profile.getDisplayName());
                 conn.setProviderId(providerId);
                 conn.setProviderUserId(providerUserId);
@@ -166,9 +167,9 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
             // notify listeners
             postService(null, domain, OPERATION_REGISTER_FEDERATED, conn, null, profile);
 
-            commitTransaction(transaction);
+            dConnectionDao.delete(userKey, expiredTokens);
             
-            dConnectionDao.delete(null, expiredTokens);
+            commitTransaction(transaction);
             
             return new RestResponse<DConnection>( 
                     isNewUser ? CrudLeaf.STATUS_CREATED : CrudLeaf.STATUS_OK,

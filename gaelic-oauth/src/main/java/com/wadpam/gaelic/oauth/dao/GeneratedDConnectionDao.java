@@ -12,10 +12,10 @@ import net.sf.mardao.core.geo.DLocation;
 /**
  * DAO interface with finder methods for DConnection entities.
  *
- * Generated on 2013-05-09T05:56:26.129+0700.
+ * Generated on 2013-05-11T20:15:45.419+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
-public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.String> {
+public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Long> {
 
 	/** Column name for primary key attribute is "id" */
 	static final String COLUMN_NAME_ID = "id";
@@ -24,6 +24,8 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	static final String COLUMN_NAME_USERKEY = "userKey";
 
 
+	/** Column name for field accessToken is "accessToken" */
+	static final String COLUMN_NAME_ACCESSTOKEN = "accessToken";
 	/** Column name for field appArg0 is "appArg0" */
 	static final String COLUMN_NAME_APPARG0 = "appArg0";
 	/** Column name for field createdBy is "createdBy" */
@@ -54,7 +56,8 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	static final String COLUMN_NAME_USERROLES = "userRoles";
 
 	/** The list of attribute names */
-	static final List<String> COLUMN_NAMES = Arrays.asList(		COLUMN_NAME_APPARG0,
+	static final List<String> COLUMN_NAMES = Arrays.asList(		COLUMN_NAME_ACCESSTOKEN,
+		COLUMN_NAME_APPARG0,
 		COLUMN_NAME_CREATEDBY,
 		COLUMN_NAME_CREATEDDATE,
 		COLUMN_NAME_DISPLAYNAME,
@@ -69,7 +72,8 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 		COLUMN_NAME_UPDATEDDATE,
 		COLUMN_NAME_USERROLES);
 	/** The list of Basic attribute names */
-	static final List<String> BASIC_NAMES = Arrays.asList(		COLUMN_NAME_APPARG0,
+	static final List<String> BASIC_NAMES = Arrays.asList(		COLUMN_NAME_ACCESSTOKEN,
+		COLUMN_NAME_APPARG0,
 		COLUMN_NAME_CREATEDBY,
 		COLUMN_NAME_CREATEDDATE,
 		COLUMN_NAME_DISPLAYNAME,
@@ -100,7 +104,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param userKey the specified attribute
 	 * @return an Iterable of DConnections with the specified parent
 	 */
-	Iterable<java.lang.String> queryKeysByUserKey(Object userKey);
+	Iterable<java.lang.Long> queryKeysByUserKey(Object userKey);
 
 	/**
 	 * query-page-by method for parent field userKey
@@ -109,10 +113,24 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified userKey (parent)
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByUserKey(java.lang.Object userKey,
+	CursorPage<DConnection, java.lang.Long> queryPageByUserKey(java.lang.Object userKey,
             int pageSize, String cursorString);
 
 	// ----------------------- field finders -------------------------------
+	/**
+	 * find-by method for unique field accessToken
+	 * @param accessToken the unique attribute
+	 * @return the unique DConnection for the specified accessToken
+	 */
+	DConnection findByAccessToken(java.lang.String accessToken);
+
+        /**
+	 * find-key-by method for unique attribute field accessToken
+	 * @param accessToken the unique attribute
+	 * @return the unique DConnection for the specified attribute
+	 */
+	java.lang.Long findKeyByAccessToken(java.lang.String accessToken);
+
 	/**
 	 * query-by method for field appArg0
 	 * @param appArg0 the specified attribute
@@ -125,7 +143,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param appArg0 the specified attribute
 	 * @return an Iterable of DConnections for the specified appArg0
 	 */
-	Iterable<java.lang.String> queryKeysByAppArg0(java.lang.String appArg0);
+	Iterable<java.lang.Long> queryKeysByAppArg0(java.lang.String appArg0);
 
 	/**
 	 * query-page-by method for field appArg0
@@ -134,7 +152,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified appArg0
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByAppArg0(java.lang.String appArg0,
+	CursorPage<DConnection, java.lang.Long> queryPageByAppArg0(java.lang.String appArg0,
             int pageSize, String cursorString);
 
 
@@ -150,7 +168,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param createdBy the specified attribute
 	 * @return an Iterable of DConnections for the specified createdBy
 	 */
-	Iterable<java.lang.String> queryKeysByCreatedBy(java.lang.String createdBy);
+	Iterable<java.lang.Long> queryKeysByCreatedBy(java.lang.String createdBy);
 
 	/**
 	 * query-page-by method for field createdBy
@@ -159,7 +177,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified createdBy
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByCreatedBy(java.lang.String createdBy,
+	CursorPage<DConnection, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString);
 
 
@@ -175,7 +193,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param createdDate the specified attribute
 	 * @return an Iterable of DConnections for the specified createdDate
 	 */
-	Iterable<java.lang.String> queryKeysByCreatedDate(java.util.Date createdDate);
+	Iterable<java.lang.Long> queryKeysByCreatedDate(java.util.Date createdDate);
 
 	/**
 	 * query-page-by method for field createdDate
@@ -184,7 +202,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified createdDate
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByCreatedDate(java.util.Date createdDate,
+	CursorPage<DConnection, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString);
 
 
@@ -200,7 +218,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param displayName the specified attribute
 	 * @return an Iterable of DConnections for the specified displayName
 	 */
-	Iterable<java.lang.String> queryKeysByDisplayName(java.lang.String displayName);
+	Iterable<java.lang.Long> queryKeysByDisplayName(java.lang.String displayName);
 
 	/**
 	 * query-page-by method for field displayName
@@ -209,7 +227,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified displayName
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByDisplayName(java.lang.String displayName,
+	CursorPage<DConnection, java.lang.Long> queryPageByDisplayName(java.lang.String displayName,
             int pageSize, String cursorString);
 
 
@@ -225,7 +243,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param expireTime the specified attribute
 	 * @return an Iterable of DConnections for the specified expireTime
 	 */
-	Iterable<java.lang.String> queryKeysByExpireTime(java.util.Date expireTime);
+	Iterable<java.lang.Long> queryKeysByExpireTime(java.util.Date expireTime);
 
 	/**
 	 * query-page-by method for field expireTime
@@ -234,7 +252,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified expireTime
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByExpireTime(java.util.Date expireTime,
+	CursorPage<DConnection, java.lang.Long> queryPageByExpireTime(java.util.Date expireTime,
             int pageSize, String cursorString);
 
 
@@ -250,7 +268,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param imageUrl the specified attribute
 	 * @return an Iterable of DConnections for the specified imageUrl
 	 */
-	Iterable<java.lang.String> queryKeysByImageUrl(java.lang.String imageUrl);
+	Iterable<java.lang.Long> queryKeysByImageUrl(java.lang.String imageUrl);
 
 	/**
 	 * query-page-by method for field imageUrl
@@ -259,7 +277,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified imageUrl
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByImageUrl(java.lang.String imageUrl,
+	CursorPage<DConnection, java.lang.Long> queryPageByImageUrl(java.lang.String imageUrl,
             int pageSize, String cursorString);
 
 
@@ -275,7 +293,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param profileUrl the specified attribute
 	 * @return an Iterable of DConnections for the specified profileUrl
 	 */
-	Iterable<java.lang.String> queryKeysByProfileUrl(java.lang.String profileUrl);
+	Iterable<java.lang.Long> queryKeysByProfileUrl(java.lang.String profileUrl);
 
 	/**
 	 * query-page-by method for field profileUrl
@@ -284,7 +302,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified profileUrl
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByProfileUrl(java.lang.String profileUrl,
+	CursorPage<DConnection, java.lang.Long> queryPageByProfileUrl(java.lang.String profileUrl,
             int pageSize, String cursorString);
 
 
@@ -300,7 +318,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param providerId the specified attribute
 	 * @return an Iterable of DConnections for the specified providerId
 	 */
-	Iterable<java.lang.String> queryKeysByProviderId(java.lang.String providerId);
+	Iterable<java.lang.Long> queryKeysByProviderId(java.lang.String providerId);
 
 	/**
 	 * query-page-by method for field providerId
@@ -309,7 +327,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified providerId
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByProviderId(java.lang.String providerId,
+	CursorPage<DConnection, java.lang.Long> queryPageByProviderId(java.lang.String providerId,
             int pageSize, String cursorString);
 
 
@@ -325,7 +343,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param providerUserId the specified attribute
 	 * @return an Iterable of DConnections for the specified providerUserId
 	 */
-	Iterable<java.lang.String> queryKeysByProviderUserId(java.lang.String providerUserId);
+	Iterable<java.lang.Long> queryKeysByProviderUserId(java.lang.String providerUserId);
 
 	/**
 	 * query-page-by method for field providerUserId
@@ -334,7 +352,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified providerUserId
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByProviderUserId(java.lang.String providerUserId,
+	CursorPage<DConnection, java.lang.Long> queryPageByProviderUserId(java.lang.String providerUserId,
             int pageSize, String cursorString);
 
 
@@ -350,7 +368,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param refreshToken the unique attribute
 	 * @return the unique DConnection for the specified attribute
 	 */
-	java.lang.String findKeyByRefreshToken(java.lang.String refreshToken);
+	java.lang.Long findKeyByRefreshToken(java.lang.String refreshToken);
 
 	/**
 	 * query-by method for field secret
@@ -364,7 +382,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param secret the specified attribute
 	 * @return an Iterable of DConnections for the specified secret
 	 */
-	Iterable<java.lang.String> queryKeysBySecret(java.lang.String secret);
+	Iterable<java.lang.Long> queryKeysBySecret(java.lang.String secret);
 
 	/**
 	 * query-page-by method for field secret
@@ -373,7 +391,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified secret
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageBySecret(java.lang.String secret,
+	CursorPage<DConnection, java.lang.Long> queryPageBySecret(java.lang.String secret,
             int pageSize, String cursorString);
 
 
@@ -389,7 +407,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param updatedBy the specified attribute
 	 * @return an Iterable of DConnections for the specified updatedBy
 	 */
-	Iterable<java.lang.String> queryKeysByUpdatedBy(java.lang.String updatedBy);
+	Iterable<java.lang.Long> queryKeysByUpdatedBy(java.lang.String updatedBy);
 
 	/**
 	 * query-page-by method for field updatedBy
@@ -398,7 +416,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified updatedBy
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByUpdatedBy(java.lang.String updatedBy,
+	CursorPage<DConnection, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString);
 
 
@@ -414,7 +432,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param updatedDate the specified attribute
 	 * @return an Iterable of DConnections for the specified updatedDate
 	 */
-	Iterable<java.lang.String> queryKeysByUpdatedDate(java.util.Date updatedDate);
+	Iterable<java.lang.Long> queryKeysByUpdatedDate(java.util.Date updatedDate);
 
 	/**
 	 * query-page-by method for field updatedDate
@@ -423,7 +441,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified updatedDate
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByUpdatedDate(java.util.Date updatedDate,
+	CursorPage<DConnection, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString);
 
 
@@ -439,7 +457,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * @param userRoles the specified attribute
 	 * @return an Iterable of DConnections for the specified userRoles
 	 */
-	Iterable<java.lang.String> queryKeysByUserRoles(java.lang.String userRoles);
+	Iterable<java.lang.Long> queryKeysByUserRoles(java.lang.String userRoles);
 
 	/**
 	 * query-page-by method for field userRoles
@@ -448,7 +466,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified userRoles
 	 */
-	CursorPage<DConnection, java.lang.String> queryPageByUserRoles(java.lang.String userRoles,
+	CursorPage<DConnection, java.lang.Long> queryPageByUserRoles(java.lang.String userRoles,
             int pageSize, String cursorString);
 
 
@@ -468,7 +486,8 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	 * Persist an entity given all attributes
 	 */
 	DConnection persist(Object userKey,  	
-		java.lang.String id, 
+		java.lang.Long id, 
+		java.lang.String accessToken, 
 		java.lang.String appArg0, 
 		java.lang.String displayName, 
 		java.util.Date expireTime, 
@@ -483,7 +502,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
 	/**
 	 * Persists an entity unless it already exists
 	 */
-	 DConnection persist(java.lang.String refreshToken, 
+	 DConnection persist(java.lang.String accessToken, 
                 java.lang.String appArg0, 
                 java.lang.String displayName, 
                 java.util.Date expireTime, 
@@ -491,6 +510,7 @@ public interface GeneratedDConnectionDao extends Dao<DConnection, java.lang.Stri
                 java.lang.String profileUrl, 
                 java.lang.String providerId, 
                 java.lang.String providerUserId, 
+                java.lang.String refreshToken, 
                 java.lang.String secret, 
                 java.lang.String userRoles);
 

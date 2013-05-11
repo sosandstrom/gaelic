@@ -11,8 +11,10 @@ import com.wadpam.gaelic.oauth.domain.DConnection;
  *
  * @author sosandstrom
  */
-public interface ConnectionService extends CrudService<DConnection, String> {
+public interface ConnectionService extends CrudService<DConnection, Long> {
     final String ROLE_SEPARATOR = ",";
+    
+    DConnection findByAccessToken(String accessToken);
     
     Iterable<DConnection> queryByProviderIdProviderUserId(String providerId, String providerUserId);
 

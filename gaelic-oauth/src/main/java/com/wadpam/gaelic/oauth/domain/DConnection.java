@@ -6,18 +6,22 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import net.sf.mardao.core.Parent;
-import net.sf.mardao.core.domain.AbstractStringEntity;
+import net.sf.mardao.core.domain.AbstractLongEntity;
 
 /**
  * access_token is primary key
  * @author sosandstrom
  */
 @Entity
-@Table(uniqueConstraints={@UniqueConstraint(columnNames={"refreshToken"})})
-public class DConnection extends AbstractStringEntity {
+@Table(uniqueConstraints={@UniqueConstraint(columnNames={"accessToken"}),
+    @UniqueConstraint(columnNames={"refreshToken"})})
+public class DConnection extends AbstractLongEntity {
 
     @Parent(kind="DOAuth2User")
     private Object userKey;
+    
+    @Basic
+    private String accessToken;
     
     /** Specify for each provider what this property contains.
      * For Salesforce, it is instance_url
@@ -55,16 +59,16 @@ public class DConnection extends AbstractStringEntity {
 
     @Override
     public String subString() {
-        return String.format("%s, userKey=%s, appArg0=%s, userRoles=%s", 
-                super.subString(), userKey, appArg0, userRoles);
+        return String.format("%s, accessToken=%s, userKey=%s, appArg0=%s, userRoles=%s", 
+                super.subString(), accessToken, userKey, appArg0, userRoles);
     }
 
     public String getAccessToken() {
-        return getId();
+        return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
-        setId(accessToken);
+        this.accessToken = accessToken;
     }
 
     public String getAppArg0() {

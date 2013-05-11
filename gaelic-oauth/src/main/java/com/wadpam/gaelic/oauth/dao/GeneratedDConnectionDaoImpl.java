@@ -20,10 +20,10 @@ import com.wadpam.gaelic.oauth.domain.DConnection;
 /**
  * The DConnection domain-object specific finders and methods go in this POJO.
  * 
- * Generated on 2013-05-09T05:56:26.129+0700.
+ * Generated on 2013-05-11T20:15:45.419+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
-public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.lang.String> 
+public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.lang.Long> 
 	implements GeneratedDConnectionDao {
 
 
@@ -43,7 +43,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 
     /** Default constructor */
    public GeneratedDConnectionDaoImpl() {
-      super(DConnection.class, java.lang.String.class);
+      super(DConnection.class, java.lang.Long.class);
    }
 
    // ------ BEGIN DaoImpl overrides -----------------------------
@@ -73,6 +73,9 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
             value = domain.getUserKey();
         }
         // fields
+        else if (COLUMN_NAME_ACCESSTOKEN.equals(name)) {
+            value = domain.getAccessToken();
+        }
         else if (COLUMN_NAME_APPARG0.equals(name)) {
             value = domain.getAppArg0();
         }
@@ -134,13 +137,16 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
         Class clazz;
         // simple key?
         if (COLUMN_NAME_ID.equals(name)) {
-            clazz = java.lang.String.class;
+            clazz = java.lang.Long.class;
         }
         // parent key?
         else if (COLUMN_NAME_USERKEY.equals(name)) {
             clazz = java.lang.Object.class;
         }
         // fields
+        else if (COLUMN_NAME_ACCESSTOKEN.equals(name)) {
+            clazz = java.lang.String.class;
+        }
         else if (COLUMN_NAME_APPARG0.equals(name)) {
             clazz = java.lang.String.class;
         }
@@ -197,13 +203,16 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
     protected void setDomainProperty(final DConnection domain, final String name, final Object value) {
         // simple key?
         if (COLUMN_NAME_ID.equals(name)) {
-            domain.setId((java.lang.String) value);
+            domain.setId((java.lang.Long) value);
         }
         // parent key?
         else if (COLUMN_NAME_USERKEY.equals(name)) {
             domain.setUserKey((java.lang.Object) value);
         }
         // fields
+        else if (COLUMN_NAME_ACCESSTOKEN.equals(name)) {
+            domain.setAccessToken((java.lang.String) value);
+        }
         else if (COLUMN_NAME_APPARG0.equals(name)) {
             domain.setAppArg0((java.lang.String) value);
         }
@@ -307,7 +316,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param userKey the parent
 	 * @return an Iterable of keys to the DConnections with the specified parent
 	 */
-	public final Iterable<java.lang.String> queryKeysByUserKey(Object userKey) {
+	public final Iterable<java.lang.Long> queryKeysByUserKey(Object userKey) {
             return queryIterableKeys(0, -1, userKey, null, null, false, null, false);
 	}
 
@@ -318,7 +327,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified userKey
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByUserKey(java.lang.Object userKey,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByUserKey(java.lang.Object userKey,
             int pageSize, String cursorString) {
             return queryPage(false, pageSize, userKey, null, null, false, null, false, cursorString);
         }
@@ -327,7 +336,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
         /**
          * @return the simple key for specified DConnection domain object
          */
-        public String getSimpleKey(DConnection domain) {
+        public Long getSimpleKey(DConnection domain) {
             if (null == domain) {
                 return null;
             }
@@ -337,7 +346,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
         /**
          * @return the simple key for specified DConnection domain object
          */
-        public void setSimpleKey(DConnection domain, String id) {
+        public void setSimpleKey(DConnection domain, Long id) {
             domain.setId(id);
         }
 
@@ -403,6 +412,26 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 
 	// ----------------------- field finders -------------------------------
 	/**
+	 * find-by method for unique attribute field accessToken
+	 * @param accessToken the unique attribute
+	 * @return the unique DConnection for the specified attribute
+	 */
+	public final DConnection findByAccessToken(java.lang.String accessToken) {
+                Filter filter = createEqualsFilter(COLUMN_NAME_ACCESSTOKEN, accessToken);
+		return findUniqueBy(filter);
+	}
+
+	/**
+	 * find-key-by method for unique attribute field accessToken
+	 * @param accessToken the unique attribute
+	 * @return the unique DConnection for the specified attribute
+	 */
+	public final java.lang.Long findKeyByAccessToken(java.lang.String accessToken) {
+                Filter filter = createEqualsFilter(COLUMN_NAME_ACCESSTOKEN, accessToken);
+		return findUniqueKeyBy(filter);
+	}
+	 
+	/**
          * {@inheritDoc}
 	 */
 	public final Iterable<DConnection> queryByAppArg0(java.lang.String appArg0) {
@@ -415,7 +444,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param appArg0 the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByAppArg0(java.lang.String appArg0) {
+	public final Iterable<java.lang.Long> queryKeysByAppArg0(java.lang.String appArg0) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_APPARG0, appArg0);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -427,7 +456,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified appArg0
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByAppArg0(java.lang.String appArg0,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByAppArg0(java.lang.String appArg0,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_APPARG0, appArg0);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -447,7 +476,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param createdBy the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByCreatedBy(java.lang.String createdBy) {
+	public final Iterable<java.lang.Long> queryKeysByCreatedBy(java.lang.String createdBy) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDBY, createdBy);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -459,7 +488,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified createdBy
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByCreatedBy(java.lang.String createdBy,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDBY, createdBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -479,7 +508,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param createdDate the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByCreatedDate(java.util.Date createdDate) {
+	public final Iterable<java.lang.Long> queryKeysByCreatedDate(java.util.Date createdDate) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDDATE, createdDate);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -491,7 +520,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified createdDate
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByCreatedDate(java.util.Date createdDate,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDDATE, createdDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -511,7 +540,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param displayName the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByDisplayName(java.lang.String displayName) {
+	public final Iterable<java.lang.Long> queryKeysByDisplayName(java.lang.String displayName) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_DISPLAYNAME, displayName);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -523,7 +552,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified displayName
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByDisplayName(java.lang.String displayName,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByDisplayName(java.lang.String displayName,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_DISPLAYNAME, displayName);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -543,7 +572,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param expireTime the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByExpireTime(java.util.Date expireTime) {
+	public final Iterable<java.lang.Long> queryKeysByExpireTime(java.util.Date expireTime) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_EXPIRETIME, expireTime);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -555,7 +584,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified expireTime
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByExpireTime(java.util.Date expireTime,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByExpireTime(java.util.Date expireTime,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_EXPIRETIME, expireTime);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -575,7 +604,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param imageUrl the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByImageUrl(java.lang.String imageUrl) {
+	public final Iterable<java.lang.Long> queryKeysByImageUrl(java.lang.String imageUrl) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_IMAGEURL, imageUrl);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -587,7 +616,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified imageUrl
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByImageUrl(java.lang.String imageUrl,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByImageUrl(java.lang.String imageUrl,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_IMAGEURL, imageUrl);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -607,7 +636,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param profileUrl the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByProfileUrl(java.lang.String profileUrl) {
+	public final Iterable<java.lang.Long> queryKeysByProfileUrl(java.lang.String profileUrl) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROFILEURL, profileUrl);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -619,7 +648,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified profileUrl
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByProfileUrl(java.lang.String profileUrl,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByProfileUrl(java.lang.String profileUrl,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROFILEURL, profileUrl);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -639,7 +668,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param providerId the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByProviderId(java.lang.String providerId) {
+	public final Iterable<java.lang.Long> queryKeysByProviderId(java.lang.String providerId) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROVIDERID, providerId);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -651,7 +680,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified providerId
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByProviderId(java.lang.String providerId,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByProviderId(java.lang.String providerId,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROVIDERID, providerId);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -671,7 +700,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param providerUserId the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByProviderUserId(java.lang.String providerUserId) {
+	public final Iterable<java.lang.Long> queryKeysByProviderUserId(java.lang.String providerUserId) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROVIDERUSERID, providerUserId);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -683,7 +712,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified providerUserId
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByProviderUserId(java.lang.String providerUserId,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByProviderUserId(java.lang.String providerUserId,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROVIDERUSERID, providerUserId);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -705,7 +734,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param refreshToken the unique attribute
 	 * @return the unique DConnection for the specified attribute
 	 */
-	public final java.lang.String findKeyByRefreshToken(java.lang.String refreshToken) {
+	public final java.lang.Long findKeyByRefreshToken(java.lang.String refreshToken) {
                 Filter filter = createEqualsFilter(COLUMN_NAME_REFRESHTOKEN, refreshToken);
 		return findUniqueKeyBy(filter);
 	}
@@ -723,7 +752,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param secret the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysBySecret(java.lang.String secret) {
+	public final Iterable<java.lang.Long> queryKeysBySecret(java.lang.String secret) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_SECRET, secret);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -735,7 +764,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified secret
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageBySecret(java.lang.String secret,
+	public final CursorPage<DConnection, java.lang.Long> queryPageBySecret(java.lang.String secret,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_SECRET, secret);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -755,7 +784,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param updatedBy the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByUpdatedBy(java.lang.String updatedBy) {
+	public final Iterable<java.lang.Long> queryKeysByUpdatedBy(java.lang.String updatedBy) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDBY, updatedBy);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -767,7 +796,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified updatedBy
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByUpdatedBy(java.lang.String updatedBy,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDBY, updatedBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -787,7 +816,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param updatedDate the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByUpdatedDate(java.util.Date updatedDate) {
+	public final Iterable<java.lang.Long> queryKeysByUpdatedDate(java.util.Date updatedDate) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDDATE, updatedDate);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -799,7 +828,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified updatedDate
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByUpdatedDate(java.util.Date updatedDate,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDDATE, updatedDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -819,7 +848,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * @param userRoles the specified attribute
 	 * @return an Iterable of keys to the DConnections with the specified attribute
 	 */
-	public final Iterable<java.lang.String> queryKeysByUserRoles(java.lang.String userRoles) {
+	public final Iterable<java.lang.Long> queryKeysByUserRoles(java.lang.String userRoles) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_USERROLES, userRoles);
             return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
 	}
@@ -831,7 +860,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified userRoles
 	 */
-	public final CursorPage<DConnection, java.lang.String> queryPageByUserRoles(java.lang.String userRoles,
+	public final CursorPage<DConnection, java.lang.Long> queryPageByUserRoles(java.lang.String userRoles,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_USERROLES, userRoles);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -852,7 +881,8 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	 * Persist an entity given all attributes
 	 */
 	public DConnection persist(Object userKey,  	
-		java.lang.String id, 
+		java.lang.Long id, 
+		java.lang.String accessToken, 
 		java.lang.String appArg0, 
 		java.lang.String displayName, 
 		java.util.Date expireTime, 
@@ -880,6 +910,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
                             domain.setId(id);
                     }
                     // fields
+                    domain.setAccessToken(accessToken);
                     domain.setAppArg0(appArg0);
                     domain.setDisplayName(displayName);
                     domain.setExpireTime(expireTime);
@@ -902,7 +933,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
 	/**
 	 * Persists an entity unless it already exists
 	 */
-	public DConnection persist(java.lang.String refreshToken, 
+	public DConnection persist(java.lang.String accessToken, 
                 java.lang.String appArg0, 
                 java.lang.String displayName, 
                 java.util.Date expireTime, 
@@ -910,11 +941,13 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
                 java.lang.String profileUrl, 
                 java.lang.String providerId, 
                 java.lang.String providerUserId, 
+                java.lang.String refreshToken, 
                 java.lang.String secret, 
                 java.lang.String userRoles) {
-            DConnection domain = findByRefreshToken(refreshToken);
+            DConnection domain = findByAccessToken(accessToken);
             if (null == domain) {
                 domain = new DConnection();
+                domain.setAccessToken(accessToken);
                 domain.setAppArg0(appArg0);
                 domain.setDisplayName(displayName);
                 domain.setExpireTime(expireTime);
