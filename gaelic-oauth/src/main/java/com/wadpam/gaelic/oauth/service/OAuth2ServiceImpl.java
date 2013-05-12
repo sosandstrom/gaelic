@@ -6,12 +6,10 @@ package com.wadpam.gaelic.oauth.service;
 
 import com.wadpam.gaelic.crud.CrudListener;
 import com.wadpam.gaelic.crud.CrudObservable;
-import com.wadpam.gaelic.crud.CrudService;
 import com.wadpam.gaelic.exception.AuthenticationFailedException;
 import com.wadpam.gaelic.json.RestResponse;
 import com.wadpam.gaelic.oauth.dao.DConnectionDao;
 import com.wadpam.gaelic.oauth.domain.DConnection;
-import com.wadpam.gaelic.oauth.domain.DFactory;
 import com.wadpam.gaelic.social.SocialProfile;
 import com.wadpam.gaelic.social.SocialTemplate;
 import com.wadpam.gaelic.tree.CrudLeaf;
@@ -34,9 +32,9 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
     
     private boolean autoCreateUser = true;
     
-    private CrudService<DFactory, String> factoryService;
+//    private CrudService<DFactory, String> factoryService;
     
-    private DConnectionDao dConnectionDao;
+    private DConnectionDao connectionDao;
     
     private OAuth2UserService oauth2UserService;
     
@@ -103,13 +101,13 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
         final Object transaction = getTransaction();
 
         // load connection from db async style (likely case is new token for existing user)
-        final Iterable<DConnection> conns = dConnectionDao.queryByProviderUserId(providerUserId);
+        final Iterable<DConnection> conns = connectionDao.queryByProviderUserId(providerUserId);
         
         try {
             final ArrayList<Long> expiredTokens = new ArrayList<Long>();
 
             // load existing conn for token
-            DConnection conn = dConnectionDao.findByPrimaryKey(access_token);
+            DConnection conn = connectionDao.findByAccessToken(access_token);
             final boolean isNewConnection = (null == conn);
             boolean isNewUser = false;
             Object userKey = null;
@@ -147,7 +145,7 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
                 if (null != expiresInSeconds) {
                     conn.setExpireTime(new Date(System.currentTimeMillis() + expiresInSeconds*1000L));
                 }
-                dConnectionDao.persist(conn);
+                connectionDao.persist(conn);
             }
             else {
                 userKey = conn.getUserKey();
@@ -162,12 +160,12 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
                     conn.setUserRoles(ConnectionServiceImpl.convertRoles(userRoles));
                 }
             }
-            dConnectionDao.update(conn);
+            connectionDao.update(conn);
 
             // notify listeners
             postService(null, domain, OPERATION_REGISTER_FEDERATED, conn, null, profile);
 
-            dConnectionDao.delete(userKey, expiredTokens);
+            connectionDao.delete(userKey, expiredTokens);
             
             commitTransaction(transaction);
             
@@ -206,12 +204,12 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
         }
     }
 
-    public void setFactoryService(CrudService factoryService) {
-        this.factoryService = factoryService;
-    }
+//    public void setFactoryService(CrudService factoryService) {
+//        this.factoryService = factoryService;
+//    }
 
-    public void setdConnectionDao(DConnectionDao dConnectionDao) {
-        this.dConnectionDao = dConnectionDao;
+    public void setConnectionDao(DConnectionDao dConnectionDao) {
+        this.connectionDao = dConnectionDao;
     }
 
     public void setAutoCreateUser(boolean autoCreateUser) {

@@ -5,6 +5,7 @@
 package com.wadpam.gaelic.social;
 
 import com.wadpam.gaelic.GaelicServlet;
+import com.wadpam.gaelic.exception.ForbiddenException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -100,6 +101,11 @@ public class SocialTemplate {
      * @return 
      */
     protected SocialProfile parseProfile(Map<String, Object> props) {
+        if (null == props.get("id")) {
+            Map<String, Object> error = (Map<String, Object>) props.get("error");
+            Integer code = (Integer) error.get("code");
+            throw new ForbiddenException(code, (String) error.get("message"), null);
+        }
         return SocialProfile.with(props)
                 .displayName("name")
                 .first("first_name")
