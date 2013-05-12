@@ -13,17 +13,22 @@ import com.wadpam.gaelic.tree.InterceptorDelegate;
 import com.wadpam.gaelic.tree.NodeDelegate;
 import com.wadpam.gaelic.tree.Path;
 import java.util.TreeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author sosandstrom
  */
 public class ConfigBuilder {
+    
+    static final Logger LOG = LoggerFactory.getLogger(ConfigBuilder.class);
+    
     protected static final String NAME_ROOT = "root";
     protected static final TreeMap<String,ConfigBuilder> BUILDER_MAP = new TreeMap<String, ConfigBuilder>();
     protected static final TreeMap<String,Node> NODE_MAP = new TreeMap<String, Node>();
     
-    private final Node node;
+    protected final Node node;
     
     public ConfigBuilder() {
         this.node = null;
@@ -37,12 +42,7 @@ public class ConfigBuilder {
         try {
             final Node child = (Node) nodeClass.newInstance();
             child.setName(path);
-            
-            ((Path) node).addChild(path, child);
-            final ConfigBuilder builder = new ConfigBuilder(child);
-            mapBuilder(builder);
-            
-            return builder;
+            return add(path, child);
         } catch (InstantiationException ex) {
             throw new RuntimeException("Building Config", ex);
         } catch (IllegalAccessException ex) {
@@ -51,6 +51,8 @@ public class ConfigBuilder {
     }
     
     public ConfigBuilder add(String path, Node child) {
+        LOG.trace("adding child {} to this {} for path {}", new Object[] {
+            child, node, path});
         ((Path) node).addChild(path, child);
         ConfigBuilder builder = to(child);
         mapBuilder(path, builder);
@@ -91,9 +93,10 @@ public class ConfigBuilder {
         return NODE_MAP.get(name);
     }
     
-    public ConfigBuilder interceptor(Interceptor interceptor) {
+    public ConfigBuilder interceptor(String path, Interceptor interceptor) {
         InterceptorDelegate delegate = new InterceptorDelegate();
         delegate.setInterceptor(interceptor);
+        add(path, delegate);
         return new DelegateBuilder(delegate);
     }
 
@@ -145,17 +148,4 @@ public class ConfigBuilder {
         return new ConfigBuilder(node);
     }
     
-    class DelegateBuilder extends ConfigBuilder {
-
-        public DelegateBuilder(Node node) {
-            super(node);
-        }
-        
-        @Override
-        public ConfigBuilder add(String ignored, Node child) {
-            ((NodeDelegate) node).setDelegate(child);
-            return to(child);
-        }
-        
-    }
 }

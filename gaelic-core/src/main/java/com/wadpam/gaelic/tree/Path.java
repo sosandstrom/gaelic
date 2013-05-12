@@ -42,8 +42,8 @@ public class Path extends Node {
         currentRequest.set(request);
         servingChild.remove();
         final String path = pathList.get(pathIndex);
-//        LOG.debug("mapping {} for {}({})", new Object[] {
-//            path, pathIndex, pathList.size()});
+        LOG.trace("mapping {} for {}({})", new Object[] {
+            path, pathIndex, pathList.size()});
         String p;
         
         Node child;

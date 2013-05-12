@@ -22,6 +22,8 @@ public class Node extends HttpServlet {
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     
+    public static final String PATH_DOMAIN = "{domain}";
+    
     protected static final Logger LOG = LoggerFactory.getLogger(Node.class);
     
     private String name = null;
@@ -65,6 +67,10 @@ public class Node extends HttpServlet {
 
     public void setName(String nodeName) {
         this.name = nodeName;
+    }
+    
+    public String getDomain() {
+        return getPathVariable(PATH_DOMAIN);
     }
     
     public static String getPathVariableKey(String name) {

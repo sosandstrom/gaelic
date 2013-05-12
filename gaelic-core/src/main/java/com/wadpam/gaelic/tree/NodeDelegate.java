@@ -21,6 +21,8 @@ public class NodeDelegate extends Node {
 
     @Override
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, int pathIndex) {
+        LOG.trace("mapping {} for {}({})", new Object[] {
+            request.getRequestURI(), pathIndex, pathList.size()});
         return delegate.getServingNode(request, pathList, pathIndex);
     }
     
