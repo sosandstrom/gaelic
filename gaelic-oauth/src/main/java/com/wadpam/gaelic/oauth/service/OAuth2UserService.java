@@ -23,5 +23,6 @@ public interface OAuth2UserService extends SecurityDetailsService {
      * @return the ID for the created user
      */
     Object createUser(String email, String firstName, String lastName, 
-            String name, String providerId, String providerUserId, String domain);
+            String name, String providerId, String providerUserId, 
+            String username, String profileUrl);
 }

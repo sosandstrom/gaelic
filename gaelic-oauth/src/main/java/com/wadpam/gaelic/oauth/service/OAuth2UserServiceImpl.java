@@ -29,7 +29,8 @@ public class OAuth2UserServiceImpl
     
     @Override
     public Object createUser(String email, String firstName, String lastName, 
-            String name, String providerId, String providerUserId, String domain) {
+            String name, String providerId, String providerUserId, 
+            String username, String profileUrl) {
         DOAuth2User user = createDomain();
         user.setDisplayName(name);
         user.setEmail(email);
@@ -38,6 +39,8 @@ public class OAuth2UserServiceImpl
         final String role = String.format("ROLE_%s", providerId.toUpperCase());
         roles.add(role);
         user.setRoles(roles);
+        user.setUsername(username);
+        user.setProfileLink(profileUrl);
         create(user);
         return getPrimaryKey(user);
     }

@@ -42,17 +42,16 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
     
     private ProviderFactory customProvider;
     
-    protected Object getTransaction() {
-//        return dConnectionDao.getTransaction();
-        return null;
+    protected Object beginTransaction() {
+        return connectionDao.beginTransaction();
     }
     
     protected void commitTransaction(Object transaction) {
-//        dConnectionDao.commitTransaction(transaction);
+        connectionDao.commitTransaction(transaction);
     }
     
-    protected void rollbackTransaction(Object transaction) {
-//        dConnectionDao.rollbackTransaction(transaction);
+    protected void rollbackActiveTransaction(Object transaction) {
+        connectionDao.rollbackActiveTransaction(transaction);
     }
     
     /**
@@ -98,19 +97,21 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
             throw new AuthenticationFailedException(503403, "Unauthorized federated side mismatch", null);
         }
         
-        final Object transaction = getTransaction();
-
+        // do outside transactions, as Only ancestor queries are allowed inside transactions:
+        
         // load connection from db async style (likely case is new token for existing user)
         final Iterable<DConnection> conns = connectionDao.queryByProviderUserId(providerUserId);
         
+        // load existing conn for token
+        DConnection conn = connectionDao.findByAccessToken(access_token);
+        final boolean isNewConnection = (null == conn);
+        boolean isNewUser = false;
+        Object userKey = null;
+
+        final Object transaction = beginTransaction();
+
         try {
             final ArrayList<Long> expiredTokens = new ArrayList<Long>();
-
-            // load existing conn for token
-            DConnection conn = connectionDao.findByAccessToken(access_token);
-            final boolean isNewConnection = (null == conn);
-            boolean isNewUser = false;
-            Object userKey = null;
 
             // create connection?
             if (isNewConnection) {
@@ -131,8 +132,10 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
                 // create user?
                 isNewUser = (null == userKey);
                 if (isNewUser && autoCreateUser && null != oauth2UserService) {
-                    userKey = oauth2UserService.createUser(profile.getEmail(), profile.getFirstName(), profile.getLastName(),
-                            profile.getDisplayName(), providerId, providerUserId, domain);
+                    userKey = oauth2UserService.createUser(profile.getEmail(), 
+                            profile.getFirstName(), profile.getLastName(),
+                            profile.getDisplayName(), providerId, providerUserId, 
+                            profile.getUsername(), profile.getProfileUrl());
                 }
 
                 conn = new DConnection();
@@ -174,7 +177,7 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
                     conn);
         }
         finally {
-            rollbackTransaction(transaction);
+            rollbackActiveTransaction(transaction);
         }
     }
     
