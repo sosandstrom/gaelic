@@ -112,6 +112,7 @@ public class SocialTemplate {
                 .last("last_name")
                 .id("id")
                 .username("username")
+                .profileUrl("link")
                 .build();
     }
 }

@@ -17,6 +17,7 @@ public class SocialProfile {
     private String email;
     private String id;
     private String username;
+    private String profileUrl;
     
     private Map<String, Object> props = null;
     
@@ -63,6 +64,11 @@ public class SocialProfile {
     
     public SocialProfile username(String propertyName) {
         this.username = (String) props.get(propertyName);
+        return this;
+    }
+    
+    public SocialProfile profileUrl(String propertyName) {
+        this.profileUrl = (String) props.get(propertyName);
         return this;
     }
     
@@ -118,5 +124,11 @@ public class SocialProfile {
         this.props = props;
     }
 
-    
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
 }
