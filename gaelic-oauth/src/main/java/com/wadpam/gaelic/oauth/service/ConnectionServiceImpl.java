@@ -62,8 +62,4 @@ public class ConnectionServiceImpl extends MardaoCrudService<DConnection, Long, 
         return to;
     }
 
-    public void setDConnectionDao(DConnectionDao dConnectionDao) {
-        this.dao = dConnectionDao;
-    }
-
 }

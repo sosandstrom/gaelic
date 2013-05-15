@@ -15,8 +15,12 @@ import com.wadpam.gaelic.oauth.json.JOAuth2User;
 public class UserConverter<JU extends JOAuth2User, D extends DOAuth2User> 
         extends MardaoConverter<JU, D> {
 
-    public UserConverter(Class<JU> jsonClass, Class<D> domainClass) {
+    public UserConverter(Class jsonClass, Class domainClass) {
         super(jsonClass, domainClass);
+    }
+    
+    public UserConverter() {
+        this(JOAuth2User.class, DOAuth2User.class);
     }
 
     @Override

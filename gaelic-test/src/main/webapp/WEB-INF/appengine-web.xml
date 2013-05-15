@@ -18,6 +18,6 @@ xsi:schemaLocation="http://appengine.google.com/ns/1.0 http://googleappengine.go
         <include path="/**.css" />
         <include path="/**.html" />
     </static-files>
-    <sessions-enabled>true</sessions-enabled>
+    <sessions-enabled>false</sessions-enabled>
     <threadsafe>true</threadsafe>
 </appengine-web-app>
