@@ -250,14 +250,6 @@ public abstract class MardaoCrudService<
     protected void prePersist(T domain) throws RestException {
     }
     
-    public void setDao(D dao) {
-        this.dao = dao;
-    }
-
-    public D getDao() {
-        return dao;
-    }
-    
     @Override
     public ID update(T domain) {
         final Object transaction = beginTransaction();
@@ -375,6 +367,14 @@ public abstract class MardaoCrudService<
     @Override
     public Class getIdClass() {
         return idClass;
+    }
+    
+    public void setDao(D dao) {
+        this.dao = dao;
+    }
+
+    public D getDao() {
+        return dao;
     }
     
 }
