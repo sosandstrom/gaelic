@@ -4,11 +4,14 @@
 
 package com.wadpam.gaelic;
 
+import java.io.IOException;
 import java.util.LinkedList;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +45,22 @@ public class Node extends HttpServlet {
         LOG.debug("Initializing node {}", toString());
     }
 
+    protected static void forward(HttpServletRequest request, HttpServletResponse response,
+            String forwardPath) throws ServletException, IOException {
+        final RequestDispatcher dispatcher = request.getRequestDispatcher(forwardPath);
+        dispatcher.forward(request, response);
+    }
+    
     public Node getServingNode(HttpServletRequest request, 
             LinkedList<String> pathList,
             int pathIndex) {
         currentRequest.set(request);
         return this;
+    }
+    
+    protected static void redirect(HttpServletRequest request, HttpServletResponse response, 
+            String redirectPath) throws ServletException, IOException {
+        response.sendRedirect(redirectPath);
     }
     
     protected void setResponseBody(HttpServletRequest request, Integer status, Object body) {

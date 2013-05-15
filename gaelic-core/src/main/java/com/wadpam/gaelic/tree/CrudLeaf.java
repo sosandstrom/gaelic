@@ -129,6 +129,14 @@ public class CrudLeaf<J extends Serializable,
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        // schema-based manager forms
+        if ("manager.html".equals(request.getAttribute(REQUEST_ATTR_FILENAME))) {
+            final String fwdPath = "/internal/bootstrap-schema.html";
+            forward(request, response, fwdPath);
+            return;
+        }
+        
         final ID id = getId(request);
         
         // GET details or page?
