@@ -33,7 +33,7 @@ public class MardaoCrudTest {
 
     final LocalServiceTestHelper helper = new LocalServiceTestHelper(
             new LocalDatastoreServiceTestConfig()
-                .setDefaultHighRepJobPolicyUnappliedJobPercentage(10));
+                .setDefaultHighRepJobPolicyUnappliedJobPercentage(0));
     
     MockHttpServletRequest request;
     MockHttpServletResponse response;

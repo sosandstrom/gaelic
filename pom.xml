@@ -7,6 +7,7 @@
     <packaging>pom</packaging>
     
     <name>Gaelic Parent</name>
+    <description>REST service framework for Google App Engine</description>
     <url>https://github.com/sosandstrom/gaelic</url>
 
     <modules>
@@ -14,6 +15,8 @@
         <module>gaelic-mardao</module>
         <module>gaelic-security</module>
         <module>gaelic-appengine</module>
+        <module>gaelic-social</module>
+        <module>gaelic-oauth</module>
         <module>gaelic-test</module>
     </modules>
     
