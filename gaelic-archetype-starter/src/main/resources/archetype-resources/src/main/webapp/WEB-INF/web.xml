@@ -1,0 +1,32 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/_admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <servlet>
+        <servlet-name>GaelicServlet</servlet-name>
+        <servlet-class>com.wadpam.gaelic.GaelicServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <init-param> 
+            <param-name>com.wadpam.gaelic.Config</param-name> 
+            <param-value>${package}.config.AppConfig</param-value> 
+        </init-param> 
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GaelicServlet</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>

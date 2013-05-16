@@ -18,6 +18,7 @@
         <module>gaelic-social</module>
         <module>gaelic-oauth</module>
         <module>gaelic-test</module>
+        <module>gaelic-archetype-starter</module>
     </modules>
     
     <properties>

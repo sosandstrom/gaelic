@@ -1,0 +1,19 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<html>
+    <head>
+        <title>Signin in...</title>
+    </head>
+    <body>
+        <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="/js/oauth2.js"></script>
+        <script type="text/javascript">
+
+${symbol_dollar}(function() {
+    var jConnection = registerFederated("/api/example", "username", "password", "facebook");
+});
+        </script>
+    </body>
+</html>
