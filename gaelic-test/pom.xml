@@ -198,7 +198,7 @@
             <plugin>
                 <groupId>net.kindleit</groupId>
                 <artifactId>maven-gae-plugin</artifactId>
-                <version>0.9.6-B1</version>
+                <version>0.9.6</version>
                 <configuration>
                     <port>8485</port>
                     <monitor.port>8788</monitor.port>

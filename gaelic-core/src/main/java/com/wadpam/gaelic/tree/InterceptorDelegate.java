@@ -26,10 +26,10 @@ public class InterceptorDelegate extends NodeDelegate {
         final boolean proceed = interceptor.preHandle(req, resp, handler);
             
         if (proceed) {
+            enqueueForCompletion(req, interceptor);
             super.service(req, resp);
 
             interceptor.postHandle(req, resp, handler, req);
-            enqueueForCompletion(req, interceptor);
         }
         else {
             setResponseBody(req, 403, null);

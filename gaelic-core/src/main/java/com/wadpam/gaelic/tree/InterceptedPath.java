@@ -25,10 +25,10 @@ public class InterceptedPath extends Path {
         final boolean proceed = interceptor.preHandle(req, resp, handler);
             
         if (proceed) {
+            InterceptorDelegate.enqueueForCompletion(req, interceptor);
             super.service(req, resp);
 
             interceptor.postHandle(req, resp, handler, req);
-            InterceptorDelegate.enqueueForCompletion(req, interceptor);
         }
         else {
             setResponseBody(req, 403, null);

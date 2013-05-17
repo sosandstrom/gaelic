@@ -83,7 +83,7 @@ public class Node extends HttpServlet {
         this.name = nodeName;
     }
     
-    public String getDomain() {
+    public static String getDomain() {
         return getPathVariable(PATH_DOMAIN);
     }
     
@@ -91,7 +91,7 @@ public class Node extends HttpServlet {
         return String.format("com.wadpam.gaelic.PathVariable.%s", name);
     }
     
-    public String getPathVariable(String name) {
+    public static String getPathVariable(String name) {
         return (String) currentRequest.get().getAttribute(getPathVariableKey(name));
     }
     
