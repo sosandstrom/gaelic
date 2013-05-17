@@ -14,6 +14,7 @@
         <module>gaelic-core</module>
         <module>gaelic-mardao</module>
         <module>gaelic-security</module>
+        <module>gaelic-domain</module>
         <module>gaelic-appengine</module>
         <module>gaelic-social</module>
         <module>gaelic-oauth</module>
