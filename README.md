@@ -14,6 +14,20 @@ We tried Jersey, but decided to give up the following:
 * Annotation-based mapping of resources / controllers
 * Compatibility with non-GAE environments
 
+Generate using Maven Archetype
+------------------------------
+    
+    mvn archetype:generate -DarchetypeGroupId=com.wadpam.gaelic -DarchetypeArtifactId=gaelic-archetype-starter -DarchetypeVersion=1.0.4
+    
+If this is your first time using this App Engine SDK of the version, download and unpack the SDK by typing
+    
+    mvn gae:unpack
+    
+in the generated projects directory. Then, build your project and start your development server with
+    
+    mvn clean gae:run
+    
+
 Supported Features
 ==================
 * [Tree-style mapping of resources in Configuration](#application-configuration)
