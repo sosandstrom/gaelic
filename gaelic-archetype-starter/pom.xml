@@ -4,7 +4,7 @@
 
     <groupId>com.wadpam.gaelic</groupId>
     <artifactId>gaelic-archetype-starter</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
     <packaging>maven-archetype</packaging>
 
     <name>Gaelic Archetype Starter</name>
