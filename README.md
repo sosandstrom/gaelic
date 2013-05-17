@@ -3,19 +3,8 @@ Gaelic
 
 REST service framework for Google App Engine
 
-Introduction
-------------
-
-Gaelic was created when we wanted to replace Spring framework with something
-more suitable for Google App Engine. We had suffered bad from (too) long initialization
-times (loading requests), and needed something that initializes _very_ quickly.
-
-We tried Jersey, but decided to give up the following:
-* Annotation-based mapping of resources / controllers
-* Compatibility with non-GAE environments
-
-Generate using Maven Archetype
-------------------------------
+Generate starter project using Maven Archetype
+----------------------------------------------
     
     mvn archetype:generate -DarchetypeGroupId=com.wadpam.gaelic -DarchetypeArtifactId=gaelic-archetype-starter -DarchetypeVersion=1.0.4
     
@@ -27,6 +16,16 @@ in the generated projects directory. Then, build your project and start your dev
     
     mvn clean gae:run
     
+Introduction
+------------
+
+Gaelic was created when we wanted to replace Spring framework with something
+more suitable for Google App Engine. We had suffered bad from (too) long initialization
+times (loading requests), and needed something that initializes _very_ quickly.
+
+We tried Jersey, but decided to give up the following:
+* Annotation-based mapping of resources / controllers
+* Compatibility with non-GAE environments
 
 Supported Features
 ==================
@@ -34,6 +33,8 @@ Supported Features
 * [Path parameters with {paramname} style mapping](#path-parameters)
 * [Spring-style Interceptors](#interceptors)
 * [Security](#security) out-of-the-box with Basic Authentication and OAuth2
+* [CRUD resources](#crud-resources) with Leaf, Service and mardao Dao
+* [App Domain](#app-domain) management mapping to GAE Namespace
 
 Application Configuration
 -------------------------
@@ -126,3 +127,10 @@ Three security interceptors are provided by the Gaelic framework:
     + - DomainSecurityInterceptor extends SecurityInterceptor
         + - OAuth2Interceptor extends DomainSecurityInterceptor
         
+CRUD Resources
+---------------
+
+App Domain
+---------------
+
+
