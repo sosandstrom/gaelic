@@ -1,5 +1,8 @@
 package com.wadpam.gaelic.oauth.domain;
 
+import com.wadpam.gaelic.oauth.service.ConnectionServiceImpl;
+import com.wadpam.gaelic.security.SecurityDetails;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -15,7 +18,8 @@ import net.sf.mardao.core.domain.AbstractLongEntity;
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"accessToken"}),
     @UniqueConstraint(columnNames={"refreshToken"})})
-public class DConnection extends AbstractLongEntity {
+public class DConnection extends AbstractLongEntity 
+        implements SecurityDetails {
 
     @Parent(kind="DOAuth2User")
     private Object userKey;
@@ -143,6 +147,7 @@ public class DConnection extends AbstractLongEntity {
         this.secret = secret;
     }
 
+    @Override
     public Object getUserKey() {
         return userKey;
     }
@@ -159,4 +164,19 @@ public class DConnection extends AbstractLongEntity {
         this.userRoles = userRoles;
     }
 
+    @Override
+    public Collection<String> getRoles() {
+        return ConnectionServiceImpl.convertRoles(userRoles);
+    }
+
+    @Override
+    public String getUsername() {
+        return accessToken;
+    }
+
+    @Override
+    public String getPassword() {
+        return accessToken;
+    }
+    
 }

@@ -10,6 +10,7 @@ import com.wadpam.gaelic.exception.AuthenticationFailedException;
 import com.wadpam.gaelic.json.RestResponse;
 import com.wadpam.gaelic.oauth.dao.DConnectionDao;
 import com.wadpam.gaelic.oauth.domain.DConnection;
+import com.wadpam.gaelic.oauth.domain.DOAuth2User;
 import com.wadpam.gaelic.social.SocialProfile;
 import com.wadpam.gaelic.social.SocialTemplate;
 import com.wadpam.gaelic.tree.CrudLeaf;
@@ -157,9 +158,10 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
             // update connection values
             conn.setAppArg0(appArg0);
             if (null != oauth2UserService) {
-                Object user = oauth2UserService.loadUserDetailsByUsername(null, null, null, access_token, userKey);
+                Long userId = connectionDao.getSimpleKeyByPrimaryKey(userKey);
+                DOAuth2User user = oauth2UserService.get(null, userId);
                 if (null != user) {
-                    Collection<String> userRoles = oauth2UserService.getRolesFromUserDetails(user);
+                    Collection<String> userRoles = user.getRoles();
                     conn.setUserRoles(ConnectionServiceImpl.convertRoles(userRoles));
                 }
             }

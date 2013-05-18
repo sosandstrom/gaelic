@@ -4,13 +4,14 @@
 
 package com.wadpam.gaelic.oauth.service;
 
-import com.wadpam.gaelic.security.SecurityDetailsService;
+import com.wadpam.gaelic.crud.CrudService;
+import com.wadpam.gaelic.oauth.domain.DOAuth2User;
 
 /**
  *
  * @author sosandstrom
  */
-public interface OAuth2UserService extends SecurityDetailsService {
+public interface OAuth2UserService extends CrudService<DOAuth2User, Long> {
 
     /**
      * Creates a new user based on Connection details

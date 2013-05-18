@@ -10,10 +10,6 @@ import com.wadpam.gaelic.oauth.dao.DOAuth2UserDaoBean;
 import com.wadpam.gaelic.oauth.domain.DOAuth2User;
 import com.wadpam.gaelic.security.SecurityDetailsService;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -21,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OAuth2UserServiceImpl 
         extends MardaoCrudService<DOAuth2User, Long, DOAuth2UserDao>
-        implements OAuth2UserService, SecurityDetailsService {
+        implements OAuth2UserService {
 
     public OAuth2UserServiceImpl() {
         super(DOAuth2User.class, Long.class, DOAuth2UserDaoBean.class);
@@ -43,19 +39,6 @@ public class OAuth2UserServiceImpl
         user.setProfileLink(profileUrl);
         create(user);
         return getPrimaryKey(user);
-    }
-
-    @Override
-    public Collection<String> getRolesFromUserDetails(Object details) {
-        return null != details ? ((DOAuth2User)details).getRoles() : Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public Object loadUserDetailsByUsername(HttpServletRequest request, HttpServletResponse response, 
-            String uri, String authValue, Object userKey) {
-        
-        final Long userId = dao.getSimpleKeyByPrimaryKey(userKey);
-        return get(null, userId);
     }
 
 }

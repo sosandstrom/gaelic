@@ -14,6 +14,7 @@ import com.wadpam.gaelic.oauth.service.ConnectionService;
 import com.wadpam.gaelic.oauth.service.ConnectionServiceImpl;
 import com.wadpam.gaelic.oauth.service.OAuth2Service;
 import com.wadpam.gaelic.security.DomainSecurityInterceptor;
+import com.wadpam.gaelic.security.SecurityDetails;
 import com.wadpam.gaelic.security.SecurityDetailsService;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,32 +42,13 @@ public class OAuth2Interceptor extends DomainSecurityInterceptor implements Secu
         setSecurityDetailsService(this);
     }
 
-    @Override
-    protected String getRealmPassword(Object details) {
-        final DConnection conn = (DConnection) details;
-        return conn.getAccessToken();
-    }
+//    @Override
+//    protected String getRealmUsername(String clientUsername, Object details) {
+//        final DConnection conn = (DConnection) details;
+//        Long userId = connectionService.getSimpleKey(conn);
+//        return null != userId ? userId.toString() : null;
+//    }
 
-    @Override
-    protected String getRealmUsername(String clientUsername, Object details) {
-        final DConnection conn = (DConnection) details;
-        Long userId = connectionService.getSimpleKey(conn);
-        return null != userId ? userId.toString() : null;
-    }
-
-    /**
-     * if specified details is defined, returns Details.roles[].
-     * @param details a DConnection object
-     * @return if specified details is defined, Details.roles[].
-     */
-    @Override
-    public Collection<String> getRolesFromUserDetails(Object details) {
-        final DConnection conn = (DConnection) details;
-        return null != details ?
-            ConnectionServiceImpl.convertRoles(conn.getUserRoles()) :
-            Collections.EMPTY_LIST;
-    }
-    
     @Override
     public String isAuthenticated(HttpServletRequest request, HttpServletResponse response, Object handler, String uri, String method, String authValue) {
         
@@ -109,7 +91,7 @@ public class OAuth2Interceptor extends DomainSecurityInterceptor implements Secu
     }
 
     @Override
-    public Object loadUserDetailsByUsername(HttpServletRequest request, 
+    public SecurityDetails loadUserDetailsByUsername(HttpServletRequest request, 
             HttpServletResponse response, 
             String uri, 
             String authValue, 
