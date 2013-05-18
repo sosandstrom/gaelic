@@ -31,7 +31,7 @@ public class InterceptorDelegate extends NodeDelegate {
 
             interceptor.postHandle(req, resp, handler, req);
         }
-        else {
+        else if (null == req.getAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY)) {
             setResponseBody(req, 403, null);
         }
     };

@@ -1,5 +1,6 @@
 package com.wadpam.gaelic.security;
 
+import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.exception.AuthenticationFailedException;
 import com.wadpam.gaelic.tree.InterceptorAdapter;
@@ -163,7 +164,8 @@ public class SecurityInterceptor extends InterceptorAdapter {
                 uri, method, authValue);
         if (null == principalName && null != response && AUTH_TYPE_BASIC.equals(authenticationMechanism)) {
             // No match initiate basic authentication with the client
-            response.setStatus(401);
+            request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSESTATUS, 401);
+            request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY, realmName);
             response.setHeader("WWW-Authenticate", 
                     String.format("Basic realm=\"%s\"", realmName));
         }
