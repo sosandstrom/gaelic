@@ -1,6 +1,10 @@
 package com.wadpam.gaelic.domain;
 
 
+import com.wadpam.gaelic.security.SecurityDetails;
+import com.wadpam.gaelic.security.SecurityDetailsService;
+import java.util.Arrays;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,7 +18,8 @@ import net.sf.mardao.core.domain.AbstractStringEntity;
 @Entity
 @Table(uniqueConstraints={
     @UniqueConstraint(columnNames = {"username"})})
-public class DAppDomain extends AbstractStringEntity {
+public class DAppDomain extends AbstractStringEntity 
+        implements SecurityDetails {
 
     /** Short description of the domain */
     @Basic
@@ -44,6 +49,7 @@ public class DAppDomain extends AbstractStringEntity {
     @Basic
     private String appArg2;
 
+    public static final Collection<String> ROLES_APPLICATION = Arrays.asList(SecurityDetailsService.ROLE_APPLICATION);
 
     @Override
     public String toString() {
@@ -107,5 +113,15 @@ public class DAppDomain extends AbstractStringEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public Collection<String> getRoles() {
+        return ROLES_APPLICATION;
+    }
+
+    @Override
+    public Object getUserKey() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -17,8 +17,8 @@ public class AppDomainLeaf extends CrudLeaf<JAppDomain, DAppDomain, String, Crud
     
     protected static final AppDomainConverter CONVERTER = new AppDomainConverter();
 
-    public AppDomainLeaf(Class domainClass, Class idClass, Class jsonClass) {
-        super(domainClass, idClass, jsonClass);
+    public AppDomainLeaf() {
+        super(DAppDomain.class, String.class, JAppDomain.class);
         setConverter(CONVERTER);
     }
 
