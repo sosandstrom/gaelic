@@ -17,8 +17,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -129,11 +132,18 @@ public class CrudLeaf<J extends Serializable,
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
         
         // schema-based manager forms
-        if ("manager.html".equals(request.getAttribute(REQUEST_ATTR_FILENAME))) {
+        if ("manager.html".equals(filename)) {
             final String fwdPath = "/internal/bootstrap-schema.html";
             forward(request, response, fwdPath);
+            return;
+        }
+        
+        // schema AJAX method
+        if ("schema".equals(filename)) {
+            getSchema(request, response);
             return;
         }
         
@@ -222,14 +232,31 @@ public class CrudLeaf<J extends Serializable,
             ServletInputStream in = request.getInputStream();
             body = (J) GaelicServlet.MAPPER.readValue(in, jsonClass);
         }
+        LOG.debug("Parsed request Content-Type: {} into {}", request.getContentType(), body);
         
         return body;
+    }
+    
+    protected void getSchema(HttpServletRequest request, HttpServletResponse response) {
+        final TreeMap<String, Object> body = new TreeMap<String, Object>();
+        body.put("tableName", service.getTableName());
+        body.put("primaryKeyName", service.getPrimaryKeyColumnName());
+        body.put("primaryKeyType", getType(service.getPrimaryKeyColumnName(), service.getPrimaryKeyColumnClass()));
+        final TreeMap<String, String> columns = new TreeMap<String, String>();
+        body.put("columns", columns);
+        
+        Class value;
+        for (Map.Entry<String, Class> entry : service.getTypeMap().entrySet()) {
+            columns.put(entry.getKey(), getType(entry.getKey(), entry.getValue()));
+        }
+        
+        setResponseBody(request, 200, body);
     }
     
     @Override
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, final int pathIndex) {
         final String method = request.getMethod();
-        LOG.info("   mapping {} {} for {} ({})", new Object[] {
+        LOG.trace("   mapping {} {} for {} ({})", new Object[] {
             method, request.getRequestURI(), pathIndex, pathList.size()
         });
         
@@ -261,6 +288,25 @@ public class CrudLeaf<J extends Serializable,
         }
         
         return null;
+    }
+    
+    public static String getType(String key, Class value) {
+        if (Long.class.equals(value) ||
+                Integer.class.equals(value) ||
+                Short.class.equals(value) ||
+                Byte.class.equals(value)) {
+            return "number";
+        }
+        else if (String.class.equals(value)) {
+            return "email".equals(key) ? "email" : "text";
+        }
+        else if (Boolean.class.equals(value)) {
+            return "boolean";
+        }
+        else if (Date.class.equals(value)) {
+            return "datetime";
+        }
+        return value.getSimpleName();
     }
     
     /**
