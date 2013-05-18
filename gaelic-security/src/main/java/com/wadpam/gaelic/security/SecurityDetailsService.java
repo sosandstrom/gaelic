@@ -4,7 +4,6 @@
 
 package com.wadpam.gaelic.security;
 
-import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,17 +39,11 @@ public interface SecurityDetailsService {
      * @param username
      * @return the user details for the specified username.
      */
-    Object loadUserDetailsByUsername(HttpServletRequest request, 
+    SecurityDetails loadUserDetailsByUsername(HttpServletRequest request, 
             HttpServletResponse response, 
             String uri, 
             String authValue, 
             Object userKey);
-    
-    /**
-     * Extracts the granted roles for the specified user details.
-     * @param details the user details containing the roles
-     * @return the extracted, granted roles for the specified user details.
-     * @since version 19
-     */
-    Collection<String> getRolesFromUserDetails(Object details);
+
+    SecurityDetailsBuilder BUILDER = new SecurityDetailsBuilder();
 }

@@ -82,11 +82,13 @@ public class SecurityInterceptor extends InterceptorAdapter {
             String uri, 
             String authValue, 
             String clientUsername, 
-            Object details) {
+            SecurityDetails details) {
         final String clientPass = getClientPassword(request, response, uri, authValue);
-        final String realmPass = getRealmPassword(details);
+        final String realmPass = details.getPassword();
+        LOG.trace("client: {}, realm: {}", clientPass, realmPass);
         final boolean matches = realmPass.equals(clientPass);
-        return matches ? getRealmUsername(clientUsername, details) : null;
+        LOG.debug("matches: {} returning {}", matches, details.getUsername());
+        return matches ? details.getUsername() : null;
     }
 
     /**
@@ -206,7 +208,7 @@ public class SecurityInterceptor extends InterceptorAdapter {
         LOG.debug("username {}", username);
 
         // load the user details
-        Object details = null;
+        SecurityDetails details = null;
         try {
             details = securityDetailsService.loadUserDetailsByUsername(request, response, uri, 
                 authValue, username);
@@ -228,7 +230,7 @@ public class SecurityInterceptor extends InterceptorAdapter {
                 request.setAttribute(ATTR_NAME_PRINCIPAL, details);
                 
                 // combine roles
-                Collection<String> roles = securityDetailsService.getRolesFromUserDetails(details);
+                Collection<String> roles = details.getRoles();
                 TreeSet<String> combinedRoles = new TreeSet<String>(roles);
                 Collection<String> previousRoles = (Collection<String>) request.getAttribute(ATTR_NAME_ROLES);
                 if (null != previousRoles) {
@@ -278,23 +280,6 @@ public class SecurityInterceptor extends InterceptorAdapter {
             password = authValue.substring(beginIndex+1);            
         }
         return password;
-    }
-    
-    protected String getRealmPassword(Object details) {
-        if (null == details) {
-            return null;
-        }
-        return details.toString();
-    }
-    
-    /**
-     * 
-     * @param clientUsername
-     * @param details
-     * @return this implementation returns the specified clientUsername
-     */
-    protected String getRealmUsername(String clientUsername, Object details) {
-        return clientUsername;
     }
     
     protected boolean skipEnvironmentPaths(HttpServletRequest request, HttpServletResponse response, String uri) {

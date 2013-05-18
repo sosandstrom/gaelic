@@ -4,6 +4,7 @@
 
 package com.wadpam.gaelic.security;
 
+import static com.wadpam.gaelic.security.SecurityDetailsService.ROLE_APPLICATION;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,19 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 public class UnitTestDetailsService implements SecurityDetailsService {
 
     @Override
-    public Object loadUserDetailsByUsername(HttpServletRequest request, HttpServletResponse response, String uri, String authValue, Object userKey) {
+    public SecurityDetails loadUserDetailsByUsername(HttpServletRequest request, HttpServletResponse response, String uri, String authValue, Object userKey) {
         if ("username".equals(userKey)) {
-            return "password";
+            return BUILDER.with("username")
+                    .password("password")
+                    .roles(Arrays.asList(ROLE_APPLICATION))
+                    .build();
         }
         return null;
-    }
-
-    @Override
-    public Collection<String> getRolesFromUserDetails(Object details) {
-        if ("password".equals(details)) {
-            Arrays.asList(ROLE_APPLICATION);
-        }
-        return Collections.EMPTY_LIST;
     }
 
 }
