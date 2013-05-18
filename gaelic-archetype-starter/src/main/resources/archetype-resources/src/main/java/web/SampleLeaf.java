@@ -18,9 +18,12 @@ import com.wadpam.gaelic.tree.CrudLeaf;
  * @author sosandstrom
  */
 public class SampleLeaf extends CrudLeaf<JSample, DSample, Long, SampleService> {
+    
+    static final SampleConverter CONVERTER = new SampleConverter();
 
     public SampleLeaf() {
         super(DSample.class, Long.class, JSample.class);
+        setConverter(CONVERTER);
     }
     
     static class SampleConverter extends LongConverter<JSample, DSample> {

@@ -35,13 +35,13 @@ function crudCreateEntity() {
     console.log("Building entity...");
     var body = {};
     var schema = $("#create-entity").data("schema");
-    var val;
+    var value;
     
     // add primary key?
     if ("text" == schema.primaryKeyType) {
-        val = $("#create_" + schema.primaryKeyName).val();
-        if (val && 0 < val.length()) {
-            body[schema.primaryKeyName] = val;
+        value = $("#create_" + schema.primaryKeyName).val();
+        if (value && 0 < value.length) {
+            body[schema.primaryKeyName] = value;
         }
     }
     
@@ -61,7 +61,11 @@ function crudCreateEntity() {
 }
 
 function crudCreate(body, successFunction) {
-    $.post("../v10", body)
+    $.ajax("../v10", {
+        contentType: "application/json",
+        data: JSON.stringify(body),
+        type: "POST"
+    })
     .success(successFunction);
 }
 

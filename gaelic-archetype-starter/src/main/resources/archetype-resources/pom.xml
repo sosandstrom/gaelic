@@ -29,6 +29,11 @@
         </dependency>
         <dependency>
             <groupId>com.wadpam.gaelic</groupId>
+            <artifactId>gaelic-domain</artifactId>
+            <version>\${gaelic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wadpam.gaelic</groupId>
             <artifactId>gaelic-appengine</artifactId>
             <version>\${gaelic.version}</version>
         </dependency>

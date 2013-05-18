@@ -21,9 +21,12 @@ import com.wadpam.gaelic.oauth.web.ConnectionConverter;
 import com.wadpam.gaelic.oauth.web.OAuth2Interceptor;
 import com.wadpam.gaelic.oauth.web.OAuth2Leaf;
 import com.wadpam.gaelic.oauth.web.UserLeaf;
+import com.wadpam.gaelic.security.DomainSecurityInterceptor;
 import com.wadpam.gaelic.security.SecurityConfig;
+import com.wadpam.gaelic.service.AppDomainService;
+import com.wadpam.gaelic.tree.AppDomainLeaf;
+import com.wadpam.gaelic.tree.DomainNamespaceInterceptor;
 import com.wadpam.gaelic.tree.Interceptor;
-import com.wadpam.gaelic.tree.InterceptorAdapter;
 import java.util.Collection;
 import java.util.Map;
 import javax.servlet.ServletConfig;
@@ -49,6 +52,8 @@ public class AppConfig implements GaelicConfig, SecurityConfig {
         oauth2Service.setConnectionDao(connectionDao);
         oauth2Service.setOauth2UserService(userService);
         
+        AppDomainService appDomainService = new AppDomainService();
+        
         // Converters
         ConnectionConverter connectionConverter = new ConnectionConverter(userDao);
         
@@ -63,9 +68,14 @@ public class AppConfig implements GaelicConfig, SecurityConfig {
         OAuth2Leaf oauth2Leaf = new OAuth2Leaf();
         oauth2Leaf.setService(oauth2Service);
         
+        AppDomainLeaf appDomainLeaf = new AppDomainLeaf();
+        
         // Interceptors
-        Interceptor basicInterceptor = new InterceptorAdapter();
-//                DomainSecurityInterceptor basicInterceptor = new DomainSecurityInterceptor();
+        DomainSecurityInterceptor basicInterceptor = new DomainSecurityInterceptor();
+        basicInterceptor.setSecurityDetailsService(appDomainService);
+        
+        DomainNamespaceInterceptor domainNamespaceInterceptor = new DomainNamespaceInterceptor();
+        
         OAuth2Interceptor oauth2Interceptor = new OAuth2Interceptor();
         oauth2Interceptor.setConnectionService(connectionService);
         oauth2Interceptor.setOauth2Service(oauth2Service);
@@ -74,14 +84,18 @@ public class AppConfig implements GaelicConfig, SecurityConfig {
         
         BUILDER.root()
                 .interceptor("api", basicInterceptor)
+                .interceptor("api", domainNamespaceInterceptor)
                 .interceptedPath("api", oauth2Interceptor)
                     .path(Node.PATH_DOMAIN)
                         .path("_admin")
                             .path("user")
                                 .crud("v10", userLeaf, userService)
                         .from("_admin")
-                            .path("sample")
-                                .crud("v10", sampleLeaf, sampleService)
+                            .path("domain")
+                                .crud("v10", appDomainLeaf, appDomainService)
+                    .from(Node.PATH_DOMAIN)
+                        .path("sample")
+                            .crud("v10", sampleLeaf, sampleService)
                     .from(Node.PATH_DOMAIN)
                         .path("federated")
                             .add("v11", oauth2Leaf);
