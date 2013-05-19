@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.wadpam.gaelic</groupId>
         <artifactId>gaelic</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.6-SNAPSHOT</version>
     </parent>
     <artifactId>gaelic-mardao</artifactId>
     <packaging>jar</packaging>
