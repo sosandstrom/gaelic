@@ -13,6 +13,8 @@
 
 ${symbol_dollar}(function() {
     var jConnection = registerFederated("/api/example", "username", "password", "facebook");
+    ${symbol_dollar}("title").text("Home");
+    ${symbol_dollar}("#h1").text("Hello " + jConnection.displayName + "!");
 });
         </script>
     </body>
