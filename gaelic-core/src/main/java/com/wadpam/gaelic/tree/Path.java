@@ -59,8 +59,7 @@ public class Path extends Node {
                     
                     // store path variable?
                     if (p.startsWith("{") && p.endsWith("}")) {
-                        String name = p.substring(1, p.length()-1);
-                        setPathVariable(name, path);
+                        setPathVariable(p, path);
                     }
                 }
             }

@@ -5,7 +5,10 @@
 package com.wadpam.gaelic;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.SimpleTimeZone;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -27,12 +30,21 @@ public class Node extends HttpServlet {
     
     public static final String PATH_DOMAIN = "{domain}";
     
+    public static final Date DATE_ORIGIN = new Date(0L);
+    
+    /** Tue, 15 Jan 2013 21:47:38 GMT */
+    public static final SimpleDateFormat SDF = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'");
+    
     protected static final Logger LOG = LoggerFactory.getLogger(Node.class);
     
     private String name = null;
     protected Node parent = null;
     protected static final ThreadLocal<HttpServletRequest> currentRequest = 
             new ThreadLocal<HttpServletRequest>();
+    
+    static {
+        SDF.setTimeZone(new SimpleTimeZone(0, "GMT"));
+    }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -61,6 +73,62 @@ public class Node extends HttpServlet {
     protected static void redirect(HttpServletRequest request, HttpServletResponse response, 
             String redirectPath) throws ServletException, IOException {
         response.sendRedirect(redirectPath);
+    }
+
+    protected String deleteCookie(HttpServletResponse response,
+            String name,
+            String domain,
+            String path) {
+        return setCookie(response, name, "", null, DATE_ORIGIN, domain, path);
+    }
+    
+    /**
+     * Sets a cookie on specified response
+     * @param response
+     * @param name
+     * @param value
+     * @param maxAge seconds into the future
+     * @param expires rfc1123-date
+     * @param domain domain-value
+     * @param path path-value
+     * @return the Set-Cookie header value
+     */
+    protected String setCookie(HttpServletResponse response,
+            String name,
+            String value,
+            Integer maxAge,
+            Date expires,
+            String domain,
+            String path) {
+        
+        StringBuffer sb = new StringBuffer();
+        sb.append(String.format("%s=%s", name, value));
+        
+        if (null != maxAge) {
+            sb.append("; Max-Age=");
+            sb.append(maxAge);
+        }
+        
+        if (null != expires) {
+            sb.append("; Expires=");
+            sb.append(SDF.format(expires));
+        }
+        
+        if (null != domain) {
+            sb.append("; Domain=");
+            sb.append(domain);
+        }
+        
+        if (null != path) {
+            sb.append("; Path=");
+            sb.append(path);
+        }
+        
+        if (null != response) {
+            response.setHeader("Set-Cookie", sb.toString());
+        }
+        
+        return sb.toString();
     }
     
     protected void setResponseBody(HttpServletRequest request, Integer status, Object body) {
@@ -96,6 +164,7 @@ public class Node extends HttpServlet {
     }
     
     public void setPathVariable(String name, String value) {
+        LOG.trace("{} = {}", name, value);
         currentRequest.get().setAttribute(getPathVariableKey(name), value);
     }
     

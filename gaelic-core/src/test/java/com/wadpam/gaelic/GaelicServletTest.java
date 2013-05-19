@@ -65,7 +65,7 @@ public class GaelicServletTest {
         
         Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
         assertNotNull(handler);
-        String domain = handler.getPathVariable("domain");
+        String domain = handler.getPathVariable("{domain}");
         assertEquals("gaelic", domain);
     }
 
