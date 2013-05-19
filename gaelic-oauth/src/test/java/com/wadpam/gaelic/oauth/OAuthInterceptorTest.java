@@ -95,14 +95,25 @@ public class OAuthInterceptorTest {
         LOG.info("---------------- testAnonymousPOST() --------------------");
 
         servlet.service(request, response);
-        assertEquals(403, response.getStatus());
+        assertEquals(401, response.getStatus());
     }
 
     @Test
     public void testUnauthorized() throws ServletException, IOException {
         request.setMethod("GET");
-        request.setRequestURI("/api/gaelic/endpoints");
+        request.setRequestURI("/api/gaelic/double");
         LOG.info("---------------- testUnauthorized() --------------------------");
+
+        servlet.service(request, response);
+        assertEquals(401, response.getStatus());
+    }
+
+    @Test
+    public void testUnauthorizedFully() throws ServletException, IOException {
+        request.setMethod("GET");
+        request.setRequestURI("/api/gaelic/double");
+        request.setParameter("jBasic", "dXNlcm5hbWU6cGFzc3dvcmQ=");
+        LOG.info("---------------- testUnauthorizedFully() --------------------------");
 
         servlet.service(request, response);
         assertEquals(403, response.getStatus());

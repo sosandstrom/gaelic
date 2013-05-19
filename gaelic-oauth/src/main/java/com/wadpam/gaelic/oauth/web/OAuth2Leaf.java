@@ -5,12 +5,14 @@
 package com.wadpam.gaelic.oauth.web;
 
 import com.wadpam.gaelic.Node;
+import static com.wadpam.gaelic.Node.getDomain;
 import com.wadpam.gaelic.crud.CrudListener;
 import com.wadpam.gaelic.crud.CrudObservable;
 import com.wadpam.gaelic.json.RestResponse;
 import com.wadpam.gaelic.oauth.domain.DConnection;
 import com.wadpam.gaelic.oauth.json.JConnection;
 import com.wadpam.gaelic.oauth.service.OAuth2Service;
+import com.wadpam.gaelic.security.SecurityInterceptor;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -90,11 +92,8 @@ public class OAuth2Leaf extends Node implements CrudObservable {
         
         // set a cookie if supported
         if (supportCookie) {
-//            synchronized (COOKIE_GENERATOR) {
-//                COOKIE_GENERATOR.setCookiePath(String.format("/api/%s", domain));
-//                COOKIE_GENERATOR.setCookieMaxAge(expires_in);
-//                COOKIE_GENERATOR.addCookie(response, access_token);
-//            }
+            setCookie(response, SecurityInterceptor.AUTH_PARAM_OAUTH, access_token, 
+                    expires_in, null, null, String.format("/api/%s", domain));
         }
         
         final JConnection body = new JConnection();
@@ -116,15 +115,12 @@ public class OAuth2Leaf extends Node implements CrudObservable {
     public void unregisterFederated(
             HttpServletRequest request,
             HttpServletResponse response
-//            @PathVariable String domain,
-//            @PathVariable String providerId
                     ) {
+        final String domain = getDomain();
         
         // delete the cookie client-side:
-//        synchronized (COOKIE_GENERATOR) {
-//            COOKIE_GENERATOR.setCookiePath(String.format("/api/%s", domain));
-//            COOKIE_GENERATOR.removeCookie(response);
-//        }
+        deleteCookie(response, SecurityInterceptor.AUTH_PARAM_OAUTH,
+                null, String.format("/api/%s", domain));
     }
 
     @Override
