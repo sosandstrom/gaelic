@@ -155,7 +155,7 @@ public class MardaoCrudTest {
         
         Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
         assertNotNull(handler);
-        String domain = handler.getPathVariable("domain");
+        String domain = handler.getPathVariable("{domain}");
         assertEquals("gaelic", domain);
         
         assertNull(request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
@@ -172,7 +172,7 @@ public class MardaoCrudTest {
         
         Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
         assertNotNull(handler);
-        String domain = handler.getPathVariable("domain");
+        String domain = handler.getPathVariable("{domain}");
         assertEquals("gaelic", domain);
         
         assertEquals("42", request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));
@@ -190,7 +190,7 @@ public class MardaoCrudTest {
         
         Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
         assertNotNull(handler);
-        String domain = handler.getPathVariable("domain");
+        String domain = handler.getPathVariable("{domain}");
         assertEquals("gaelic", domain);
         
         assertEquals("42", request.getAttribute(CrudLeaf.REQUEST_ATTR_FILENAME));

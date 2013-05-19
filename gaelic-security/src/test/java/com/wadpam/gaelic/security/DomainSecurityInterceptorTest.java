@@ -95,7 +95,7 @@ public class DomainSecurityInterceptorTest {
         LOG.info("---------------- testAnonymousPOST() --------------------");
 
         servlet.service(request, response);
-        assertEquals(403, response.getStatus());
+        assertEquals(401, response.getStatus());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class DomainSecurityInterceptorTest {
         LOG.info("---------------- testUnauthorized() --------------------------");
 
         servlet.service(request, response);
-        assertEquals(403, response.getStatus());
+        assertEquals(401, response.getStatus());
     }
 
 }
