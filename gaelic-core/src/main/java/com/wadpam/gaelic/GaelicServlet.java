@@ -90,8 +90,10 @@ public class GaelicServlet extends HttpServlet {
     protected static LinkedList<String> parsePath(HttpServletRequest request) {
         final LinkedList<String> pathStack = new LinkedList<String>();
         final String uri = request.getRequestURI();
-//        LOG.debug("splitting requestURI {}", uri);
-        for (String p : uri.split("/")) {
+        final String ctxt = request.getContextPath();
+        LOG.debug("splitting requestURI {} and context {}", uri, ctxt);
+        // if app is deployed with context != / then skip the first path
+        for (String p : uri.substring(ctxt.length()).split("/")) {
             if (!"".equals(p)) {
                 pathStack.add(p);
             }

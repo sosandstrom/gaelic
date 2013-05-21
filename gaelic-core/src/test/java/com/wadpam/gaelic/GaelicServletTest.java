@@ -70,6 +70,26 @@ public class GaelicServletTest {
     }
 
     @Test
+    public void testGetWithContext() throws ServletException, IOException {
+        request.setMethod("GET");
+        request.setRequestURI("/myapp-1-SNAPSHOT.war/api/gaelic/endpoints");
+        request.setContextPath("/myapp-1-SNAPSHOT.war");
+        LOG.info("---------------- testService() -------------------------------");
+
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+//        assertTrue(0 < response.getContentLength());
+        assertEquals("application/json", response.getContentType());
+        assertEquals("{\"method\":\"GET\",\"uri\":\"/myapp-1-SNAPSHOT.war/api/gaelic/endpoints\"}", response.getContentAsString());
+        assertNull(request.getAttribute(UnitTestInterceptor.REQUEST_ATTR_INTERCEPTOR_PRE));
+        
+        Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
+        assertNotNull(handler);
+        String domain = handler.getPathVariable("{domain}");
+        assertEquals("gaelic", domain);
+    }
+
+    @Test
     public void testNotFound() throws ServletException, IOException {
         request.setMethod("GET");
         request.setRequestURI("/api/anything/notFound");
