@@ -26,6 +26,7 @@ times (loading requests), and needed something that initializes _very_ quickly.
 We tried Jersey, but decided to give up the following:
 * Annotation-based mapping of resources / controllers
 * Compatibility with non-GAE environments
+
 and push hard for
 * Convention over Configuration
 
@@ -140,5 +141,15 @@ Datastore using Mardao.
 
 App Domain
 ---------------
+With the concept of App Domains, you can host for multiple, separated customers
+from the same App Engine application. Their data is separated (multi-tenancy) by
+using Namespaces. Convention is to select domain via the REST path, e.g.
 
+    http://example.appspot.com/api/bmw/user
+    
+where the App Domain would be named bmw. This App Domain entity also has properties
+for username and password, so you can protect some API methods within /api/bmw/ with
+Basic Authentication.
+An App Domain also has a tracking code property, allowing to send tracking for /api/bmw
+to a bmw-dedicated Analytics Account (e.g. Google Analytics).
 
