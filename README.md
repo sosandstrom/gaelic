@@ -26,12 +26,13 @@ times (loading requests), and needed something that initializes _very_ quickly.
 We tried Jersey, but decided to give up the following:
 * Annotation-based mapping of resources / controllers
 * Compatibility with non-GAE environments
+and push hard for
+* Convention over Configuration
 
 Supported Features
 ==================
-* [Tree-style mapping of resources in Configuration](#application-configuration)
-* [Path parameters with {paramname} style mapping](#path-parameters)
-* [Spring-style Interceptors](#interceptors)
+* [Tree-style mapping of REST URLs](#application-configuration) to resources in Configuration
+* [Spring-style Interceptors](#interceptors) with flexible "point-cuts"
 * [Security](#security) out-of-the-box with Basic Authentication and OAuth2
 * [CRUD resources](#crud-resources) with Leaf, Service and mardao Dao
 * [App Domain](#app-domain) management mapping to GAE Namespace
@@ -103,14 +104,11 @@ It creates and maps the following resource tree:
 * /api/{domain}/public
 * /api/{domain}/_admin/task
 
-Where 
+Where
+* the Security interceptor is mapped to /api/* requests
 * endpoints is a protected resource
 * GET public has public access
 * task should be Container-based secured via web.xml
-
-Path Parameters
----------------
-
 
 Interceptors
 ------------
@@ -129,6 +127,16 @@ Three security interceptors are provided by the Gaelic framework:
         
 CRUD Resources
 ---------------
+There is a CrudLeaf you can extend or map in the tree, to get out-of-the-box
+methods for the basic CRUD operations:
+* `GET /` a page of entities
+* `GET /{id}` a specific entity
+* `POST /` to create a new entity
+* `POST /{id}` to update a specific entity
+* `DELETE /{id}` to delete a specific entity
+
+There is also a CrudService implementation with connects your Resource with the
+Datastore using Mardao.
 
 App Domain
 ---------------
