@@ -1,7 +1,7 @@
 Gaelic
 ======
 
-REST service framework for Google App Engine
+REST framework for Google App Engine
 
 Generate starter project using Maven Archetype
 ----------------------------------------------
@@ -14,7 +14,7 @@ If this is your first time using this App Engine SDK of the version, download an
     
 in the generated projects directory. Then, build your project and start your development server with
     
-    mvn clean gae:run
+    mvn clean gae:run -Pmardao
     
 Introduction
 ------------
@@ -29,6 +29,7 @@ We tried Jersey, but decided to give up the following:
 
 and push hard for
 * Convention over Configuration
+* Very few dependencies
 
 Supported Features
 ==================
@@ -37,6 +38,11 @@ Supported Features
 * [Security](#security) out-of-the-box with Basic Authentication and OAuth2
 * [CRUD resources](#crud-resources) with Leaf, Service and mardao Dao
 * [App Domain](#app-domain) management mapping to GAE Namespace
+
+and non-functional requirements:
+
+* Core dependency only to Jackson and Slf4j
+* Security adds dependency to commons-codec
 
 Application Configuration
 -------------------------
