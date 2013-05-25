@@ -55,6 +55,11 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
         connectionDao.rollbackActiveTransaction(transaction);
     }
     
+    @Override
+    public Long getUserId(Object userKey) {
+        return connectionDao.getSimpleKeyByPrimaryKey(userKey);
+    }
+    
     /**
      * 
      * @param access_token
@@ -107,6 +112,7 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
         DConnection conn = connectionDao.findByAccessToken(access_token);
         final boolean isNewConnection = (null == conn);
         boolean isNewUser = false;
+        DOAuth2User user = null;
         Object userKey = null;
 
         final Object transaction = beginTransaction();
@@ -133,10 +139,11 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
                 // create user?
                 isNewUser = (null == userKey);
                 if (isNewUser && autoCreateUser && null != oauth2UserService) {
-                    userKey = oauth2UserService.createUser(profile.getEmail(), 
+                    user = oauth2UserService.createUser(profile.getEmail(), 
                             profile.getFirstName(), profile.getLastName(),
                             profile.getDisplayName(), providerId, providerUserId, 
                             profile.getUsername(), profile.getProfileUrl());
+                    userKey = oauth2UserService.getUserKey(user);
                 }
 
                 conn = new DConnection();
@@ -158,12 +165,19 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
             // update connection values
             conn.setAppArg0(appArg0);
             if (null != oauth2UserService) {
-                Long userId = connectionDao.getSimpleKeyByPrimaryKey(userKey);
-                DOAuth2User user = oauth2UserService.get(null, userId);
+                
+                // existing user
+                if (null == user) {
+                    Long userId = connectionDao.getSimpleKeyByPrimaryKey(userKey);
+                    user = oauth2UserService.get(null, userId);
+                }
+                
+                // copy roles to Connection
                 if (null != user) {
                     Collection<String> userRoles = user.getRoles();
                     conn.setUserRoles(ConnectionServiceImpl.convertRoles(userRoles));
                 }
+                LOG.debug("Roles set to {} from user {}", conn.getUserRoles(), user);
             }
             connectionDao.update(conn);
 

@@ -15,6 +15,8 @@ import com.wadpam.gaelic.oauth.service.OAuth2Service;
 import com.wadpam.gaelic.security.DomainSecurityInterceptor;
 import com.wadpam.gaelic.security.SecurityDetails;
 import com.wadpam.gaelic.security.SecurityDetailsService;
+import static com.wadpam.gaelic.security.SecurityInterceptor.ATTR_NAME_PRINCIPAL;
+import static com.wadpam.gaelic.security.SecurityInterceptor.ATTR_NAME_USERNAME;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,6 +84,15 @@ public class OAuth2Interceptor extends DomainSecurityInterceptor implements Secu
         // which leads to an empty 200 response.
         if (null == username) {
             throw new ForbiddenException(77403, authValue, null);
+        }
+        
+        // replace username being access_token with parentKeyString
+        Object principal = request.getAttribute(ATTR_NAME_PRINCIPAL);
+        LOG.debug("principal is {}", principal);
+        DConnection conn = (DConnection) principal;
+        if (null != conn && null != conn.getUserKey()) {
+            final Long userId = oauth2Service.getUserId(conn.getUserKey());
+            request.setAttribute(ATTR_NAME_USERNAME, userId.toString());
         }
         
         return username;

@@ -228,7 +228,7 @@ public class SecurityInterceptor extends InterceptorAdapter {
         LOG.debug("principalName {}", principalName);
         if (null != principalName) {
             if (null != request) {
-                request.setAttribute(ATTR_NAME_USERNAME, principalName);
+                request.setAttribute(ATTR_NAME_USERNAME, details.getUsername());
                 request.setAttribute(ATTR_NAME_PRINCIPAL, details);
                 
                 // combine roles
@@ -350,7 +350,7 @@ public class SecurityInterceptor extends InterceptorAdapter {
         if (whitelisted && null != request) {
             // populate request
             request.setAttribute(ATTR_NAME_USERNAME, USERNAME_ANONYMOUS);
-            request.setAttribute(ATTR_NAME_PRINCIPAL, USERNAME_ANONYMOUS);
+//            request.setAttribute(ATTR_NAME_PRINCIPAL, USERNAME_ANONYMOUS);
 
             // combine roles
             TreeSet<String> combinedRoles = new TreeSet<String>();

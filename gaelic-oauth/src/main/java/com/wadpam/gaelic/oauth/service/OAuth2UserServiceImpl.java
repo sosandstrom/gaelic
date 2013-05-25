@@ -11,6 +11,7 @@ import com.wadpam.gaelic.oauth.domain.DOAuth2User;
 import com.wadpam.gaelic.security.SecurityDetailsService;
 import java.util.ArrayList;
 
+
 /**
  *
  * @author sosandstrom
@@ -24,7 +25,7 @@ public class OAuth2UserServiceImpl
     }
     
     @Override
-    public Object createUser(String email, String firstName, String lastName, 
+    public DOAuth2User createUser(String email, String firstName, String lastName, 
             String name, String providerId, String providerUserId, 
             String username, String profileUrl) {
         DOAuth2User user = createDomain();
@@ -38,7 +39,11 @@ public class OAuth2UserServiceImpl
         user.setUsername(username);
         user.setProfileLink(profileUrl);
         create(user);
+        return user;
+    }    
+
+    @Override
+    public Object getUserKey(DOAuth2User user) {
         return getPrimaryKey(user);
     }
-
 }

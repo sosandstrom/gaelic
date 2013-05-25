@@ -40,7 +40,7 @@ public interface OAuth2Service extends CrudObservable {
             String appArg0,
             String domain);    
     
-//    String getProviderUserId(String access_token, String providerId, String appArg0);
+    Long getUserId(Object userKey);
     
     void setCustomProvider(ProviderFactory customProvider);
 }

@@ -21,9 +21,15 @@ public interface OAuth2UserService extends CrudService<DOAuth2User, Long> {
      * @param name
      * @param providerId 
      * @param providerUserId
-     * @return the ID for the created user
+     * @return the created user
      */
-    Object createUser(String email, String firstName, String lastName, 
+    DOAuth2User createUser(String email, String firstName, String lastName, 
             String name, String providerId, String providerUserId, 
             String username, String profileUrl);
+    
+    /**
+     * @param user
+     * @return the primary key for the specified user
+     */
+    Object getUserKey(DOAuth2User user);
 }
