@@ -35,6 +35,8 @@ public class Node extends HttpServlet {
     /** Tue, 15 Jan 2013 21:47:38 GMT */
     public static final SimpleDateFormat SDF = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'");
     
+    public static final String ATTR_NAME_USERNAME = "com.wadpam.open.security.username";
+    
     protected static final Logger LOG = LoggerFactory.getLogger(Node.class);
     
     private String name = null;
@@ -168,4 +170,7 @@ public class Node extends HttpServlet {
         currentRequest.get().setAttribute(getPathVariableKey(name), value);
     }
     
+    public String getCurrentUsername() {
+        return (String) currentRequest.get().getAttribute(ATTR_NAME_USERNAME);
+    }
 }

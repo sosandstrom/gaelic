@@ -147,7 +147,16 @@ public class CrudLeaf<J extends Serializable,
             return;
         }
         
-        final ID id = getId(request);
+        ID id = null; 
+        
+        // me alias
+        if ("me".equals(filename)) {
+            final String username = getCurrentUsername();
+            id = getId(username);
+        }
+        else {
+            id = getId(request);
+        }
         
         // GET details or page?
         if (null != id) {
@@ -190,8 +199,12 @@ public class CrudLeaf<J extends Serializable,
     }
     
     protected ID getId(HttpServletRequest request) {
-        ID id = null;
         final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
+        return getId(filename);
+    }
+    
+    protected ID getId(final String filename) {
+        ID id = null;
         
         if (null != filename) {
             // if ID is Long, parse filename
