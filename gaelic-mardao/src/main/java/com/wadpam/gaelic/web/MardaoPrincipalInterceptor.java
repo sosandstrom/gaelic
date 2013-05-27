@@ -18,7 +18,7 @@ import net.sf.mardao.core.dao.DaoImpl;
  */
 public class MardaoPrincipalInterceptor implements Interceptor {
     /** Must be same as SecurityInterceptor constant */
-    public static final String ATTR_NAME_USERNAME = "com.wadpam.open.security.username";
+    public static final String ATTR_NAME_USERNAME = Node.ATTR_NAME_USERNAME;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Node handler) throws ServletException, IOException {

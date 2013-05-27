@@ -45,7 +45,7 @@ public class SecurityInterceptor extends InterceptorAdapter {
     public static final String AUTH_PARAM_OAUTH = "access_token";
 
     /** must be same as MardaoPrincipalInterceptor value */
-    public static final String ATTR_NAME_USERNAME = "com.wadpam.open.security.username";
+    public static final String ATTR_NAME_USERNAME = Node.ATTR_NAME_USERNAME;
     public static final String ATTR_NAME_PRINCIPAL = "com.wadpam.open.security.principal";
     public static final String ATTR_NAME_ROLES = "com.wadpam.open.security.roles";
     public static final String USERNAME_ANONYMOUS = "[ANONYMOUS]";
