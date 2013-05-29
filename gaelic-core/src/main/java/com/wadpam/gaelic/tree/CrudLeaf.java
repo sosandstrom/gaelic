@@ -169,9 +169,20 @@ public class CrudLeaf<J extends Serializable,
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final ID id = getId(request);
+        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
         final J body = getRequestBody(request);
         final T domain = converter.convertJson(body);
+        
+        ID id = null; 
+        
+        // me alias
+        if ("me".equals(filename)) {
+            final String username = getCurrentUsername();
+            id = getId(username);
+        }
+        else {
+            id = getId(request);
+        }
         
         if (null != id) {
             update(request, response, body, domain, id);
