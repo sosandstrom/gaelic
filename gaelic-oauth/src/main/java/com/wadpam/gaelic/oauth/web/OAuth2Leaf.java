@@ -48,7 +48,13 @@ public class OAuth2Leaf extends Node implements CrudObservable {
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        registerFederated(req, resp);
+        // cross-domain or web link to unregister
+        if (METHOD_DELETE.equals(req.getParameter("_method"))) {
+            unregisterFederated(req, resp);
+        }
+        else {
+            registerFederated(req, resp);
+        }
     }
     
     @Override
@@ -115,12 +121,17 @@ public class OAuth2Leaf extends Node implements CrudObservable {
     public void unregisterFederated(
             HttpServletRequest request,
             HttpServletResponse response
-                    ) {
+                    ) throws ServletException, IOException {
         final String domain = getDomain();
         
         // delete the cookie client-side:
         deleteCookie(response, SecurityInterceptor.AUTH_PARAM_OAUTH,
                 null, String.format("/api/%s", domain));
+        
+        // redirect to url after signout?
+        if (null != request.getParameter("redirect_uri")) {
+            redirect(request, response, (String) request.getParameter("redirect_uri"));
+        }
     }
 
     @Override

@@ -74,6 +74,7 @@ public class Node extends HttpServlet {
     
     protected static void redirect(HttpServletRequest request, HttpServletResponse response, 
             String redirectPath) throws ServletException, IOException {
+        LOG.debug("redirecting to Location: {}", redirectPath);
         response.sendRedirect(redirectPath);
     }
 
