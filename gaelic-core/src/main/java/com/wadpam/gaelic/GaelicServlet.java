@@ -105,6 +105,12 @@ public class GaelicServlet extends HttpServlet {
     protected void renderResponse(HttpServletRequest request, 
             HttpServletResponse response, 
             RestException exception) throws IOException {
+        
+        // for redirect and forward:
+        if (response.isCommitted()) {
+            return;
+        }
+        
         Object responseBody;
         if (null != exception) {
             LOG.debug("Handling exception: {}", exception);
