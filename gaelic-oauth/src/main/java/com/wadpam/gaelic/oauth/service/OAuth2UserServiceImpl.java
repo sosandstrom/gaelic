@@ -10,25 +10,30 @@ import com.wadpam.gaelic.oauth.dao.DOAuth2UserDaoBean;
 import com.wadpam.gaelic.oauth.domain.DOAuth2User;
 import com.wadpam.gaelic.security.SecurityDetailsService;
 import java.util.ArrayList;
+import net.sf.mardao.core.dao.Dao;
 
 
 /**
  *
  * @author sosandstrom
  */
-public class OAuth2UserServiceImpl 
-        extends MardaoCrudService<DOAuth2User, Long, DOAuth2UserDao>
-        implements OAuth2UserService {
+public class OAuth2UserServiceImpl<T extends DOAuth2User, D extends Dao<T, Long>> 
+        extends MardaoCrudService<T, Long, D>
+        implements OAuth2UserService<T> {
 
     public OAuth2UserServiceImpl() {
         super(DOAuth2User.class, Long.class, DOAuth2UserDaoBean.class);
     }
+
+    public OAuth2UserServiceImpl(Class domainClass, Class daoClass) {
+        super(domainClass, Long.class, daoClass);
+    }
     
     @Override
-    public DOAuth2User createUser(String email, String firstName, String lastName, 
+    public T createUser(String email, String firstName, String lastName, 
             String name, String providerId, String providerUserId, 
             String username, String profileUrl) {
-        DOAuth2User user = createDomain();
+        T user = createDomain();
         user.setDisplayName(name);
         user.setEmail(email);
         ArrayList roles = new ArrayList();
@@ -43,7 +48,7 @@ public class OAuth2UserServiceImpl
     }    
 
     @Override
-    public Object getUserKey(DOAuth2User user) {
+    public Object getUserKey(T user) {
         return getPrimaryKey(user);
     }
 }

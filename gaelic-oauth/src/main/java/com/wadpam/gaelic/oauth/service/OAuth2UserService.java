@@ -11,7 +11,7 @@ import com.wadpam.gaelic.oauth.domain.DOAuth2User;
  *
  * @author sosandstrom
  */
-public interface OAuth2UserService extends CrudService<DOAuth2User, Long> {
+public interface OAuth2UserService<T extends DOAuth2User> extends CrudService<T, Long> {
 
     /**
      * Creates a new user based on Connection details
@@ -23,7 +23,7 @@ public interface OAuth2UserService extends CrudService<DOAuth2User, Long> {
      * @param providerUserId
      * @return the created user
      */
-    DOAuth2User createUser(String email, String firstName, String lastName, 
+    T createUser(String email, String firstName, String lastName, 
             String name, String providerId, String providerUserId, 
             String username, String profileUrl);
     
@@ -31,5 +31,5 @@ public interface OAuth2UserService extends CrudService<DOAuth2User, Long> {
      * @param user
      * @return the primary key for the specified user
      */
-    Object getUserKey(DOAuth2User user);
+    Object getUserKey(T user);
 }

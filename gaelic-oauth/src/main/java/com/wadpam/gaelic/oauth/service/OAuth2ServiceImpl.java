@@ -37,7 +37,7 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
     
     private DConnectionDao connectionDao;
     
-    private OAuth2UserService oauth2UserService;
+    private OAuth2UserService<DOAuth2User> oauth2UserService;
     
     protected final ArrayList<CrudListener> listeners = new ArrayList<CrudListener>();
     

@@ -8,9 +8,10 @@ import static com.wadpam.gaelic.converter.BaseConverter.toLong;
 import static com.wadpam.gaelic.converter.BaseConverter.toString;
 import com.wadpam.gaelic.converter.MardaoConverter;
 import static com.wadpam.gaelic.converter.MardaoConverter.convertLongEntity;
-import com.wadpam.gaelic.oauth.dao.DOAuth2UserDao;
 import com.wadpam.gaelic.oauth.domain.DConnection;
 import com.wadpam.gaelic.oauth.json.JConnection;
+import net.sf.mardao.core.dao.Dao;
+import net.sf.mardao.core.domain.AbstractLongEntity;
 
 /**
  *
@@ -18,9 +19,9 @@ import com.wadpam.gaelic.oauth.json.JConnection;
  */
 public class ConnectionConverter extends MardaoConverter<JConnection, DConnection> {
     
-    private static DOAuth2UserDao userDao;
+    private static Dao<AbstractLongEntity, Long> userDao;
 
-    public ConnectionConverter(DOAuth2UserDao userDao) {
+    public ConnectionConverter(Dao userDao) {
         super(JConnection.class, DConnection.class);
         ConnectionConverter.userDao = userDao;
     }
