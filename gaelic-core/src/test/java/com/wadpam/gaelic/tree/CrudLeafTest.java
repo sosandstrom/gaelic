@@ -54,13 +54,18 @@ public class CrudLeafTest {
     }
     
     protected JDate doCreate() throws ServletException, IOException {
-        request.setMethod("POST");
-        request.setRequestURI("/api/gaelic/crud/v10");
-        request.setContentType("application/json");
-        request.setContent("{\"startDate\":12345678}".getBytes());
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        MockHttpServletResponse res = new MockHttpServletResponse();
+
+        req.setMethod("POST");
+        req.setRequestURI("/api/gaelic/crud/v10");
+        req.setContentType("application/json");
+        req.setContent("{\"startDate\":12345678}".getBytes());
         
-        servlet.service(request, response);
-        return GaelicServlet.MAPPER.readValue(response.getContentAsString(), JDate.class);
+        servlet.service(req, res);
+        assertEquals(201, res.getStatus());
+        assertNotNull(res.getContentAsString());
+        return GaelicServlet.MAPPER.readValue(res.getContentAsString(), JDate.class);
     }
 
     @Test
@@ -69,13 +74,9 @@ public class CrudLeafTest {
 
         JDate jDate = doCreate();
         
-        assertEquals(201, response.getStatus());
-        assertNotNull(response.getContentAsString());
         assertEquals("12345678", jDate.getId());
         assertEquals((Long)12345678L, jDate.getStartDate());
 
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
         request.setMethod("GET");
         request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
         
@@ -88,10 +89,7 @@ public class CrudLeafTest {
         LOG.info("---------------- testDelete() -------------------------------");
 
         JDate jDate = doCreate();
-        assertEquals(201, response.getStatus());
 
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
         request.setMethod("DELETE");
         request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
         
@@ -110,10 +108,7 @@ public class CrudLeafTest {
     @Test
     public void testGetPage() throws ServletException, IOException {
         JDate jDate = doCreate();
-        assertEquals(201, response.getStatus());
 
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
         request.setMethod("GET");
         request.setRequestURI("/api/gaelic/crud/v10");
         LOG.info("---------------- testGetPage() -------------------------------");
@@ -242,14 +237,11 @@ public class CrudLeafTest {
         LOG.info("---------------- testUpdate() -------------------------------");
 
         JDate jDate = doCreate();
-        assertEquals(201, response.getStatus());
 
         final long millis = System.currentTimeMillis();
         assertTrue(jDate.getStartDate() < millis);
         jDate.setStartDate(millis);
         
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
         request.setMethod("POST");
         request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
         request.setContentType("application/json");
