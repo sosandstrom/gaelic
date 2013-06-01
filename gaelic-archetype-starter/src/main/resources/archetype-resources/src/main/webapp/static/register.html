@@ -1,0 +1,84 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<html>
+    <head>
+        <title>Register</title>
+        <!-- Bootstrap -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <style>
+            body {
+                padding-top: 60px; /* When using the navbar-top-fixed */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="navbar navbar-fixed-top navbar-inverse">
+            <div class="navbar-inner">
+                <div class="container">				
+                    <a id="tableName" class="brand" href="${symbol_pound}">Gaelic Bootstrap</a>
+                    <ul class="nav">
+                        <li class="active"><a href="${symbol_pound}register-profile" data-toggle="tab">Register your Profile</a></li>
+                        <!--<li ><a href="${symbol_pound}create-entity" data-toggle="tab">Create</a></li>-->
+                    </ul>
+                </div>	
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="tabbable">
+
+                <div class="tab-content">
+                    <div id="register-profile" class="tab-pane active">
+                        <form id="createForm">
+                            <fieldset id="createFieldset">
+                                <input id="userId" type="hidden" value="" />
+                                
+                                <label for="displayName">Name</label>
+                                <input id="displayName" type="text" placeholder="First Lastname" value="" />
+                                
+                                <label for="phoneNumber">Mobile</label>
+                                <input id="phoneNumber" type="tel" placeholder="+855123456789" value="" />
+                                
+                                <label for="email">Email</label>
+                                <input id="email" type="email" placeholder="first.last@host.com" value="" />
+
+                            </fieldset>
+                        </form>
+                        <button class="btn btn-primary" id="createButton" onclick="registerDetails();" >Submit</button>
+                    </div>
+                </div>
+            </div><!-- tabbable -->
+        </div><!-- container -->
+
+        <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+
+        <script src="/js/crud_api.js"></script>
+        <script type="text/javascript">
+${symbol_dollar}(function() {
+    crud_Read("api/kh/profile/v10", "me")
+    .success(function(data) {
+        console.log(data);
+        ${symbol_dollar}("${symbol_pound}userId").val(data.id);
+        ${symbol_dollar}("${symbol_pound}displayName").val(data.displayName);
+        ${symbol_dollar}("${symbol_pound}phoneNumber").val(data.phoneNumber);
+        ${symbol_dollar}("${symbol_pound}email").val(data.email);
+    });
+});
+
+function registerDetails() {
+    var body = new Object();
+    body.id = ${symbol_dollar}("${symbol_pound}userId").val();
+    body.displayName = ${symbol_dollar}("${symbol_pound}displayName").val();
+    body.phoneNumber = ${symbol_dollar}("${symbol_pound}phoneNumber").val();
+    body.email = ${symbol_dollar}("${symbol_pound}email").val();
+    
+    crud_Update("api/kh/profile/v10", "me", body)
+    .success(function() {
+        document.location.href = "/home.html";
+    })
+}
+        </script>
+    </body>
+</html>

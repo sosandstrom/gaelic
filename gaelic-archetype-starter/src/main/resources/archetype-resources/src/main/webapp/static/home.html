@@ -1,0 +1,87 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<html>
+    <head>
+        <title>Home</title>
+        <!-- Bootstrap -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <style>
+            body {
+                padding-top: 60px; /* When using the navbar-top-fixed */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="navbar navbar-fixed-top navbar-inverse">
+            <div class="navbar-inner">
+                <div class="container">				
+                    <a id="tableName" class="brand" href="${symbol_pound}">Gaelic Bootstrap</a>
+                    <ul class="nav">
+                        <li class="active"><a href="${symbol_pound}all-entities" data-toggle="tab">My Page</a></li>
+                        <!--                        <li ><a href="${symbol_pound}create-entity" data-toggle="tab">Create</a></li>-->
+                    </ul>
+                </div>	
+                <div class="nav-collapse collapse">
+                    <ul class="nav navbar-text pull-right" id="headerUser">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown"><span class="icon-white icon-user"></span> <span id="headerUsername"></span> <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="register.html">Profile</a></li>
+<!--                                <li data-target="templates"><a>Templates</a></li>
+                                <li data-target="languages"><a>Languages</a></li>-->
+                                <li class="divider"></li>
+                                <li><a id="headerUserAction" href="api/kh/federated/v11?_method=DELETE&redirect_uri=/index.html" >Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="tabbable">
+
+                <div class="tab-content">
+                    <div id="all-entities" class="tab-pane active">
+                        <table class="table">
+                            <thead>
+                                <tr id="allHead"></tr>
+                            </thead>
+                            <tbody id="allBody">
+                            </tbody>
+                        </table>
+                        <button id="allLoadMore" class="btn" onclick="crudLoadMore();" >Load more...</button>
+                    </div>
+
+                    <div id="create-entity" class="tab-pane">
+                        <form id="createForm">
+                            <fieldset id="createFieldset">
+
+
+                            </fieldset>
+                        </form>
+                        <button class="btn btn-primary" id="createButton" onclick="crudCreateEntity();" >Create</button>
+                    </div>
+                </div>
+            </div><!-- tabbable -->
+        </div><!-- container -->
+
+        <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+
+        <script src="/js/crud_api.js"></script>
+        <script type="text/javascript">
+                            ${symbol_dollar}(function() {
+                                crud_Read("api/kh/profile/v10", "me")
+                                        .success(function(data) {
+                                    console.log(data);
+//                                    ${symbol_dollar}("${symbol_pound}userId").val(data.id);
+                                    ${symbol_dollar}("${symbol_pound}headerUsername").text(data.displayName);
+//                                    ${symbol_dollar}("${symbol_pound}phoneNumber").val(data.phoneNumber);
+//                                    ${symbol_dollar}("${symbol_pound}email").val(data.email);
+                                });
+                            });
+        </script>
+    </body>
+</html>

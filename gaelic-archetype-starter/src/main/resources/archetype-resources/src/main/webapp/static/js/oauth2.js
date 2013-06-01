@@ -23,11 +23,9 @@ function registerFederated(apiUrl, basicUsername, basicPassword, providerId) {
                     console.log("register fail...")
             },
             success: function(data, textStatus, jqXHR){
-//                                    $("#response").html("register success" + data);
-                    //Redirect to admin login success page
-//                                    redirect(token);
                     jConnection = data;
-                    console.log("Register success " + data);
+                    jConnection.statusCode = jqXHR.status;
+                    console.log("Register success " + jConnection);
             },
             complete: function(jqXHR, textStatus){
                     console.log(textStatus);
