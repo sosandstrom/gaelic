@@ -6,7 +6,7 @@ REST framework for Google App Engine
 Generate starter project using Maven Archetype
 ----------------------------------------------
     
-    mvn archetype:generate -DarchetypeGroupId=com.wadpam.gaelic -DarchetypeArtifactId=gaelic-archetype-starter -DarchetypeVersion=1.0.5
+    mvn archetype:generate -DarchetypeGroupId=com.wadpam.gaelic -DarchetypeArtifactId=gaelic-archetype-starter -DarchetypeVersion=1.0.6
     
 If this is your first time using this App Engine SDK of the version, download and unpack the SDK by typing
     
@@ -14,7 +14,7 @@ If this is your first time using this App Engine SDK of the version, download an
     
 in the generated projects directory. Then, build your project and start your development server with
     
-    mvn clean gae:run -Pmardao
+    mvn clean gae:run
     
 Introduction
 ------------
