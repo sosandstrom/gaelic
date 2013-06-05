@@ -279,6 +279,12 @@ public class CrudLeaf<J extends Serializable,
     
     @Override
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, final int pathIndex) {
+        return isServingNode(request, pathList, pathIndex, supportedMethods(), getErrorBaseCode()) ? this : null;
+    }
+    
+    public static boolean isServingNode(HttpServletRequest request, 
+            LinkedList<String> pathList, final int pathIndex,
+            final Set<String> supportedMethods, int errorBaseCode) {
         final String method = request.getMethod();
         LOG.trace("   mapping {} {} for {} ({})", new Object[] {
             method, request.getRequestURI(), pathIndex, pathList.size()
@@ -288,12 +294,12 @@ public class CrudLeaf<J extends Serializable,
         // support '' and /
         if (pathIndex == pathList.size() || 
                 (pathIndex == pathList.size()-1 && pathList.getLast().isEmpty())) {
-            if (supportedMethods().contains(method)) {
-                return this;
+            if (supportedMethods.contains(method)) {
+                return true;
             }
             else {
-                throw new MethodNotAllowedException(getErrorBaseCode() + ERR_OFFSET_METHOD, 
-                        method, null, supportedMethods());
+                throw new MethodNotAllowedException(errorBaseCode + ERR_OFFSET_METHOD, 
+                        method, null, supportedMethods);
             }
         }
 
@@ -302,17 +308,18 @@ public class CrudLeaf<J extends Serializable,
                 (pathIndex == pathList.size()-2 && pathList.getLast().isEmpty())) {
 
             request.setAttribute(REQUEST_ATTR_FILENAME, pathList.get(pathIndex));
-            if (supportedMethods().contains(method)) {
-                return this;
+            if (supportedMethods.contains(method)) {
+                return true;
             }
             else {
-                throw new MethodNotAllowedException(getErrorBaseCode() + ERR_OFFSET_METHOD, 
-                        method, null, supportedMethods());
+                throw new MethodNotAllowedException(errorBaseCode + ERR_OFFSET_METHOD, 
+                        method, null, supportedMethods);
             }
         }
         
-        return null;
+        return false;
     }
+    
     
     public static String getType(String key, Class value) {
         if (Long.class.equals(value) ||
