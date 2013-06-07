@@ -24,6 +24,7 @@ import static com.wadpam.gaelic.Node.getPathVariable;
 import com.wadpam.gaelic.exception.ConflictException;
 import com.wadpam.gaelic.exception.NotFoundException;
 import com.wadpam.gaelic.json.JEntity;
+import com.wadpam.gaelic.json.JKey;
 import static com.wadpam.gaelic.tree.CrudLeaf.REQUEST_ATTR_FILENAME;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,26 +58,48 @@ public class EntityLeaf extends Node {
     
     protected static JEntity convertEntity(Entity from) {
         JEntity to = new JEntity();
-        to.setId(from.getKey().getId());
-        to.setKind(from.getKind());
+        convertKey(from.getKey(), to);
         convertProperties(from.getProperties(), to);
         
         return to;
     }
 
     protected static Entity convertJEntity(JEntity from) {
+        final Key key = convertJKey(from);
         Entity to;
-        
-        if (null != from.getId()) {
-            to = new Entity(from.getKind(), from.getId());
+        if (null == key) {
+            // with parent?
+            final Key parent = convertJKey(from.getParentKey());
+            to = null != parent ? new Entity(from.getKind(), parent) : new Entity(from.getKind());
         }
         else {
-            to = new Entity(from.getKind());
+             to = new Entity(key); 
         }
         
         to.setPropertiesFrom(convertJProperties(from.getProperties(), from.getPropertyTypes()));
         
         return to;
+    }
+    
+    protected static Key convertJKey(JKey from) {
+        if (null == from) {
+            return null;
+        }
+        
+        if (null != from.getId() || null != from.getName()) {
+            LOG.debug("parent:{}, kind:{}, id:{}, name:{}", new Object[] {
+                from.getParentKey(), from.getKind(), from.getId(), from.getName()
+            });
+
+            final Key parent = convertJKey(from.getParentKey());
+
+            if (null != from.getName()) {
+                return KeyFactory.createKey(parent, from.getKind(), from.getName());
+            }
+
+            return KeyFactory.createKey(parent, from.getKind(), from.getId());
+        }
+        return null;
     }
 
     protected static PropertyContainer convertJProperties(Map<String, Object> properties, Map<String, String> propertyTypes) {
@@ -104,6 +127,27 @@ public class EntityLeaf extends Node {
         }
         
         return to;
+    }
+    
+    protected static JKey convertKey(Key from) {
+        if (null == from) {
+            return null;
+        }
+        
+        final JKey to = new JKey();
+        convertKey(from, to);
+        return to;
+    }
+        
+    protected static void convertKey(Key from, JKey to) {
+        to.setParentKey(convertKey(from.getParent()));
+        if (null != from.getName()) {
+            to.setName(from.getName());
+        }
+        else {
+            to.setId(from.getId());
+        }
+        to.setKind(from.getKind());
     }
 
     protected static void convertProperties(Map<String, Object> from, JEntity body) {

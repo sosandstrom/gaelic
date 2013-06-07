@@ -10,27 +10,9 @@ import java.util.Map;
  *
  * @author sosandstrom
  */
-public class JEntity {
-    private String kind;
-    private Long id;
+public class JEntity extends JKey {
     private Map<String, Object> properties;
     private Map<String, String> propertyTypes;
-
-    public String getKind() {
-        return kind;
-    }
-
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Map<String, Object> getProperties() {
         return properties;
