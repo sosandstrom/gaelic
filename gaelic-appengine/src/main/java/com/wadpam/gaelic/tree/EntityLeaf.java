@@ -21,6 +21,7 @@ import static com.wadpam.gaelic.Node.METHOD_DELETE;
 import static com.wadpam.gaelic.Node.METHOD_GET;
 import static com.wadpam.gaelic.Node.METHOD_POST;
 import static com.wadpam.gaelic.Node.getPathVariable;
+import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.exception.ConflictException;
 import com.wadpam.gaelic.exception.NotFoundException;
 import com.wadpam.gaelic.json.JEntity;
@@ -49,6 +50,7 @@ public class EntityLeaf extends Node {
     public static final String PATH_KIND = "{kind}";
     
     public static final int ERROR_BASE = GaelicServlet.ERROR_CODE_ENTITY_BASE;
+    public static final int ERROR_DELETE_BAD_REQUEST = ERROR_BASE + 0;
     public static final int ERROR_GET_NOT_FOUND = ERROR_BASE + 4;
     public static final int ERROR_KIND_CONFLICT = ERROR_BASE + 9;
     public static final int ERROR_ID_CONFLICT = ERROR_BASE + 19;
@@ -175,6 +177,22 @@ public class EntityLeaf extends Node {
             to.put(entry.getKey(), value);
         }
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final String kind = getPathVariable(PATH_KIND);
+        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
+        
+        if (null != filename) {
+            final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            final long id = Long.parseLong(filename);
+            final Key key = KeyFactory.createKey(kind, id);
+            datastore.delete(key);
+        }
+        else {
+            throw new BadRequestException(ERROR_DELETE_BAD_REQUEST, "Must include a primary key", null);
+        }
+    }
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -205,6 +223,7 @@ public class EntityLeaf extends Node {
         }
         
         if (null != filename) {
+            // Update is only a check of ID for consistency
             if (null == jBody.getId()) {
                 jBody.setId(Long.parseLong(filename));
             }
@@ -212,9 +231,7 @@ public class EntityLeaf extends Node {
                 throw new ConflictException(ERROR_ID_CONFLICT, String.format("%s != %s", filename, jBody.getId()), null);
             }
         }        
-        else {
-            putEntity(request, response, jBody);
-        }
+        putEntity(request, response, jBody);
     }
     
     protected void getEntities(HttpServletRequest request, HttpServletResponse response, String kind) {
