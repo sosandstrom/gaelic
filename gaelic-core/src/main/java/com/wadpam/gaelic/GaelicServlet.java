@@ -179,6 +179,8 @@ public class GaelicServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LOG.info("======= GaelicServlet processing {} {} ...", 
+                request.getMethod(), request.getRequestURI());
         RestException exception = null;
 
         // stack the request URI
@@ -191,7 +193,7 @@ public class GaelicServlet extends HttpServlet {
 
                 // populate and serve using handler
                 request.setAttribute(REQUEST_ATTR_HANDLERNODE, handler);
-                LOG.debug("Mapped {} {} to Handler {}", new Object[] {
+                LOG.debug("------- Mapped {} {} to Handler {}", new Object[] {
                     request.getMethod(), request.getRequestURI(), handler
                 });
 
@@ -215,6 +217,8 @@ public class GaelicServlet extends HttpServlet {
         finally {
             renderResponse(request, response, exception);
             afterCompletion(request, response, handler, exception);
+            LOG.info("+++++++ GaelicServlet done processing {} {} +++++++", 
+                    request.getMethod(), request.getRequestURI());
         }
     }
 
