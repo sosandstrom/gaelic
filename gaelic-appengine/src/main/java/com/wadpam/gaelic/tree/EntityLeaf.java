@@ -14,6 +14,9 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Text;
 import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.Node;
@@ -52,11 +55,27 @@ public class EntityLeaf extends Node {
     public static final int ERROR_BASE = GaelicServlet.ERROR_CODE_ENTITY_BASE;
     public static final int ERROR_DELETE_BAD_REQUEST = ERROR_BASE + 0;
     public static final int ERROR_GET_NOT_FOUND = ERROR_BASE + 4;
+    public static final int ERROR_GET_FILTER_TYPE = ERROR_BASE + 5;
     public static final int ERROR_KIND_CONFLICT = ERROR_BASE + 9;
     public static final int ERROR_ID_CONFLICT = ERROR_BASE + 19;
     
     public static final TreeSet<String> SUPPORTED_METHODS = 
             new TreeSet<String>(Arrays.asList(METHOD_DELETE, METHOD_GET, METHOD_POST));
+    
+    public static final char FILTER_EQUALS_STRING = 's';
+    public static final char FILTER_EQUALS_INTEGER = 'i';
+    public static final char FILTER_EQUALS_LONG = 'l';
+    public static final char FILTER_EQUALS_DATE = 'd';
+    /** String Filter Greater Than or Equal */
+    public static final char FILTER_GTE_STRING = 'S';
+    /** Integer Filter Greater Than or Equal */
+    public static final char FILTER_GTE_INTEGER = 'I';
+    /** Long Filter Greater Than or Equal */
+    public static final char FILTER_GTE_LONG = 'L';
+    /** Date Filter Greater Than or Equal */
+    public static final char FILTER_GTE_DATE = 'D';
+    
+    public static final String FILTER_NULL_STRING = "NULL";
     
     protected static JEntity convertEntity(Entity from) {
         JEntity to = new JEntity();
@@ -237,6 +256,39 @@ public class EntityLeaf extends Node {
     protected void getEntities(HttpServletRequest request, HttpServletResponse response, String kind) {
         final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         final Query query = new Query(kind);
+        
+        Map<String,String[]> params = request.getParameterMap();
+        for (Entry<String,String[]> entry : params.entrySet()) {
+            
+            // simple filter
+            if (1 == entry.getValue().length) {
+                FilterOperator op = getFilterOperator(entry.getValue()[0]);
+                query.setFilter(new Query.FilterPredicate(entry.getKey(), op, getFilterValue(entry.getValue()[0])));
+            }
+            else if (1 < entry.getValue().length) {
+                
+                // range  min <= value < max?
+                if (2 == entry.getValue().length && 
+                        FilterOperator.GREATER_THAN_OR_EQUAL.equals(getFilterOperator(entry.getValue()[0]))) {
+                    
+                    final Filter gteFilter = new Query.FilterPredicate(entry.getKey(), 
+                            FilterOperator.GREATER_THAN_OR_EQUAL, getFilterValue(entry.getValue()[0]));
+                    final Filter ltFilter = new Query.FilterPredicate(entry.getKey(), 
+                            FilterOperator.LESS_THAN, getFilterValue(entry.getValue()[1]));
+                    query.setFilter(CompositeFilterOperator.and(gteFilter, ltFilter));
+                }
+                else {
+                    
+                    // multiple values gives IN
+                    final ArrayList values = new ArrayList();
+                    for (String v : entry.getValue()) {
+                        values.add(getFilterValue(v));
+                    }
+                    query.setFilter(new Query.FilterPredicate(entry.getKey(), Query.FilterOperator.IN, values));
+                }
+            }
+        }
+        
         PreparedQuery pq = datastore.prepare(query);
         Iterable<Entity> i = pq.asIterable();
         
@@ -260,6 +312,40 @@ public class EntityLeaf extends Node {
         }
     }
     
+    protected static FilterOperator getFilterOperator(String stringValue) {
+        final char type = stringValue.charAt(0);
+        switch (type) {
+            case FILTER_GTE_STRING:
+            case FILTER_GTE_INTEGER:
+            case FILTER_GTE_LONG:
+            case FILTER_GTE_DATE:
+                return FilterOperator.GREATER_THAN_OR_EQUAL;
+        }
+        
+        return FilterOperator.EQUAL;
+    }
+        
+    protected static Object getFilterValue(String stringValue) {
+        final char type = stringValue.charAt(0);
+        final String sub = stringValue.substring(1);
+        if (FILTER_NULL_STRING.equals(sub)) {
+            return null;
+        }
+        
+        switch (type) {
+            case FILTER_EQUALS_STRING:
+                return  sub;
+            case FILTER_EQUALS_INTEGER:
+                return Integer.parseInt(sub);
+            case FILTER_EQUALS_LONG:
+                return Long.parseLong(sub);
+            case FILTER_EQUALS_DATE:
+                return new Date(Long.parseLong(sub));
+        }
+        
+        throw new BadRequestException(ERROR_GET_FILTER_TYPE, String.format("No such filter value type {}", type), null);
+    }
+
     protected JEntity getRequestBody(HttpServletRequest request) throws IOException {
         JEntity body = null;
         
@@ -274,6 +360,7 @@ public class EntityLeaf extends Node {
     
     @Override
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, int pathIndex) {
+        LOG.debug("path[{}]={}", pathIndex, pathList.get(pathIndex-1));
         return CrudLeaf.isServingNode(request, 
                 pathList, pathIndex, 
                 SUPPORTED_METHODS, ERROR_BASE) ?

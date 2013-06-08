@@ -8,7 +8,7 @@
     </parent>
     <artifactId>gaelic-appengine</artifactId>
     <packaging>jar</packaging>
-    <name>Gaelic Google App Engine</name>
+    <name>Gaelic GAE</name>
 
     <!-- Specify hard-coded project properties here -->
     <properties>

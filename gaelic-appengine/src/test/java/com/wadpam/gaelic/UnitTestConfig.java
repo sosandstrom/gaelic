@@ -7,6 +7,7 @@ package com.wadpam.gaelic;
 import static com.wadpam.gaelic.GaelicConfig.BUILDER;
 import com.wadpam.gaelic.tree.DomainLeaf;
 import com.wadpam.gaelic.tree.DomainNamespaceInterceptor;
+import com.wadpam.gaelic.tree.EntityLeaf;
 import javax.servlet.ServletConfig;
 
 /**
@@ -26,6 +27,11 @@ public class UnitTestConfig implements GaelicConfig {
                 .interceptedPath("{domain}", dni)
                     // add /endpoints
                     .add("namespace", DomainLeaf.class).named("getNamespace()");
+        
+        BUILDER.from(Node.PATH_DOMAIN)
+                    .path("entity")
+                        // add {kind}
+                        .add(EntityLeaf.PATH_KIND, EntityLeaf.class);
                     
         return BUILDER.build();
     }

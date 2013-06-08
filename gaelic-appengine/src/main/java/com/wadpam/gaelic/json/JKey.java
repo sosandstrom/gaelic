@@ -14,6 +14,12 @@ public class JKey {
     private Long id;
     private String name;
 
+    @Override
+    public String toString() {
+        return String.format("%s{%s(%s)}", getClass().getSimpleName(), kind,
+                null != id ? id.toString() : name);
+    }
+    
     public JKey getParentKey() {
         return parentKey;
     }
