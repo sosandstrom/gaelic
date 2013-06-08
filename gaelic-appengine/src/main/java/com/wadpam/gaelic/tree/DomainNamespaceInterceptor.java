@@ -29,7 +29,7 @@ public class DomainNamespaceInterceptor implements Interceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Node handler) throws ServletException, IOException {
         final String uri = request.getRequestURI();
         final String domain = DomainNamespaceFilter.getDomainNamespace(uri);
-        LOG.info("======= Switching namespace to {}, {} {} ========", 
+        LOG.info("Switching namespace to {}, {} {}", 
                 new Object[] {domain, request.getMethod(), uri});
         
         final String entry = NamespaceManager.get();

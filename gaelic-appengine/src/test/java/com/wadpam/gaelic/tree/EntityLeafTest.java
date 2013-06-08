@@ -108,6 +108,7 @@ public class EntityLeafTest {
         
         servlet.service(request, response);
         assertEquals(200, response.getStatus());
+        LOG.info("response: {}", response.getContentAsString());
         final JEntity body = GaelicServlet.MAPPER.readValue(response.getContentAsString(), JEntity.class);
         assertEquals(empl.getId(), body.getId());
         assertEquals((Long)1370503068166L, body.getProperties().get("startDate"));

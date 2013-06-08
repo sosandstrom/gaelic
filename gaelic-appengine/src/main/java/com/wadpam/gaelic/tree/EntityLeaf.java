@@ -77,6 +77,8 @@ public class EntityLeaf extends Node {
     
     public static final String FILTER_NULL_STRING = "NULL";
     
+    public static final String REQUEST_ATTR_JKEY = "com.wadpam.gaelic.jKey";
+    
     protected static JEntity convertEntity(Entity from) {
         JEntity to = new JEntity();
         convertKey(from.getKey(), to);
@@ -215,14 +217,13 @@ public class EntityLeaf extends Node {
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final String kind = getPathVariable(PATH_KIND);
-        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
+        final JKey jKey = (JKey) request.getAttribute(REQUEST_ATTR_JKEY);
         
-        if (null != filename) {
-            getEntity(request, response, kind, Long.parseLong(filename));
+        if (null != jKey.getId() || null != jKey.getName()) {
+            getEntity(request, response, jKey);
         }
         else {
-            getEntities(request, response, kind);
+            getEntities(request, response, jKey);
         }
     }
 
@@ -253,9 +254,9 @@ public class EntityLeaf extends Node {
         putEntity(request, response, jBody);
     }
     
-    protected void getEntities(HttpServletRequest request, HttpServletResponse response, String kind) {
+    protected void getEntities(HttpServletRequest request, HttpServletResponse response, JKey jKey) {
         final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        final Query query = new Query(kind);
+        final Query query = new Query(jKey.getKind());
         
         Map<String,String[]> params = request.getParameterMap();
         for (Entry<String,String[]> entry : params.entrySet()) {
@@ -300,15 +301,15 @@ public class EntityLeaf extends Node {
         setResponseBody(request, HttpServletResponse.SC_OK, body);
     }
     
-    protected void getEntity(HttpServletRequest request, HttpServletResponse response, String kind, long id) {
+    protected void getEntity(HttpServletRequest request, HttpServletResponse response, JKey jKey) {
         final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        final Key key = KeyFactory.createKey(kind, id);
+        final Key key = convertJKey(jKey);
         try {
             final Entity entity = datastore.get(key);
             final JEntity body = convertEntity(entity);
             setResponseBody(request, HttpServletResponse.SC_OK, body);
         } catch (EntityNotFoundException ex) {
-            throw new NotFoundException(ERROR_GET_NOT_FOUND, String.format("%s(%d)", kind, id), null);
+            throw new NotFoundException(ERROR_GET_NOT_FOUND, jKey.toString(), null);
         }
     }
     
@@ -361,10 +362,30 @@ public class EntityLeaf extends Node {
     @Override
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, int pathIndex) {
         LOG.debug("path[{}]={}", pathIndex, pathList.get(pathIndex-1));
-        return CrudLeaf.isServingNode(request, 
-                pathList, pathIndex, 
-                SUPPORTED_METHODS, ERROR_BASE) ?
-                this : null;
+        
+        JKey parentKey = null, key = null;
+        for (int i = pathIndex-1; i < pathList.size(); i += 2) {
+            final String kind = pathList.get(i);
+            final String name = i+1 < pathList.size() ? pathList.get(i+1) : null;
+            key = new JKey();
+            key.setParentKey(parentKey);
+            key.setKind(kind);
+            if (null != name && 0 < name.length()) {
+                try {
+                    key.setId(Long.parseLong(name));
+                }
+                catch (NumberFormatException ifStringKey) {
+                    key.setName(name);
+                }
+            }
+            
+            parentKey = key;
+        }
+        
+        request.setAttribute(REQUEST_ATTR_JKEY, key);
+        
+        final String method = request.getMethod();
+        return SUPPORTED_METHODS.contains(method) ? this : null;
     }
 
     protected void putEntity(HttpServletRequest request, HttpServletResponse response, JEntity jBody) {
