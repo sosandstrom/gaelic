@@ -201,13 +201,11 @@ public class EntityLeaf extends Node {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final String kind = getPathVariable(PATH_KIND);
-        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
+        final JKey jKey = (JKey) request.getAttribute(REQUEST_ATTR_JKEY);
         
-        if (null != filename) {
+        if (null != jKey.getId() || null != jKey.getName()) {
             final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            final long id = Long.parseLong(filename);
-            final Key key = KeyFactory.createKey(kind, id);
+            final Key key = convertJKey(jKey);
             datastore.delete(key);
         }
         else {

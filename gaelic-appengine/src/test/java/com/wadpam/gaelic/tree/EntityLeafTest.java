@@ -184,7 +184,7 @@ public class EntityLeafTest {
         assertEquals("Not Found", response.getErrorMessage());
 //        assertEquals("{:", response.getContentAsString());
         assertTrue(response.getContentAsString().startsWith(
-                "{\"code\":204,\"status\":404,\"message\":\"Not Found\",\"developerMessage\":\"Empl(9999)\",\"stackTrace\":\"com.wadpam.gaelic.tree.EntityLeaf.getEntity:"));
+                "{\"code\":204,\"status\":404,\"message\":\"Not Found\",\"developerMessage\":\"JKey{Empl(9999)}\",\"stackTrace\":\"com.wadpam.gaelic.tree.EntityLeaf.getEntity:"));
     }
 
     @Test
