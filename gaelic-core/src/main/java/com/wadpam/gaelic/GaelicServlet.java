@@ -236,7 +236,6 @@ public class GaelicServlet extends HttpServlet {
         protected static String getEffectiveMethod(HttpServletRequest request) {
             final String method = request.getMethod();
             final String _method = request.getParameter("_method");
-            LOG.info("{} _method is {}", method, _method);
             if (Node.METHOD_GET.equals(method) && null != _method) {
                 return _method;
             }
