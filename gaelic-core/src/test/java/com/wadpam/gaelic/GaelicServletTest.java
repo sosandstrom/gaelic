@@ -127,4 +127,26 @@ public class GaelicServletTest {
         assertNull(request.getAttribute(UnitTestInterceptor.REQUEST_ATTR_INTERCEPTOR_POST));
         assertNull(request.getAttribute(UnitTestInterceptor.REQUEST_ATTR_INTERCEPTOR_AFTER));
     }
+
+    @Test
+    public void testJsonpPost() throws ServletException, IOException {
+        request.setMethod("GET");
+        request.setRequestURI("/api/gaelic/endpoints");
+        request.setParameter("_method", "POST");
+        request.setQueryString("?_method=POST");
+        LOG.info("---------------- testJsonpPost() -------------------------------");
+
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+//        assertTrue(0 < response.getContentLength());
+        assertEquals("application/json", response.getContentType());
+        assertEquals("{\"method\":\"POST\",\"uri\":\"/api/gaelic/endpoints\"}", response.getContentAsString());
+        assertNull(request.getAttribute(UnitTestInterceptor.REQUEST_ATTR_INTERCEPTOR_PRE));
+        
+        Node handler = (Node) request.getAttribute(GaelicServlet.REQUEST_ATTR_HANDLERNODE);
+        assertNotNull(handler);
+        String domain = handler.getPathVariable("{domain}");
+        assertEquals("gaelic", domain);
+    }
+
 }

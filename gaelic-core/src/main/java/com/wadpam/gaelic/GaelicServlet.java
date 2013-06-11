@@ -16,6 +16,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -178,7 +179,9 @@ public class GaelicServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+        final GaelicRequest request = new GaelicRequest(req);
+        
         LOG.info("======= GaelicServlet processing {} {} ...", 
                 request.getMethod(), request.getRequestURI());
         RestException exception = null;
@@ -222,4 +225,28 @@ public class GaelicServlet extends HttpServlet {
         }
     }
 
+    public static class GaelicRequest extends HttpServletRequestWrapper {
+        private final String method;
+
+        public GaelicRequest(HttpServletRequest request) {
+            super(request);
+            this.method = getEffectiveMethod(request);
+        }
+
+        protected static String getEffectiveMethod(HttpServletRequest request) {
+            final String method = request.getMethod();
+            final String _method = request.getParameter("_method");
+            LOG.info("{} _method is {}", method, _method);
+            if (Node.METHOD_GET.equals(method) && null != _method) {
+                return _method;
+            }
+            return method;
+        }
+    
+        @Override
+        public String getMethod() {
+            return method;
+        }
+        
+    }
 }
