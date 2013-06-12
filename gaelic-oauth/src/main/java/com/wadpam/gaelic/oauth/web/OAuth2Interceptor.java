@@ -89,10 +89,12 @@ public class OAuth2Interceptor extends DomainSecurityInterceptor implements Secu
         // replace username being access_token with parentKeyString
         Object principal = request.getAttribute(ATTR_NAME_PRINCIPAL);
         LOG.debug("principal is {}", principal);
-        DConnection conn = (DConnection) principal;
-        if (null != conn && null != conn.getUserKey()) {
-            final Long userId = oauth2Service.getUserId(conn.getUserKey());
-            request.setAttribute(ATTR_NAME_USERNAME, userId.toString());
+        if (principal instanceof DConnection) {
+            DConnection conn = (DConnection) principal;
+            if (null != conn && null != conn.getUserKey()) {
+                final Long userId = oauth2Service.getUserId(conn.getUserKey());
+                request.setAttribute(ATTR_NAME_USERNAME, userId.toString());
+            }
         }
         
         return username;
