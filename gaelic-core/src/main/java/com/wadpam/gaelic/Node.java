@@ -52,10 +52,15 @@ public class Node extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         
-        initNode(config, null);
+        try {
+            initNode(config, null);
+        }
+        catch (IOException ex) {
+            throw new ServletException("initNode", ex);
+        }
     }
     
-    public void initNode(ServletConfig config, Node parent) throws ServletException {
+    public void initNode(ServletConfig config, Node parent) throws ServletException, IOException {
         LOG.debug("Initializing node {}", toString());
     }
 
@@ -154,8 +159,21 @@ public class Node extends HttpServlet {
         this.name = nodeName;
     }
     
+    public static String getCursorKey(HttpServletRequest request) {
+        return request.getParameter("cursorKey");
+    }
+    
     public static String getDomain() {
         return getPathVariable(PATH_DOMAIN);
+    }
+    
+    public static int getPageSize(HttpServletRequest request) {
+        return getPageSize(request, 10);
+    }
+    
+    public static int getPageSize(HttpServletRequest request, int defaultSize) {
+        final String s = request.getParameter("pageSize");
+        return null != s ? Integer.parseInt(s) : defaultSize;
     }
     
     public static String getPathVariableKey(String name) {
@@ -164,6 +182,11 @@ public class Node extends HttpServlet {
     
     public static String getPathVariable(String name) {
         return (String) currentRequest.get().getAttribute(getPathVariableKey(name));
+    }
+    
+    public static Long getPathVariableLong(String name) {
+        final String value = getPathVariable(name);
+        return null != value ? Long.parseLong(value) : null;
     }
     
     public void setPathVariable(String name, String value) {

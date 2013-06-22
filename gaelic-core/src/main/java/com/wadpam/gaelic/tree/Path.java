@@ -29,7 +29,7 @@ public class Path extends Node {
     }
     
     @Override
-    public void initNode(ServletConfig config, Node parent) throws ServletException {
+    public void initNode(ServletConfig config, Node parent) throws ServletException, IOException {
         super.initNode(config, parent);
         
         for (Node child : paths.values()) {

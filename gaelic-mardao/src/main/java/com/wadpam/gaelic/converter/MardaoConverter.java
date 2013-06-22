@@ -112,6 +112,17 @@ public abstract class MardaoConverter<J extends Serializable, T>
         
         return to;
     }
+    
+    /**
+     * Converts from a Mardao CursorPage of domain objects
+     * @param from the Mardao page of domains
+     * @return a JCursorPage of JSON objects
+     */
+    public JCursorPage<J> convertMardaoDomainPage(CursorPage from) {
+        final JCursorPage<J> to = convertMardaoPage(from);
+        to.setItems(convertDomains(from.getItems()));
+        return to;
+    }
 
 //    public JCursorPage<J> convertPageWithInner(HttpServletRequest request, HttpServletResponse response,
 //            String domain, CursorPage<T, ID> from) {
