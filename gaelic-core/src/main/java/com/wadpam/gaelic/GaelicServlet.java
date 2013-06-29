@@ -44,6 +44,7 @@ public class GaelicServlet extends HttpServlet {
     
     public static final int ERROR_CODE_CRUD_BASE = 100;
     public static final int ERROR_CODE_ENTITY_BASE = 200;
+    public static final int ERROR_CODE_LEAF_BASE = 300;
     public static final int ERROR_CODE_APPLICATION_BASE = 1000;
     
     public static final ObjectMapper MAPPER = new ObjectMapper();
