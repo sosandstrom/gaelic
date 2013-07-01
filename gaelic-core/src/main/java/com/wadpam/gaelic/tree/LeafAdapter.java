@@ -29,10 +29,11 @@ public class LeafAdapter<J extends Object> extends Node {
     public static final int ERR_BASE = GaelicServlet.ERROR_CODE_LEAF_BASE;
     public static final int ERR_PAGESIZE = ERR_BASE + 10;
     
-    /** Contains GET and POST */
+    /** Contains DELETE, GET and POST */
     protected static final HashSet<String> SUPPORTED_METHODS = new HashSet();
     
     static {
+        SUPPORTED_METHODS.add(METHOD_DELETE);
         SUPPORTED_METHODS.add(METHOD_GET);
         SUPPORTED_METHODS.add(METHOD_POST);
     }

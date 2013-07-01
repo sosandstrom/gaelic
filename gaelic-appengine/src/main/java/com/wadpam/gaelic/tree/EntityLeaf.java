@@ -4,6 +4,7 @@
 
 package com.wadpam.gaelic.tree;
 
+import com.wadpam.gaelic.json.JKey;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.EmbeddedEntity;
@@ -28,7 +29,6 @@ import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.exception.ConflictException;
 import com.wadpam.gaelic.exception.NotFoundException;
 import com.wadpam.gaelic.json.JEntity;
-import com.wadpam.gaelic.json.JKey;
 import static com.wadpam.gaelic.tree.CrudLeaf.REQUEST_ATTR_FILENAME;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author sosandstrom
  */
-public class EntityLeaf extends Node {
+public class EntityLeaf extends LeafAdapter<JEntity> {
     
     public static final String PATH_KIND = "{kind}";
     
@@ -76,8 +76,10 @@ public class EntityLeaf extends Node {
     public static final char FILTER_GTE_DATE = 'D';
     
     public static final String FILTER_NULL_STRING = "NULL";
-    
-    public static final String REQUEST_ATTR_JKEY = "com.wadpam.gaelic.jKey";
+
+    public EntityLeaf() {
+        super(JEntity.class);
+    }
     
     protected static JEntity convertEntity(Entity from) {
         JEntity to = new JEntity();
@@ -109,17 +111,17 @@ public class EntityLeaf extends Node {
             return null;
         }
         
-        if (null != from.getId() || null != from.getName()) {
-            LOG.debug("parent:{}, kind:{}, id:{}, name:{}", new Object[] {
-                from.getParentKey(), from.getKind(), from.getId(), from.getName()
-            });
+        if (null != from.getId()) {
+            LOG.debug("parent:{}, kind:{}, id:{}", new Object[] {
+                from.getParentKey(), from.getKind(), from.getId()});
 
             final Key parent = convertJKey(from.getParentKey());
 
-            if (null != from.getName()) {
-                return KeyFactory.createKey(parent, from.getKind(), from.getName());
+            try {
+                long l = Long.parseLong(from.getId());
+                return KeyFactory.createKey(parent, from.getKind(), l);
             }
-
+            catch (NumberFormatException onStringId) { }
             return KeyFactory.createKey(parent, from.getKind(), from.getId());
         }
         return null;
@@ -165,10 +167,10 @@ public class EntityLeaf extends Node {
     protected static void convertKey(Key from, JKey to) {
         to.setParentKey(convertKey(from.getParent()));
         if (null != from.getName()) {
-            to.setName(from.getName());
+            to.setId(from.getName());
         }
         else {
-            to.setId(from.getId());
+            to.setId(Long.toString(from.getId()));
         }
         to.setKind(from.getKind());
     }
@@ -200,10 +202,15 @@ public class EntityLeaf extends Node {
     }
 
     @Override
+    protected void createResource(HttpServletRequest request, HttpServletResponse response, JKey jKey, JEntity body) {
+        putEntity(request, response, body);
+    }
+
+    @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final JKey jKey = (JKey) request.getAttribute(REQUEST_ATTR_JKEY);
         
-        if (null != jKey.getId() || null != jKey.getName()) {
+        if (null != jKey.getId()) {
             final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             final Key key = convertJKey(jKey);
             datastore.delete(key);
@@ -214,45 +221,8 @@ public class EntityLeaf extends Node {
     }
     
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final JKey jKey = (JKey) request.getAttribute(REQUEST_ATTR_JKEY);
-        
-        if (null != jKey.getId() || null != jKey.getName()) {
-            getEntity(request, response, jKey);
-        }
-        else {
-            getEntities(request, response, jKey);
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final String kind = getPathVariable(PATH_KIND);
-        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
-        final JEntity jBody = getRequestBody(request);
-        
-        // check kind
-        if (null == jBody.getKind())
-        {
-            jBody.setKind(kind);
-        }
-        if (!kind.equals(jBody.getKind())) {
-            throw new ConflictException(ERROR_KIND_CONFLICT, String.format("%s != %s", kind, jBody.getKind()), null);
-        }
-        
-        if (null != filename) {
-            // Update is only a check of ID for consistency
-            if (null == jBody.getId()) {
-                jBody.setId(Long.parseLong(filename));
-            }
-            if (!filename.equals(jBody.getId().toString())) {
-                throw new ConflictException(ERROR_ID_CONFLICT, String.format("%s != %s", filename, jBody.getId()), null);
-            }
-        }        
-        putEntity(request, response, jBody);
-    }
-    
-    protected void getEntities(HttpServletRequest request, HttpServletResponse response, JKey jKey) {
+    protected void getResourcesPage(HttpServletRequest request, HttpServletResponse response, 
+            JKey jKey, int pageSize, String cursorKey) {
         final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         final Query query = new Query(jKey.getKind());
         
@@ -299,7 +269,8 @@ public class EntityLeaf extends Node {
         setResponseBody(request, HttpServletResponse.SC_OK, body);
     }
     
-    protected void getEntity(HttpServletRequest request, HttpServletResponse response, JKey jKey) {
+    @Override
+    protected void getResourceByKey(HttpServletRequest request, HttpServletResponse response, JKey jKey) {
         final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         final Key key = convertJKey(jKey);
         try {
@@ -357,35 +328,6 @@ public class EntityLeaf extends Node {
         return body;
     }
     
-    @Override
-    public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, int pathIndex) {
-        LOG.debug("path[{}]={}", pathIndex, pathList.get(pathIndex-1));
-        
-        JKey parentKey = null, key = null;
-        for (int i = pathIndex-1; i < pathList.size(); i += 2) {
-            final String kind = pathList.get(i);
-            final String name = i+1 < pathList.size() ? pathList.get(i+1) : null;
-            key = new JKey();
-            key.setParentKey(parentKey);
-            key.setKind(kind);
-            if (null != name && 0 < name.length()) {
-                try {
-                    key.setId(Long.parseLong(name));
-                }
-                catch (NumberFormatException ifStringKey) {
-                    key.setName(name);
-                }
-            }
-            
-            parentKey = key;
-        }
-        
-        request.setAttribute(REQUEST_ATTR_JKEY, key);
-        
-        final String method = request.getMethod();
-        return SUPPORTED_METHODS.contains(method) ? this : null;
-    }
-
     protected void putEntity(HttpServletRequest request, HttpServletResponse response, JEntity jBody) {
         final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             
@@ -397,4 +339,9 @@ public class EntityLeaf extends Node {
                 body);
     }
 
+    @Override
+    protected void updateResource(HttpServletRequest request, HttpServletResponse response, JKey jKey, JEntity body) {
+        putEntity(request, response, body);
+    }
+    
 }

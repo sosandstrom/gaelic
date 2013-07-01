@@ -104,7 +104,7 @@ public class EntityLeafTest {
         JEntity empl = doCreate(1370503068166L);
 
         request.setMethod("GET");
-        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%d", empl.getId()));
+        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%s", empl.getId()));
         
         servlet.service(request, response);
         assertEquals(200, response.getStatus());
@@ -121,7 +121,7 @@ public class EntityLeafTest {
         JEntity empl = doCreate(1370503068165L);
 
         request.setMethod("DELETE");
-        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%d", empl.getId()));
+        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%s", empl.getId()));
         
         servlet.service(request, response);
         assertEquals(200, response.getStatus());
@@ -129,7 +129,7 @@ public class EntityLeafTest {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
         request.setMethod("GET");
-        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%d", empl.getId()));
+        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%s", empl.getId()));
         
         servlet.service(request, response);
         assertEquals(404, response.getStatus());
@@ -184,7 +184,7 @@ public class EntityLeafTest {
         assertEquals("Not Found", response.getErrorMessage());
 //        assertEquals("{:", response.getContentAsString());
         assertTrue(response.getContentAsString().startsWith(
-                "{\"code\":204,\"status\":404,\"message\":\"Not Found\",\"developerMessage\":\"JKey{Empl(9999)}\",\"stackTrace\":\"com.wadpam.gaelic.tree.EntityLeaf.getEntity:"));
+                "{\"code\":204,\"status\":404,\"message\":\"Not Found\",\"developerMessage\":\"JKey{Empl(9999)}\",\"stackTrace\":\"com.wadpam.gaelic.tree.EntityLeaf.getResourceByKey:"));
     }
 
     @Test
@@ -211,7 +211,7 @@ public class EntityLeafTest {
         empl.getProperties().put("startDate", millis);
         
         request.setMethod("POST");
-        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%d", empl.getId()));
+        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%s", empl.getId()));
         request.setContentType("application/json");
         byte[] requestBody = GaelicServlet.MAPPER.writeValueAsBytes(empl);
         request.setContent(requestBody);
@@ -228,7 +228,7 @@ public class EntityLeafTest {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
         request.setMethod("GET");
-        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%d", empl.getId()));
+        request.setRequestURI(String.format("/api/gaelic/entity/Empl/%s", empl.getId()));
         
         servlet.service(request, response);
         assertEquals(200, response.getStatus());
