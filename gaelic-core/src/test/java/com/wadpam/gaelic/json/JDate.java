@@ -29,6 +29,11 @@ public class JDate implements Serializable {
     public void setStartDate(Long startDate) {
         this.startDate = startDate;
     }
+
+    @Override
+    public String toString() {
+        return String.format("JDate{id:%s, startDate:%d}", id, startDate);
+    }
     
     
 }

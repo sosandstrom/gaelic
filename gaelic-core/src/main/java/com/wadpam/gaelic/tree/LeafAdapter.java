@@ -8,9 +8,10 @@ import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.json.JKey;
 import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.exception.BadRequestException;
+import com.wadpam.gaelic.exception.MethodNotAllowedException;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.TreeSet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -27,10 +28,11 @@ public class LeafAdapter<J extends Object> extends Node {
     public static final String REQUEST_ATTR_JKEY = "com.wadpam.gaelic.jKey";
     
     public static final int ERR_BASE = GaelicServlet.ERROR_CODE_LEAF_BASE;
+    public static final int ERR_METHOD = ERR_BASE + 5;
     public static final int ERR_PAGESIZE = ERR_BASE + 10;
     
     /** Contains DELETE, GET and POST */
-    protected static final HashSet<String> SUPPORTED_METHODS = new HashSet();
+    protected static final TreeSet<String> SUPPORTED_METHODS = new TreeSet();
     
     static {
         SUPPORTED_METHODS.add(METHOD_DELETE);
@@ -53,7 +55,7 @@ public class LeafAdapter<J extends Object> extends Node {
      * @param jKey JKey with null id
      * @param body as parsed by {@link #getRequestBody(javax.servlet.http.HttpServletRequest)}
      */
-    protected void createResource(HttpServletRequest request, HttpServletResponse response, JKey jKey, J body) {
+    protected void createResource(HttpServletRequest request, HttpServletResponse response, JKey jKey, J body) throws ServletException, IOException {
     }
     
     @Override
@@ -61,6 +63,12 @@ public class LeafAdapter<J extends Object> extends Node {
         final JKey jKey = (JKey) request.getAttribute(REQUEST_ATTR_JKEY);
         
         if (null != jKey.getId()) {
+
+            // me alias
+            if ("me".equals(jKey.getId())) {
+                jKey.setId(getCurrentUsername());
+            }
+
             getResourceByKey(request, response, jKey);
         }
         else {
@@ -121,9 +129,15 @@ public class LeafAdapter<J extends Object> extends Node {
         }
         
         request.setAttribute(REQUEST_ATTR_JKEY, key);
+        request.setAttribute(CrudLeaf.REQUEST_ATTR_FILENAME, key.getId());
         
         final String method = request.getMethod();
-        return isSupported(method) ? this : null;
+        if (!isSupported(method)) {
+            throw new MethodNotAllowedException(ERR_METHOD, 
+                method, null, SUPPORTED_METHODS);
+
+        }
+        return this;
     }
 
     /**
@@ -133,7 +147,7 @@ public class LeafAdapter<J extends Object> extends Node {
      * @param response
      * @param jKey JKey with non-null id
      */
-    protected void getResourceByKey(HttpServletRequest request, HttpServletResponse response, JKey jKey) {
+    protected void getResourceByKey(HttpServletRequest request, HttpServletResponse response, JKey jKey) throws ServletException, IOException {
     }
 
     /**
@@ -146,7 +160,7 @@ public class LeafAdapter<J extends Object> extends Node {
      * @param cursorKey null for first page
      */
     protected void getResourcesPage(HttpServletRequest request, HttpServletResponse response, 
-            JKey jKey, int pageSize, String cursorKey) {
+            JKey jKey, int pageSize, String cursorKey) throws ServletException, IOException {
     }
 
     public boolean isSupported(final String method) {
@@ -162,7 +176,7 @@ public class LeafAdapter<J extends Object> extends Node {
      * @param jKey JKey with non-null id
      * @param body as parsed by {@link #getRequestBody(javax.servlet.http.HttpServletRequest)}
      */
-    protected void updateResource(HttpServletRequest request, HttpServletResponse response, JKey jKey, J body) {
+    protected void updateResource(HttpServletRequest request, HttpServletResponse response, JKey jKey, J body) throws ServletException, IOException {
     }
 
 }

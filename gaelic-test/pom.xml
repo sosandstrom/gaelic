@@ -12,8 +12,6 @@
 
     <!-- Specify hard-coded project properties here -->
     <properties>
-        <mardao.version>2.3.0</mardao.version>
-        <gae.version>1.7.5</gae.version>
         <gae.application.version>lab</gae.application.version>
         <gae.application.id>broker-web</gae.application.id>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
@@ -214,8 +212,8 @@
                     <dependency>
                         <groupId>net.kindleit</groupId>
                         <artifactId>gae-runtime</artifactId>
-                        <version>1.7.5.1</version>
-                        <!--<version>${gae.version}</version>-->
+                        <!--<version>1.7.5.1</version>-->
+                        <version>${gae.version}</version>
                         <type>pom</type>
                     </dependency>
                     <dependency>

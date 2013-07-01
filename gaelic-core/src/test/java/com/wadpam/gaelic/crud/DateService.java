@@ -27,14 +27,14 @@ public class DateService extends CrudServiceAdapter<DDate, Long> {
     }
 
     @Override
-    public void delete(String parentKeyString, Long id) {
+    public void delete(Object parentKey, Long id) {
         if (DATES.containsKey(id)) {
             DATES.remove(id);
         }
     }
     
     @Override
-    public DDate get(String parentKeyString, Long id) {
+    public DDate get(Object parentKey, Long id) {
         if (null == id) {
             return null;
         }
@@ -43,7 +43,7 @@ public class DateService extends CrudServiceAdapter<DDate, Long> {
     }
 
     @Override
-    public JCursorPage<DDate> getPage(int pageSize, String cursorKey) {
+    public JCursorPage<DDate> getPage(Object parentKey, int pageSize, String cursorKey) {
         JCursorPage<DDate> page = new JCursorPage<DDate>();
         if (null == cursorKey) {
             page.setTotalSize(DATES.size());

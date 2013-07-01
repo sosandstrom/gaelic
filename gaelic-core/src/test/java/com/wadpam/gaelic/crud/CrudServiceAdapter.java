@@ -28,27 +28,27 @@ public class CrudServiceAdapter<T, ID extends Serializable> implements CrudServi
     }
 
     @Override
-    public void delete(String parentKeyString, ID id) {
+    public void delete(Object parentKey, ID id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void delete(String parentKeyString, ID[] id) {
+    public void delete(Object parentKey, ID[] id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public T get(String parentKeyString, ID id) {
+    public T get(Object parentKey, ID id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Iterable<T> getByPrimaryKeys(Collection<ID> ids) {
+    public Iterable<T> getByPrimaryKeys(Object parentKey, Collection<ID> ids) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JCursorPage<T> getPage(int pageSize, String cursorKey) {
+    public JCursorPage<T> getPage(Object parentKey, int pageSize, String cursorKey) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -12,6 +12,7 @@ import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.exception.MethodNotAllowedException;
 import com.wadpam.gaelic.exception.NotFoundException;
 import com.wadpam.gaelic.json.JCursorPage;
+import com.wadpam.gaelic.json.JKey;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 public class CrudLeaf<J extends Serializable, 
         T, 
         ID extends Serializable,
-        S extends CrudService<T, ID>> extends Node {
+        S extends CrudService<T, ID>> extends LeafAdapter<J> {
     
     public static final int STATUS_OK = 200;
     public static final int STATUS_CREATED = 201;
@@ -53,16 +54,15 @@ public class CrudLeaf<J extends Serializable,
     
     private final Class domainClass;
     private final Class idClass;
-    private final Class jsonClass;
     
     protected S service;
     
     protected BaseConverter<J, T> converter;
 
     public CrudLeaf(Class domainClass, Class idClass, Class jsonClass) {
+        super(jsonClass);
         this.domainClass = domainClass;
         this.idClass = idClass;
-        this.jsonClass = jsonClass;
     }
     
     public void addInnerObjects(HttpServletRequest request, 
@@ -131,43 +131,6 @@ public class CrudLeaf<J extends Serializable,
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
-        
-        // schema-based manager forms
-        if ("manager.html".equals(filename)) {
-            final String fwdPath = "/internal/bootstrap-schema.html";
-            forward(request, response, fwdPath);
-            return;
-        }
-        
-        // schema AJAX method
-        if ("schema".equals(filename)) {
-            getSchema(request, response);
-            return;
-        }
-        
-        ID id = null; 
-        
-        // me alias
-        if ("me".equals(filename)) {
-            final String username = getCurrentUsername();
-            id = getId(username);
-        }
-        else {
-            id = getId(request);
-        }
-        
-        // GET details or page?
-        if (null != id) {
-            getDetails(request, response, id);
-        }
-        else {
-            getPage(request, response);
-        }
-    }
-
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
         final J body = getRequestBody(request);
@@ -192,10 +155,23 @@ public class CrudLeaf<J extends Serializable,
         }
     }
 
-    protected void getDetails(HttpServletRequest request, HttpServletResponse response,
-            ID id) throws ServletException, IOException {
+    @Override
+    protected void getResourceByKey(HttpServletRequest request, HttpServletResponse response, JKey jKey) throws ServletException, IOException {
+
+        // schema-based manager forms
+        if ("manager.html".equals(jKey.getId())) {
+            final String fwdPath = "/internal/bootstrap-schema.html";
+            forward(request, response, fwdPath);
+            return;
+        }
         
-        T domain = service.get(null, id);
+        // schema AJAX method
+        if ("schema".equals(jKey.getId())) {
+            getSchema(request, response);
+            return;
+        }
+
+        T domain = service.get(jKey.getParentKey(), getId(jKey.getId()));
         if (null != domain) {
             J body = converter.convertDomain(domain);
             setResponseBody(request, 200, body);
@@ -204,6 +180,8 @@ public class CrudLeaf<J extends Serializable,
             throw new NotFoundException(getErrorBaseCode()+ERR_OFFSET_DETAILS, toString(), null);
         }
     }
+    
+    
     
     protected int getErrorBaseCode() {
         return GaelicServlet.ERROR_CODE_CRUD_BASE;
@@ -236,14 +214,11 @@ public class CrudLeaf<J extends Serializable,
         return id;
     }
     
-    protected void getPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void getResourcesPage(HttpServletRequest request, HttpServletResponse response,
+            JKey parentKey, int pageSize, String cursorKey) throws ServletException, IOException {
         
-        final String pageSize = request.getParameter("pageSize");
-        int size = null != pageSize ? Integer.parseInt(pageSize) : 10;
-        
-        final String cursorKey = request.getParameter("cursorKey");
-        
-        final JCursorPage<T> page = service.getPage(size, cursorKey);
+        final JCursorPage<T> page = service.getPage(parentKey, pageSize, cursorKey);
         final JCursorPage<J> body = converter.convertDomainPage(page);
         
         setResponseBody(request, 200, body);
@@ -277,11 +252,11 @@ public class CrudLeaf<J extends Serializable,
         setResponseBody(request, 200, body);
     }
     
-    @Override
-    public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, final int pathIndex) {
-        return isServingNode(request, pathList, pathIndex, supportedMethods(), getErrorBaseCode()) ? this : null;
-    }
-    
+//    @Override
+//    public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, final int pathIndex) {
+//        return isServingNode(request, pathList, pathIndex, supportedMethods(), getErrorBaseCode()) ? this : null;
+//    }
+//    
     public static boolean isServingNode(HttpServletRequest request, 
             LinkedList<String> pathList, final int pathIndex,
             final Set<String> supportedMethods, int errorBaseCode) {

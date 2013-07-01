@@ -32,14 +32,14 @@ public interface CrudService<T,
      * @param parentKeyString
      * @param id 
      */
-    void delete(String parentKeyString, ID id);
+    void delete(Object parentKey, ID id);
 
     /**
      * Deletes specified entities from the underlying database persistence.
      * @param parentKeyString
      * @param id an array of IDs
      */
-    void delete(String parentKeyString, ID[] id);
+    void delete(Object parentKey, ID[] id);
 
     /**
      * Reads the specified entity from underlying database persistence.
@@ -47,14 +47,14 @@ public interface CrudService<T,
      * @param id
      * @return null if not found, otherwise the read entity.
      */
-    T get(String parentKeyString, ID id);
+    T get(Object parentKey, ID id);
     
     /**
      * Batch-reads specified entities from underlying database persistence.
      * @param ids
      * @return 
      */
-    Iterable<T> getByPrimaryKeys(Collection<ID> ids);
+    Iterable<T> getByPrimaryKeys(Object parentKey, Collection<ID> ids);
 
     Class getDaoClass();
     Class<T> getDomainClass();
@@ -66,7 +66,7 @@ public interface CrudService<T,
      * @param cursorKey null for first page, otherwise same value as returned in previous CursorPage
      * @return 
      */
-    JCursorPage<T> getPage(int pageSize, String cursorKey);
+    JCursorPage<T> getPage(Object parentKey, int pageSize, String cursorKey);
     
     /**
      * Extractor method to get the simple key from specified domain entity object.

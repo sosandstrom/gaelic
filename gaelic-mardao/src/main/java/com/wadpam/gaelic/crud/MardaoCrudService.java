@@ -101,11 +101,10 @@ public abstract class MardaoCrudService<
     }
     
     @Override
-    public void delete(String parentKeyString, ID id) {
+    public void delete(Object parentKey, ID id) {
         final Object transaction = beginTransaction();
         preDao();
         try {
-            Object parentKey = dao.getPrimaryKey(parentKeyString);
             LOG.debug("deleting {} with ID {}/{}", new Object[] {dao.getTableName(), parentKey, id});
             dao.delete(parentKey, id);
             commitTransaction(transaction);
@@ -117,11 +116,10 @@ public abstract class MardaoCrudService<
     }
 
     @Override
-    public void delete(String parentKeyString, ID[] id) {
+    public void delete(Object parentKey, ID[] id) {
         final Object transaction = beginTransaction();
         preDao();
         try {
-            Object parentKey = dao.getPrimaryKey(parentKeyString);
             final ArrayList<ID> ids = new ArrayList<ID>();
             for (ID i : id) {
                 ids.add(i);
@@ -136,15 +134,13 @@ public abstract class MardaoCrudService<
     }
 
     @Override
-    public T get(String parentKeyString, ID id) {
+    public T get(Object parentKey, ID id) {
         if (null == id || "".equals(id)) {
             return null;
         }
         
         preDao();
         try {
-            // TODO: parentKeyString must be decoded by parent dao!
-            Object parentKey = dao.getPrimaryKey(parentKeyString);
             T domain = dao.findByPrimaryKey(parentKey, id);
             LOG.debug("GET {}/{}/{} returns {}", new Object[] {
                 dao.getTableName(), parentKey, id, domain});
@@ -161,10 +157,10 @@ public abstract class MardaoCrudService<
     }
     
     @Override
-    public Iterable<T> getByPrimaryKeys(Collection<ID> ids) {
+    public Iterable<T> getByPrimaryKeys(Object parentKey, Collection<ID> ids) {
         preDao();
         try {
-            final Iterable<T> entities = dao.queryByPrimaryKeys(null, ids);
+            final Iterable<T> entities = dao.queryByPrimaryKeys(parentKey, ids);
 
             return entities;
         }
@@ -188,7 +184,7 @@ public abstract class MardaoCrudService<
     }
 
     @Override
-    public JCursorPage<T> getPage(int pageSize, String cursorKey) {
+    public JCursorPage<T> getPage(Object parentKey, int pageSize, String cursorKey) {
         preDao();
         try {
             return MardaoConverter.convertMardaoPage(

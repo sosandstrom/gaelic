@@ -193,14 +193,15 @@ public class CrudLeafTest {
     @Test
     public void testNotFound() throws ServletException, IOException {
         request.setMethod("GET");
-        request.setRequestURI("/api/anything/crud/v10/24/parent");
+        request.setRequestURI("/api/anything/crud/v10/404");
         LOG.info("---------------- testNotFound() ------------------------------");
 
         servlet.service(request, response);
         assertEquals(404, response.getStatus());
         assertEquals("Not Found", response.getErrorMessage());
+//        assertEquals("{:", response.getContentAsString());
         assertTrue(response.getContentAsString().startsWith(
-                "{\"code\":0,\"status\":404,\"message\":\"Not Found\",\"stackTrace\":\"com.wadpam.gaelic.exception.RestException.<clinit>:"));
+                "{\"code\":102,\"status\":404,\"message\":\"Not Found\","));
     }
 
     @Test
