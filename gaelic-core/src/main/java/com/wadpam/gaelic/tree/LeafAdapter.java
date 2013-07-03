@@ -41,9 +41,15 @@ public class LeafAdapter<J extends Object> extends Node {
     }
     
     protected final Class jsonClass;
+    protected final String kind;
+
+    public LeafAdapter(Class jsonClass, String kind) {
+        this.jsonClass = jsonClass;
+        this.kind = kind;
+    }
 
     public LeafAdapter(Class jsonClass) {
-        this.jsonClass = jsonClass;
+        this(jsonClass, null);
     }
 
     /**
@@ -115,17 +121,30 @@ public class LeafAdapter<J extends Object> extends Node {
     @Override
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, int pathIndex) {
         LOG.debug("path[{}]={}", pathIndex, pathList.get(pathIndex-1));
+        int i = pathIndex-1;
         
-        JKey parentKey = null, key = null;
-        for (int i = pathIndex-1; i < pathList.size(); i += 2) {
-            final String kind = pathList.get(i);
-            final String id = i+1 < pathList.size() ? pathList.get(i+1) : null;
-            key = new JKey();
-            key.setParentKey(parentKey);
-            key.setKind(kind);
-            key.setId(id);
-
-            parentKey = key;
+        // Entity key first:
+        final JKey key = new JKey();
+        key.setKind(null != this.kind ? this.kind : pathList.get(i));
+        
+        // resource/{id} or just resource/ ?
+        if (1 == (pathList.size() - pathIndex) %2) {
+            key.setId(pathList.get(i+1));
+            i+=2;
+        }
+        else {
+            i++;
+        }
+        
+        // then parent keys
+        JKey childKey = key, parentKey;
+        for ( ; i < pathList.size(); i += 2) {
+            parentKey = new JKey();
+            parentKey.setKind(pathList.get(i));
+            parentKey.setId(pathList.get(i+1));
+            
+            childKey.setParentKey(parentKey);
+            childKey = parentKey;
         }
         
         request.setAttribute(REQUEST_ATTR_JKEY, key);
