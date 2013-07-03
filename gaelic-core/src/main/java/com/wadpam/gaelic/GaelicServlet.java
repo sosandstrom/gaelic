@@ -7,6 +7,7 @@ package com.wadpam.gaelic;
 import com.wadpam.gaelic.exception.MethodNotAllowedException;
 import com.wadpam.gaelic.exception.RestException;
 import com.wadpam.gaelic.json.JException;
+import com.wadpam.gaelic.json.JKeyFactory;
 import com.wadpam.gaelic.tree.Interceptor;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -90,21 +91,6 @@ public class GaelicServlet extends HttpServlet {
         }
     }
     
-    protected static LinkedList<String> parsePath(HttpServletRequest request) {
-        final LinkedList<String> pathStack = new LinkedList<String>();
-        final String uri = request.getRequestURI();
-        final String ctxt = request.getContextPath();
-        LOG.debug("splitting requestURI {} and context {}", uri, ctxt);
-        // if app is deployed with context != / then skip the first path
-        for (String p : uri.substring(ctxt.length()).split("/")) {
-            if (!"".equals(p)) {
-                pathStack.add(p);
-            }
-        }
-        request.setAttribute(REQUEST_ATTR_PATHSTACK, pathStack);
-        return pathStack;
-    }
-
     protected void renderResponse(HttpServletRequest request, 
             HttpServletResponse response, 
             RestException exception) throws IOException {
@@ -182,13 +168,15 @@ public class GaelicServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
         final GaelicRequest request = new GaelicRequest(req);
+        final String uri = request.getRequestURI();
         
         LOG.info("======= GaelicServlet processing {} {} ...", 
-                request.getMethod(), request.getRequestURI());
+                request.getMethod(), uri);
         RestException exception = null;
 
         // stack the request URI
-        final LinkedList<String> pathStack = parsePath(request);
+        final String ctxt = request.getContextPath();
+        final LinkedList<String> pathStack = JKeyFactory.parsePath(uri, ctxt);
         Node handler = null;
         
         try {
@@ -198,7 +186,7 @@ public class GaelicServlet extends HttpServlet {
                 // populate and serve using handler
                 request.setAttribute(REQUEST_ATTR_HANDLERNODE, handler);
                 LOG.debug("------- Mapped {} {} to Handler {}", new Object[] {
-                    request.getMethod(), request.getRequestURI(), handler
+                    request.getMethod(), uri, handler
                 });
 
                 rootNode.service(request, response);
@@ -222,7 +210,7 @@ public class GaelicServlet extends HttpServlet {
             renderResponse(request, response, exception);
             afterCompletion(request, response, handler, exception);
             LOG.info("+++++++ GaelicServlet done processing {} {} +++++++", 
-                    request.getMethod(), request.getRequestURI());
+                    request.getMethod(), uri);
         }
     }
 

@@ -9,6 +9,7 @@ import com.wadpam.gaelic.json.JKey;
 import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.exception.MethodNotAllowedException;
+import com.wadpam.gaelic.json.JKeyFactory;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -121,31 +122,7 @@ public class LeafAdapter<J extends Object> extends Node {
     @Override
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, int pathIndex) {
         LOG.debug("path[{}]={}", pathIndex, pathList.get(pathIndex-1));
-        int i = pathIndex-1;
-        
-        // Entity key first:
-        final JKey key = new JKey();
-        key.setKind(null != this.kind ? this.kind : pathList.get(i));
-        
-        // resource/{id} or just resource/ ?
-        if (1 == (pathList.size() - pathIndex) %2) {
-            key.setId(pathList.get(i+1));
-            i+=2;
-        }
-        else {
-            i++;
-        }
-        
-        // then parent keys
-        JKey childKey = key, parentKey;
-        for ( ; i < pathList.size(); i += 2) {
-            parentKey = new JKey();
-            parentKey.setKind(pathList.get(i));
-            parentKey.setId(pathList.get(i+1));
-            
-            childKey.setParentKey(parentKey);
-            childKey = parentKey;
-        }
+        final JKey key = JKeyFactory.createKey(pathList, pathIndex-1, kind);
         
         request.setAttribute(REQUEST_ATTR_JKEY, key);
         request.setAttribute(CrudLeaf.REQUEST_ATTR_FILENAME, key.getId());
