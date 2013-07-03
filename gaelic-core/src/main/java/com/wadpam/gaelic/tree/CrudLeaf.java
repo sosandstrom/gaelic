@@ -60,7 +60,7 @@ public class CrudLeaf<J extends Serializable,
     protected BaseConverter<J, T> converter;
 
     public CrudLeaf(Class domainClass, Class idClass, Class jsonClass) {
-        super(jsonClass);
+        super(jsonClass, domainClass.getSimpleName());
         this.domainClass = domainClass;
         this.idClass = idClass;
     }
