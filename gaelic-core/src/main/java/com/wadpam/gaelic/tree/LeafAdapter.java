@@ -7,6 +7,7 @@ package com.wadpam.gaelic.tree;
 import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.json.JKey;
 import com.wadpam.gaelic.Node;
+import com.wadpam.gaelic.crud.BasicCrudObservable;
 import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.exception.MethodNotAllowedException;
 import com.wadpam.gaelic.json.JKeyFactory;
@@ -43,6 +44,7 @@ public class LeafAdapter<J extends Object> extends Node {
     
     protected final Class jsonClass;
     protected final String kind;
+    protected final BasicCrudObservable listeners = new BasicCrudObservable(this, null);
 
     public LeafAdapter(Class jsonClass, String kind) {
         this.jsonClass = jsonClass;

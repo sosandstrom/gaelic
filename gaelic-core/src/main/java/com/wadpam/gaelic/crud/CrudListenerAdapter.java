@@ -5,7 +5,7 @@
 package com.wadpam.gaelic.crud;
 
 import com.wadpam.gaelic.json.JCursorPage;
-import com.wadpam.gaelic.tree.CrudLeaf;
+import com.wadpam.gaelic.tree.LeafAdapter;
 import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,7 +17,7 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
         implements CrudListener<J, T, ID, S> {
 
     @Override
-    public void preService(CrudLeaf<J, T, ID, S> controller, 
+    public void preService(LeafAdapter<J> leaf, 
             S service, 
             HttpServletRequest request, 
             String namespace, 
@@ -27,16 +27,16 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
             Serializable id) {
         switch (operation) {
             case CREATE:
-                preCreate(controller, service, request, namespace, json, domain);
+                preCreate(leaf, service, request, namespace, json, domain);
                 break;
             case GET:
-                preGet(controller, service, request, namespace, id);
+                preGet(leaf, service, request, namespace, id);
                 break;
             case UPDATE:
-                preUpdate(controller, service, request, namespace, json, domain, id);
+                preUpdate(leaf, service, request, namespace, json, domain, id);
                 break;
             case DELETE:
-                preDelete(controller, service, request, namespace, id);
+                preDelete(leaf, service, request, namespace, id);
                 break;
             case GET_PAGE:
                 break;
@@ -52,7 +52,7 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
     }
 
     @Override
-    public void postService(CrudLeaf<J, T, ID, S> controller, 
+    public void postService(LeafAdapter<J> leaf, 
             S service, 
             HttpServletRequest request, 
             String namespace, 
@@ -62,19 +62,19 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
             Object serviceResponse) {
         switch (operation) {
             case CREATE:
-                postCreate(controller, service, request, namespace, json, id, serviceResponse);
+                postCreate(leaf, service, request, namespace, json, id, serviceResponse);
                 break;
             case GET:
-                postGet(controller, service, request, namespace, id, serviceResponse, json);
+                postGet(leaf, service, request, namespace, id, serviceResponse, json);
                 break;
             case UPDATE:
-                postUpdate(controller, service, request, namespace, json, id, serviceResponse);
+                postUpdate(leaf, service, request, namespace, json, id, serviceResponse);
                 break;
             case DELETE:
-                postDelete(controller, service, request, namespace, id);
+                postDelete(leaf, service, request, namespace, id);
                 break;
             case GET_PAGE:
-                postGetPage(controller, service, request, namespace, (JCursorPage<J>) json, (String) id, (JCursorPage<T>) serviceResponse);
+                postGetPage(leaf, service, request, namespace, (JCursorPage<J>) json, (String) id, (JCursorPage<T>) serviceResponse);
                 break;
             case WHAT_CHANGED:
                 break;
@@ -89,28 +89,28 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
 
     /**
      * Override to implement the pre-service create callback
-     * @param controller
+     * @param leaf
      * @param service
      * @param request
      * @param namespace
      * @param json
      * @param domain
      */
-    protected void preCreate(CrudLeaf controller, CrudService service, HttpServletRequest request, String namespace, Object json, Object domain) {
+    protected void preCreate(LeafAdapter leaf, CrudService service, HttpServletRequest request, String namespace, Object json, Object domain) {
     }
 
-    protected void preGet(CrudLeaf controller, CrudService service, HttpServletRequest request, String namespace, Serializable id) {
+    protected void preGet(LeafAdapter leaf, CrudService service, HttpServletRequest request, String namespace, Serializable id) {
     }
 
-    protected void preUpdate(CrudLeaf controller, CrudService service, HttpServletRequest request, String namespace, Object json, Object domain, Serializable id) {
+    protected void preUpdate(LeafAdapter leaf, CrudService service, HttpServletRequest request, String namespace, Object json, Object domain, Serializable id) {
     }
 
-    protected void preDelete(CrudLeaf controller, CrudService service, HttpServletRequest request, String namespace, Serializable id) {
+    protected void preDelete(LeafAdapter leaf, CrudService service, HttpServletRequest request, String namespace, Serializable id) {
     }
     
     /**
      * Override to implement the post-service create callback
-     * @param controller
+     * @param leaf
      * @param service
      * @param request
      * @param domain
@@ -118,12 +118,12 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
      * @param id
      * @param serviceResponse 
      */
-    protected void postCreate(CrudLeaf controller, CrudService service, HttpServletRequest request, String domain, Object json, Serializable id, Object serviceResponse) {
+    protected void postCreate(LeafAdapter leaf, CrudService service, HttpServletRequest request, String domain, Object json, Serializable id, Object serviceResponse) {
     }
 
     /**
      * 
-     * @param controller
+     * @param leaf
      * @param service
      * @param request
      * @param namespace
@@ -131,19 +131,19 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
      * @param serviceResponse
      * @param jsonResponse 
      */
-    protected void postGet(CrudLeaf controller, CrudService service, HttpServletRequest request, 
+    protected void postGet(LeafAdapter leaf, CrudService service, HttpServletRequest request, 
             String namespace, Serializable id, Object serviceResponse, Object jsonResponse) {
     }
 
-    protected void postUpdate(CrudLeaf controller, CrudService service, HttpServletRequest request, 
+    protected void postUpdate(LeafAdapter leaf, CrudService service, HttpServletRequest request, 
             String namespace, Object json, Serializable id, Object serviceResponse) {
     }
 
-    protected void postDelete(CrudLeaf controller, CrudService service, HttpServletRequest request, 
+    protected void postDelete(LeafAdapter leaf, CrudService service, HttpServletRequest request, 
             String namespace, Serializable id) {
     }
 
-    protected void postGetPage(CrudLeaf<J, T, ID, S> controller, S service, HttpServletRequest request, 
+    protected void postGetPage(LeafAdapter<J> leaf, S service, HttpServletRequest request, 
             String namespace, JCursorPage<J> jPage, String cursorKey, JCursorPage<T> serviceResponse) {
     }
 

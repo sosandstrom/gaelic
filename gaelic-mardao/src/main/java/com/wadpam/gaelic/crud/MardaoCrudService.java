@@ -25,15 +25,20 @@ import org.slf4j.LoggerFactory;
 public abstract class MardaoCrudService<
         T extends Object,
         ID extends Serializable,
-        D extends Dao<T, ID>> implements CrudService<T, ID> {
+        D extends Dao<T, ID>> 
+    extends BasicCrudObservable<Void, T, ID>
+    implements CrudService<T, ID> {
     
     protected static final Logger LOG = LoggerFactory.getLogger(MardaoCrudService.class);
     
     protected final Class domainClass;
     protected final Class idClass;
     protected final Class daoClass;
+    protected D dao;
 
     public MardaoCrudService(Class domainClass, Class idClass, Class daoClass) {
+        super(null, null);
+        setService(this);
         this.domainClass = domainClass;
         this.idClass = idClass;
         this.daoClass = daoClass;
@@ -46,7 +51,6 @@ public abstract class MardaoCrudService<
         }
     }
     
-    protected D dao;
     
     @Override
     public T createDomain() {
@@ -86,12 +90,14 @@ public abstract class MardaoCrudService<
         final Object transaction = beginTransaction();
         preDao();
         prePersist(domain);
+        preService(null, null, CrudListener.CREATE, null, domain, dao.getSimpleKey(domain));
         try {
             final ID id = dao.persist(domain);
 
             LOG.debug("Created {}", domain);
 
             commitTransaction(transaction);
+            postService(null, null, CrudListener.CREATE, null, id, domain);
             return id;
         }
         finally {
@@ -104,10 +110,12 @@ public abstract class MardaoCrudService<
     public void delete(Object parentKey, ID id) {
         final Object transaction = beginTransaction();
         preDao();
+        preService(null, null, CrudListener.DELETE, null, null, id);
         try {
             LOG.debug("deleting {} with ID {}/{}", new Object[] {dao.getTableName(), parentKey, id});
             dao.delete(parentKey, id);
             commitTransaction(transaction);
+            postService(null, null, CrudListener.DELETE, null, id, null);
         }
         finally {
             postDao();
@@ -119,6 +127,7 @@ public abstract class MardaoCrudService<
     public void delete(Object parentKey, ID[] id) {
         final Object transaction = beginTransaction();
         preDao();
+        preService(null, null, CrudListener.DELETE_BATCH, null, null, id);
         try {
             final ArrayList<ID> ids = new ArrayList<ID>();
             for (ID i : id) {
@@ -126,6 +135,7 @@ public abstract class MardaoCrudService<
             }
             dao.delete(parentKey, ids);
             commitTransaction(transaction);
+            postService(null, null, CrudListener.DELETE_BATCH, null, id, null);
         }
         finally {
             postDao();
@@ -140,11 +150,13 @@ public abstract class MardaoCrudService<
         }
         
         preDao();
+        preService(null, null, CrudListener.GET, null, null, id);
         try {
             T domain = dao.findByPrimaryKey(parentKey, id);
             LOG.debug("GET {}/{}/{} returns {}", new Object[] {
                 dao.getTableName(), parentKey, id, domain});
 
+            postService(null, null, CrudListener.GET, null, id, domain);
             return domain;
         }
         catch (RuntimeException toLog) {
@@ -159,9 +171,12 @@ public abstract class MardaoCrudService<
     @Override
     public Iterable<T> getByPrimaryKeys(Object parentKey, Collection<ID> ids) {
         preDao();
+        final Serializable idArray = ids.toArray(new Serializable[ids.size()]);
+        preService(null, null, CrudListener.GET_BATCH, null, null, idArray);
         try {
             final Iterable<T> entities = dao.queryByPrimaryKeys(parentKey, ids);
 
+            postService(null, null, CrudListener.GET_BATCH, null, idArray, entities);
             return entities;
         }
         finally {
@@ -186,9 +201,12 @@ public abstract class MardaoCrudService<
     @Override
     public JCursorPage<T> getPage(Object parentKey, int pageSize, String cursorKey) {
         preDao();
+        preService(null, null, CrudListener.GET_PAGE, null, null, cursorKey);
         try {
-            return MardaoConverter.convertMardaoPage(
-                    dao.queryPage(pageSize, cursorKey));
+            JCursorPage page = MardaoConverter.convertMardaoPage(
+                               dao.queryPage(pageSize, cursorKey));
+            postService(null, null, CrudListener.GET_PAGE, null, cursorKey, page);
+            return page;
         }
         finally {
             postDao();
@@ -256,10 +274,12 @@ public abstract class MardaoCrudService<
             if (null == domain || null == id) {
                 throw new IllegalArgumentException("ID cannot be null updating " + dao.getTableName());
             }
+            preService(null, null, CrudListener.UPDATE, null, domain, id);
 
             dao.update(domain);
 
             commitTransaction(transaction);
+            postService(null, null, CrudListener.UPDATE, null, id, domain);
             return id;
         }
         finally {
@@ -288,6 +308,7 @@ public abstract class MardaoCrudService<
         LOG.debug("Creating {}, Updating {}", toCreate.size(), toUpdate.size());
         LOG.debug("Creating {}, Updating {}", toCreate, toUpdate);
         
+        preService(null, null, CrudListener.UPSERT_BATCH, null, dEntities, null);
         try {
             // create new entities using async API
             Future<List<?>> createFuture = null;
@@ -316,6 +337,7 @@ public abstract class MardaoCrudService<
             }
 
             commitTransaction(transaction);
+            postService(null, null, CrudListener.UPSERT_BATCH, null, body, dEntities);
             return body;
         }
         finally {
@@ -326,10 +348,13 @@ public abstract class MardaoCrudService<
     @Override
     public JCursorPage<ID> whatsChanged(Date since, int pageSize, String cursorKey) {
         preDao();
+        preService(null, null, CrudListener.WHAT_CHANGED, null, null, cursorKey);
         try {
             // TODO: include deletes from Audit table
-            return MardaoConverter.convertMardaoPage(
-                    dao.whatsChanged(since, pageSize, cursorKey));
+            JCursorPage page = MardaoConverter.convertMardaoPage(
+                                dao.whatsChanged(since, pageSize, cursorKey));
+            postService(null, null, CrudListener.WHAT_CHANGED, null, cursorKey, page);
+            return page;
         }
         finally {
             postDao();
@@ -339,9 +364,12 @@ public abstract class MardaoCrudService<
     public CursorPage<ID, ID> whatsChanged(Object parentKey, Date since, 
             int pageSize, String cursorKey, Filter... filters) {
         preDao();
+        preService(null, null, CrudListener.WHAT_CHANGED, null, null, cursorKey);
         try {
             // TODO: include deletes from Audit table
-            return dao.whatsChanged(parentKey, since, pageSize, cursorKey, filters);
+            CursorPage<ID, ID> page = dao.whatsChanged(parentKey, since, pageSize, cursorKey, filters);
+            postService(null, null, CrudListener.WHAT_CHANGED, null, cursorKey, page);
+            return page;
         }
         finally {
             postDao();

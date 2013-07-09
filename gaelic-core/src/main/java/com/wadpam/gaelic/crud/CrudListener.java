@@ -4,7 +4,7 @@
  */
 package com.wadpam.gaelic.crud;
 
-import com.wadpam.gaelic.tree.CrudLeaf;
+import com.wadpam.gaelic.tree.LeafAdapter;
 import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +23,7 @@ public interface CrudListener<J extends Serializable, T, ID extends Serializable
     public static final int UPSERT_BATCH = 13;
     public static final int DELETE_BATCH = 14;
     public static final int GET_EXISTING = 15;
+    public static final int GET_BATCH = 16;
     
     /**
      * Triggered by the CrudController before the CrudService is invoked.
@@ -35,7 +36,7 @@ public interface CrudListener<J extends Serializable, T, ID extends Serializable
      * @param domain The domain / service entity object for this operation
      * @param id defined for GET, UPDATE, DELETE
      */
-    public void preService(CrudLeaf<J, T, ID, S> handler, S service,
+    public void preService(LeafAdapter<J> handler, S service,
             HttpServletRequest request, String namespace,
             int operation, Object json, Object domain, Serializable id);
 
@@ -50,7 +51,7 @@ public interface CrudListener<J extends Serializable, T, ID extends Serializable
      * @param id defined for GET, UPDATE, DELETE
      * @param serviceResponse 
      */
-    public void postService(CrudLeaf<J, T, ID, S> handler, S service,
+    public void postService(LeafAdapter<J> handler, S service,
             HttpServletRequest request, String domain,
             int operation, Object json, Serializable id, Object serviceResponse);
 }
