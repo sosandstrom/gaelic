@@ -12,7 +12,7 @@ import net.sf.mardao.core.geo.DLocation;
 /**
  * DAO interface with finder methods for DOAuth2User entities.
  *
- * Generated on 2013-05-11T20:15:45.419+0700.
+ * Generated on 2013-07-11T18:39:40.213+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long> {
@@ -90,7 +90,7 @@ public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified createdBy
 	 */
-	CursorPage<DOAuth2User, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
+	CursorPage<DOAuth2User> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString);
 
 
@@ -115,7 +115,7 @@ public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified createdDate
 	 */
-	CursorPage<DOAuth2User, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
+	CursorPage<DOAuth2User> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString);
 
 
@@ -140,7 +140,7 @@ public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified displayName
 	 */
-	CursorPage<DOAuth2User, java.lang.Long> queryPageByDisplayName(java.lang.String displayName,
+	CursorPage<DOAuth2User> queryPageByDisplayName(java.lang.String displayName,
             int pageSize, String cursorString);
 
 
@@ -179,7 +179,7 @@ public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified profileLink
 	 */
-	CursorPage<DOAuth2User, java.lang.Long> queryPageByProfileLink(java.lang.String profileLink,
+	CursorPage<DOAuth2User> queryPageByProfileLink(java.lang.String profileLink,
             int pageSize, String cursorString);
 
 
@@ -204,7 +204,7 @@ public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified roles
 	 */
-	CursorPage<DOAuth2User, java.lang.Long> queryPageByRoles(java.lang.Object roles,
+	CursorPage<DOAuth2User> queryPageByRoles(java.lang.Object roles,
             int pageSize, String cursorString);
 
 
@@ -229,7 +229,7 @@ public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified thumbnailUrl
 	 */
-	CursorPage<DOAuth2User, java.lang.Long> queryPageByThumbnailUrl(java.lang.String thumbnailUrl,
+	CursorPage<DOAuth2User> queryPageByThumbnailUrl(java.lang.String thumbnailUrl,
             int pageSize, String cursorString);
 
 
@@ -254,7 +254,7 @@ public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified updatedBy
 	 */
-	CursorPage<DOAuth2User, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
+	CursorPage<DOAuth2User> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString);
 
 
@@ -279,7 +279,7 @@ public interface GeneratedDOAuth2UserDao extends Dao<DOAuth2User, java.lang.Long
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified updatedDate
 	 */
-	CursorPage<DOAuth2User, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
+	CursorPage<DOAuth2User> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString);
 
 

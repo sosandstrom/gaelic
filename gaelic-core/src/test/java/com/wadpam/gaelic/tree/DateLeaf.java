@@ -13,7 +13,7 @@ import com.wadpam.gaelic.json.JDate;
  *
  * @author sosandstrom
  */
-public class DateLeaf extends CrudLeaf<JDate, DDate, Long, DateService> {
+public class DateLeaf extends CrudLeaf<JDate, DDate, DateService> {
     
     protected static final DateConverter CONVERTER = new DateConverter();
 

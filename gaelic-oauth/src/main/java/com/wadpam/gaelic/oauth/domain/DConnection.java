@@ -1,7 +1,7 @@
 package com.wadpam.gaelic.oauth.domain;
 
-import com.wadpam.gaelic.oauth.service.ConnectionServiceImpl;
 import com.wadpam.gaelic.security.SecurityDetails;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -20,7 +20,8 @@ import net.sf.mardao.core.domain.AbstractLongEntity;
     @UniqueConstraint(columnNames={"refreshToken"})})
 public class DConnection extends AbstractLongEntity 
         implements SecurityDetails {
-
+    public static final String ROLE_SEPARATOR = ",";
+    
     @Parent(kind="DOAuth2User")
     private Object userKey;
     
@@ -65,6 +66,17 @@ public class DConnection extends AbstractLongEntity
     public String subString() {
         return String.format("%s, accessToken=%s, userKey=%s, appArg0=%s, userRoles=%s", 
                 super.subString(), accessToken, userKey, appArg0, userRoles);
+    }
+
+    public static ArrayList<String> convertRoles(String from) {
+        final ArrayList<String> to = new ArrayList<String>();
+        if (null != from) {
+            final String[] roles = from.split(ROLE_SEPARATOR);
+            for (String r : roles) {
+                to.add(r.trim());
+            }
+        }
+        return to;
     }
 
     public String getAccessToken() {
@@ -166,7 +178,7 @@ public class DConnection extends AbstractLongEntity
 
     @Override
     public Collection<String> getRoles() {
-        return ConnectionServiceImpl.convertRoles(userRoles);
+        return convertRoles(userRoles);
     }
 
     @Override

@@ -12,7 +12,7 @@ import net.sf.mardao.core.geo.DLocation;
 /**
  * DAO interface with finder methods for DProfile entities.
  *
- * Generated on 2013-04-27T09:52:30.772+0700.
+ * Generated on 2013-07-11T18:55:13.149+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public interface GeneratedDProfileDao extends Dao<DProfile, java.lang.Long> {
@@ -70,7 +70,7 @@ public interface GeneratedDProfileDao extends Dao<DProfile, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified createdBy
 	 */
-	CursorPage<DProfile, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
+	CursorPage<DProfile> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString);
 
 
@@ -95,7 +95,7 @@ public interface GeneratedDProfileDao extends Dao<DProfile, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified createdDate
 	 */
-	CursorPage<DProfile, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
+	CursorPage<DProfile> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString);
 
 
@@ -120,7 +120,7 @@ public interface GeneratedDProfileDao extends Dao<DProfile, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified phoneNumber
 	 */
-	CursorPage<DProfile, java.lang.Long> queryPageByPhoneNumber(java.lang.String phoneNumber,
+	CursorPage<DProfile> queryPageByPhoneNumber(java.lang.String phoneNumber,
             int pageSize, String cursorString);
 
 
@@ -145,7 +145,7 @@ public interface GeneratedDProfileDao extends Dao<DProfile, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified updatedBy
 	 */
-	CursorPage<DProfile, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
+	CursorPage<DProfile> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString);
 
 
@@ -170,7 +170,7 @@ public interface GeneratedDProfileDao extends Dao<DProfile, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified updatedDate
 	 */
-	CursorPage<DProfile, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
+	CursorPage<DProfile> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString);
 
 

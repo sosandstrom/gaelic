@@ -1,7 +1,6 @@
 package com.wadpam.gaelic.crud;
 
 import com.wadpam.gaelic.json.JCursorPage;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -11,8 +10,7 @@ import java.util.Map;
  *
  * @author os
  */
-public interface CrudService<T, 
-        ID extends Serializable> {
+public interface CrudService<T> {
     
     /**
      * Factory method that creates a domain-model side object.
@@ -23,23 +21,23 @@ public interface CrudService<T,
     /**
      * Persists an entity in the underlying database.
      * @param domain
-     * @return the generated ID of the entity.
+     * @return the generated simple ID of the entity.
      */
-    ID create(T domain);
+    String create(T domain);
     
     /**
      * Deletes an entity from the underlying database persistence.
      * @param parentKeyString
-     * @param id 
+     * @param id the simple ID of the entity
      */
-    void delete(Object parentKey, ID id);
+    void delete(Object parentKey, String id);
 
     /**
      * Deletes specified entities from the underlying database persistence.
      * @param parentKeyString
      * @param id an array of IDs
      */
-    void delete(Object parentKey, ID[] id);
+    void delete(Object parentKey, String[] id);
 
     /**
      * Reads the specified entity from underlying database persistence.
@@ -47,18 +45,18 @@ public interface CrudService<T,
      * @param id
      * @return null if not found, otherwise the read entity.
      */
-    T get(Object parentKey, ID id);
+    T get(Object parentKey, String id);
     
     /**
      * Batch-reads specified entities from underlying database persistence.
      * @param ids
      * @return 
      */
-    Iterable<T> getByPrimaryKeys(Object parentKey, Collection<ID> ids);
+    Iterable<T> getByPrimaryKeys(Object parentKey, Collection<String> ids);
 
     Class getDaoClass();
     Class<T> getDomainClass();
-    Class<ID> getIdClass();
+    Class getIdClass();
     
     /**
      * Reads a page of entities from the underlying database persistence.
@@ -73,7 +71,7 @@ public interface CrudService<T,
      * @param domain
      * @return 
      */
-    ID getSimpleKey(T domain);
+    String getSimpleKey(T domain);
     
     /**
      * Extractor method to get the simple key toString from specified domain primary key.
@@ -112,14 +110,14 @@ public interface CrudService<T,
      * @param domain
      * @return the ID of the updated entity
      */
-    ID update(T domain);
+    String update(T domain);
     
     /**
      * Updates or Inserts specified entities in the underlying datastore persistence.
      * @param domains
      * @return the IDs of the upserted entities
      */
-    List<ID> upsert(Iterable<T> domains);
+    List<String> upsert(Iterable<T> domains);
     
     /**
      * Returns a page of IDs, for those entities that has changed or been deleted since.
@@ -128,6 +126,6 @@ public interface CrudService<T,
      * @param cursorKey null for first page, otherwise same value as returned in previous CursorPage
      * @return the IDs of the upserted entities
      */
-    JCursorPage<ID> whatsChanged(Date since, int pageSize, String cursorKey);
+    JCursorPage<String> whatsChanged(Date since, int pageSize, String cursorKey);
 
 }

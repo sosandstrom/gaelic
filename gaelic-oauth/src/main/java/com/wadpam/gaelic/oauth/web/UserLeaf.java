@@ -4,17 +4,16 @@
 
 package com.wadpam.gaelic.oauth.web;
 
-import com.wadpam.gaelic.oauth.dao.DOAuth2UserDao;
 import com.wadpam.gaelic.oauth.domain.DOAuth2User;
 import com.wadpam.gaelic.oauth.json.JOAuth2User;
-import com.wadpam.gaelic.oauth.service.OAuth2UserServiceImpl;
+import com.wadpam.gaelic.oauth.service.OAuth2UserService;
 import com.wadpam.gaelic.tree.CrudLeaf;
 
 /**
  *
  * @author sosandstrom
  */
-public class UserLeaf extends CrudLeaf<JOAuth2User, DOAuth2User, Long, OAuth2UserServiceImpl<DOAuth2User, DOAuth2UserDao>> {
+public class UserLeaf extends CrudLeaf<JOAuth2User, DOAuth2User, OAuth2UserService<DOAuth2User>> {
 
     public UserLeaf() {
         super(DOAuth2User.class, Long.class, JOAuth2User.class);

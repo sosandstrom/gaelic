@@ -20,7 +20,7 @@ import com.wadpam.gaelic.domain.DDate;
 /**
  * The DDate domain-object specific finders and methods go in this POJO.
  * 
- * Generated on 2013-05-06T09:20:59.186+0700.
+ * Generated on 2013-07-11T17:23:15.598+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public class GeneratedDDateDaoImpl extends TypeDaoImpl<DDate, java.lang.Long> 
@@ -290,7 +290,7 @@ public class GeneratedDDateDaoImpl extends TypeDaoImpl<DDate, java.lang.Long>
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified createdBy
 	 */
-	public final CursorPage<DDate, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
+	public final CursorPage<DDate> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDBY, createdBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -322,7 +322,7 @@ public class GeneratedDDateDaoImpl extends TypeDaoImpl<DDate, java.lang.Long>
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified createdDate
 	 */
-	public final CursorPage<DDate, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
+	public final CursorPage<DDate> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDDATE, createdDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -354,7 +354,7 @@ public class GeneratedDDateDaoImpl extends TypeDaoImpl<DDate, java.lang.Long>
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified startDate
 	 */
-	public final CursorPage<DDate, java.lang.Long> queryPageByStartDate(java.util.Date startDate,
+	public final CursorPage<DDate> queryPageByStartDate(java.util.Date startDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_STARTDATE, startDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -386,7 +386,7 @@ public class GeneratedDDateDaoImpl extends TypeDaoImpl<DDate, java.lang.Long>
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified updatedBy
 	 */
-	public final CursorPage<DDate, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
+	public final CursorPage<DDate> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDBY, updatedBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -418,7 +418,7 @@ public class GeneratedDDateDaoImpl extends TypeDaoImpl<DDate, java.lang.Long>
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified updatedDate
 	 */
-	public final CursorPage<DDate, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
+	public final CursorPage<DDate> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDDATE, updatedDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);

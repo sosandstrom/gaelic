@@ -20,7 +20,7 @@ import com.wadpam.gaelic.oauth.domain.DFactory;
 /**
  * The DFactory domain-object specific finders and methods go in this POJO.
  * 
- * Generated on 2013-05-11T20:15:45.419+0700.
+ * Generated on 2013-07-11T18:39:40.213+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.String> 
@@ -308,7 +308,7 @@ public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.St
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified baseUrl
 	 */
-	public final CursorPage<DFactory, java.lang.String> queryPageByBaseUrl(java.lang.String baseUrl,
+	public final CursorPage<DFactory> queryPageByBaseUrl(java.lang.String baseUrl,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_BASEURL, baseUrl);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -340,7 +340,7 @@ public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.St
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified clientId
 	 */
-	public final CursorPage<DFactory, java.lang.String> queryPageByClientId(java.lang.String clientId,
+	public final CursorPage<DFactory> queryPageByClientId(java.lang.String clientId,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CLIENTID, clientId);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -372,7 +372,7 @@ public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.St
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified clientSecret
 	 */
-	public final CursorPage<DFactory, java.lang.String> queryPageByClientSecret(java.lang.String clientSecret,
+	public final CursorPage<DFactory> queryPageByClientSecret(java.lang.String clientSecret,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CLIENTSECRET, clientSecret);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -404,7 +404,7 @@ public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.St
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified createdBy
 	 */
-	public final CursorPage<DFactory, java.lang.String> queryPageByCreatedBy(java.lang.String createdBy,
+	public final CursorPage<DFactory> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDBY, createdBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -436,7 +436,7 @@ public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.St
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified createdDate
 	 */
-	public final CursorPage<DFactory, java.lang.String> queryPageByCreatedDate(java.util.Date createdDate,
+	public final CursorPage<DFactory> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDDATE, createdDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -468,7 +468,7 @@ public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.St
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified updatedBy
 	 */
-	public final CursorPage<DFactory, java.lang.String> queryPageByUpdatedBy(java.lang.String updatedBy,
+	public final CursorPage<DFactory> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDBY, updatedBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -500,7 +500,7 @@ public class GeneratedDFactoryDaoImpl extends TypeDaoImpl<DFactory, java.lang.St
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified updatedDate
 	 */
-	public final CursorPage<DFactory, java.lang.String> queryPageByUpdatedDate(java.util.Date updatedDate,
+	public final CursorPage<DFactory> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDDATE, updatedDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);

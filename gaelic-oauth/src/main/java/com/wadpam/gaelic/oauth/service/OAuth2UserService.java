@@ -11,7 +11,7 @@ import com.wadpam.gaelic.oauth.domain.DOAuth2User;
  *
  * @author sosandstrom
  */
-public interface OAuth2UserService<T extends DOAuth2User> extends CrudService<T, Long> {
+public interface OAuth2UserService<T extends DOAuth2User> extends CrudService<T> {
 
     /**
      * Creates a new user based on Connection details

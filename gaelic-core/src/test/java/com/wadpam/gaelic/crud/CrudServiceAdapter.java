@@ -5,7 +5,6 @@
 package com.wadpam.gaelic.crud;
 
 import com.wadpam.gaelic.json.JCursorPage;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.Map;
  *
  * @author sosandstrom
  */
-public class CrudServiceAdapter<T, ID extends Serializable> implements CrudService<T, ID> {
+public class CrudServiceAdapter<T> implements CrudService<T> {
 
     @Override
     public T createDomain() {
@@ -23,27 +22,27 @@ public class CrudServiceAdapter<T, ID extends Serializable> implements CrudServi
     }
 
     @Override
-    public ID create(T domain) {
+    public String create(T domain) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void delete(Object parentKey, ID id) {
+    public void delete(Object parentKey, String id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void delete(Object parentKey, ID[] id) {
+    public void delete(Object parentKey, String[] id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public T get(Object parentKey, ID id) {
+    public T get(Object parentKey, String id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Iterable<T> getByPrimaryKeys(Object parentKey, Collection<ID> ids) {
+    public Iterable<T> getByPrimaryKeys(Object parentKey, Collection<String> ids) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -53,7 +52,7 @@ public class CrudServiceAdapter<T, ID extends Serializable> implements CrudServi
     }
 
     @Override
-    public ID getSimpleKey(T domain) {
+    public String getSimpleKey(T domain) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -88,17 +87,17 @@ public class CrudServiceAdapter<T, ID extends Serializable> implements CrudServi
     }
 
     @Override
-    public ID update(T domain) {
+    public String update(T domain) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<ID> upsert(Iterable<T> domains) {
+    public List<String> upsert(Iterable<T> domains) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JCursorPage<ID> whatsChanged(Date since, int pageSize, String cursorKey) {
+    public JCursorPage<String> whatsChanged(Date since, int pageSize, String cursorKey) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -113,7 +112,7 @@ public class CrudServiceAdapter<T, ID extends Serializable> implements CrudServi
     }
 
     @Override
-    public Class<ID> getIdClass() {
+    public Class<String> getIdClass() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

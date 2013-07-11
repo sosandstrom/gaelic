@@ -222,7 +222,7 @@ public class MardaoCrudTest {
         assertEquals("Bad Request", response.getErrorMessage());
 //        assertEquals("{}", response.getContentAsString());
         assertTrue(response.getContentAsString().startsWith(
-                "{\"code\":3,\"status\":400,\"message\":\"Bad Request\",\"developerMessage\":\"notLong\",\"stackTrace\":\"com.wadpam.gaelic.tree.CrudLeaf.getId:"));
+                "{\"code\":3,\"status\":400,\"message\":\"Bad Request\",\"developerMessage\":\"notLong\",\"stackTrace\":\"com.wadpam.gaelic"));
     }
 
     @Test

@@ -20,7 +20,7 @@ import com.wadpam.gaelic.oauth.domain.DConnection;
 /**
  * The DConnection domain-object specific finders and methods go in this POJO.
  * 
- * Generated on 2013-05-11T20:15:45.419+0700.
+ * Generated on 2013-07-11T18:39:40.213+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.lang.Long> 
@@ -327,7 +327,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified userKey
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByUserKey(java.lang.Object userKey,
+	public final CursorPage<DConnection> queryPageByUserKey(java.lang.Object userKey,
             int pageSize, String cursorString) {
             return queryPage(false, pageSize, userKey, null, null, false, null, false, cursorString);
         }
@@ -456,7 +456,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified appArg0
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByAppArg0(java.lang.String appArg0,
+	public final CursorPage<DConnection> queryPageByAppArg0(java.lang.String appArg0,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_APPARG0, appArg0);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -488,7 +488,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified createdBy
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
+	public final CursorPage<DConnection> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDBY, createdBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -520,7 +520,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified createdDate
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
+	public final CursorPage<DConnection> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDDATE, createdDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -552,7 +552,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified displayName
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByDisplayName(java.lang.String displayName,
+	public final CursorPage<DConnection> queryPageByDisplayName(java.lang.String displayName,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_DISPLAYNAME, displayName);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -584,7 +584,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified expireTime
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByExpireTime(java.util.Date expireTime,
+	public final CursorPage<DConnection> queryPageByExpireTime(java.util.Date expireTime,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_EXPIRETIME, expireTime);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -616,7 +616,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified imageUrl
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByImageUrl(java.lang.String imageUrl,
+	public final CursorPage<DConnection> queryPageByImageUrl(java.lang.String imageUrl,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_IMAGEURL, imageUrl);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -648,7 +648,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified profileUrl
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByProfileUrl(java.lang.String profileUrl,
+	public final CursorPage<DConnection> queryPageByProfileUrl(java.lang.String profileUrl,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROFILEURL, profileUrl);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -680,7 +680,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified providerId
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByProviderId(java.lang.String providerId,
+	public final CursorPage<DConnection> queryPageByProviderId(java.lang.String providerId,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROVIDERID, providerId);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -712,7 +712,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified providerUserId
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByProviderUserId(java.lang.String providerUserId,
+	public final CursorPage<DConnection> queryPageByProviderUserId(java.lang.String providerUserId,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROVIDERUSERID, providerUserId);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -764,7 +764,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified secret
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageBySecret(java.lang.String secret,
+	public final CursorPage<DConnection> queryPageBySecret(java.lang.String secret,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_SECRET, secret);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -796,7 +796,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified updatedBy
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
+	public final CursorPage<DConnection> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDBY, updatedBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -828,7 +828,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified updatedDate
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
+	public final CursorPage<DConnection> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDDATE, updatedDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -860,7 +860,7 @@ public class GeneratedDConnectionDaoImpl extends TypeDaoImpl<DConnection, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DConnections for the specified userRoles
 	 */
-	public final CursorPage<DConnection, java.lang.Long> queryPageByUserRoles(java.lang.String userRoles,
+	public final CursorPage<DConnection> queryPageByUserRoles(java.lang.String userRoles,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_USERROLES, userRoles);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);

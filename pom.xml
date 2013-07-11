@@ -24,7 +24,7 @@
     
     <properties>
         <gae.version>1.7.7</gae.version>
-        <mardao.version>2.3.1</mardao.version>
+        <mardao.version>2.3.3-SNAPSHOT</mardao.version>
     </properties>
 
     <distributionManagement>
@@ -82,7 +82,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>2.1</version>
                     <configuration>
                         <source>1.6</source>
                         <target>1.6</target>

@@ -5,15 +5,15 @@
 package com.wadpam.gaelic.tree;
 
 import com.wadpam.gaelic.converter.MardaoConverter;
-import com.wadpam.gaelic.crud.CrudService;
 import com.wadpam.gaelic.domain.DAppDomain;
 import com.wadpam.gaelic.json.JAppDomain;
+import com.wadpam.gaelic.service.AppDomainService;
 
 /**
  *
  * @author sosandstrom
  */
-public class AppDomainLeaf extends CrudLeaf<JAppDomain, DAppDomain, String, CrudService<DAppDomain, String>> {
+public class AppDomainLeaf extends CrudLeaf<JAppDomain, DAppDomain, AppDomainService> {
     
     protected static final AppDomainConverter CONVERTER = new AppDomainConverter();
 

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * On multiple Controller listeners, the order of notification cannot be guaranteed.
  * @author os
  */
-public interface CrudListener<J extends Serializable, T, ID extends Serializable, S extends CrudService<T, ID>> {
+public interface CrudListener<J extends Serializable, T> {
     public static final int CREATE = 1;
     public static final int GET = 2;
     public static final int UPDATE = 3;
@@ -36,7 +36,7 @@ public interface CrudListener<J extends Serializable, T, ID extends Serializable
      * @param domain The domain / service entity object for this operation
      * @param id defined for GET, UPDATE, DELETE
      */
-    public void preService(LeafAdapter<J> handler, S service,
+    public void preService(LeafAdapter<J> handler, CrudService<T> service,
             HttpServletRequest request, String namespace,
             int operation, Object json, Object domain, Serializable id);
 
@@ -51,7 +51,7 @@ public interface CrudListener<J extends Serializable, T, ID extends Serializable
      * @param id defined for GET, UPDATE, DELETE
      * @param serviceResponse 
      */
-    public void postService(LeafAdapter<J> handler, S service,
+    public void postService(LeafAdapter<J> handler, CrudService<T> service,
             HttpServletRequest request, String domain,
             int operation, Object json, Serializable id, Object serviceResponse);
 }

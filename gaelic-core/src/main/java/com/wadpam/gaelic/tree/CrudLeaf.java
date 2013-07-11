@@ -33,10 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author sosandstrom
  */
-public class CrudLeaf<J extends Serializable, 
-        T, 
-        ID extends Serializable,
-        S extends CrudService<T, ID>> extends LeafAdapter<J> {
+public class CrudLeaf<J extends Serializable, T, S extends CrudService<T>> extends LeafAdapter<J> {
     
     public static final int STATUS_OK = 200;
     public static final int STATUS_CREATED = 201;
@@ -95,12 +92,13 @@ public class CrudLeaf<J extends Serializable,
         
         return returnValue;
     }
-    
-    protected void create(HttpServletRequest request, HttpServletResponse response,
-            J body, T domain) {
 
+    @Override
+    protected void createResource(HttpServletRequest request, HttpServletResponse response, JKey jKey, J body) throws ServletException, IOException {
+        final T domain = converter.convertJson(body);
+        
         if (null != domain) {
-            final ID id = service.create(domain);
+            final String id = service.create(domain);
             if ("302".equals(request.getParameter(REQUEST_PARAM_EXPECTS))) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
@@ -112,13 +110,13 @@ public class CrudLeaf<J extends Serializable,
     }
     
     protected void delete(HttpServletRequest request, HttpServletResponse response,
-            ID id) {
+            String id) {
         service.delete(null, id);
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final ID id = getId(request);
+        final String id = getId(request);
         LOG.debug("doDelete {}", id);
         
         // GET details or page?
@@ -127,31 +125,6 @@ public class CrudLeaf<J extends Serializable,
         }
         else {
             throw new BadRequestException(getErrorBaseCode()+ERR_OFFSET_DELETE_ALL, toString(), null);
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
-        final J body = getRequestBody(request);
-        final T domain = converter.convertJson(body);
-        
-        ID id = null; 
-        
-        // me alias
-        if ("me".equals(filename)) {
-            final String username = getCurrentUsername();
-            id = getId(username);
-        }
-        else {
-            id = getId(request);
-        }
-        
-        if (null != id) {
-            update(request, response, body, domain, id);
-        }
-        else {
-            create(request, response, body, domain);
         }
     }
 
@@ -187,31 +160,32 @@ public class CrudLeaf<J extends Serializable,
         return GaelicServlet.ERROR_CODE_CRUD_BASE;
     }
     
-    protected ID getId(HttpServletRequest request) {
+    protected String getId(HttpServletRequest request) {
         final String filename = (String) request.getAttribute(REQUEST_ATTR_FILENAME);
         return getId(filename);
     }
     
-    protected ID getId(final String filename) {
-        ID id = null;
-        
-        if (null != filename) {
-            // if ID is Long, parse filename
-            if (Long.class.equals(idClass)) {
-                try {
-                    Long l = Long.parseLong(filename);
-                    id = (ID) l;
-                }
-                catch (NumberFormatException notLong) {
-                    throw new BadRequestException(GaelicServlet.ERROR_CODE_ID_LONG, filename, null);
-                }
-            }
-            else {
-                id = (ID) filename;
-            }
-        }
-        
-        return id;
+    protected String getId(final String filename) {
+//        ID id = null;
+//        
+//        if (null != filename) {
+//            // if ID is Long, parse filename
+//            if (Long.class.equals(idClass)) {
+//                try {
+//                    Long l = Long.parseLong(filename);
+//                    id = (ID) l;
+//                }
+//                catch (NumberFormatException notLong) {
+//                    throw new BadRequestException(GaelicServlet.ERROR_CODE_ID_LONG, filename, null);
+//                }
+//            }
+//            else {
+//                id = (ID) filename;
+//            }
+//        }
+//        
+//        return id;
+        return filename;
     }
     
     @Override
@@ -323,10 +297,11 @@ public class CrudLeaf<J extends Serializable,
         return SUPPORTED_METHODS;
     }
 
-    protected void update(HttpServletRequest request, HttpServletResponse response, 
-            J body, T domain, ID id) {
+    @Override
+    protected void updateResource(HttpServletRequest request, HttpServletResponse response, JKey jKey, J body) throws ServletException, IOException {
+        final T domain = converter.convertJson(body);
         
-        if (null != domain && null != id) {
+        if (null != domain && null != jKey.getId()) {
             service.update(domain);
             if ("302".equals(request.getParameter(REQUEST_PARAM_EXPECTS))) {
                 throw new UnsupportedOperationException("Not supported yet.");

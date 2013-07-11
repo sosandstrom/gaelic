@@ -13,12 +13,12 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author sosandstrom
  */
-public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializable, S extends CrudService<T, ID>>
-        implements CrudListener<J, T, ID, S> {
+public class CrudListenerAdapter<J extends Serializable, T>
+        implements CrudListener<J, T> {
 
     @Override
     public void preService(LeafAdapter<J> leaf, 
-            S service, 
+            CrudService<T> service, 
             HttpServletRequest request, 
             String namespace, 
             int operation, 
@@ -53,7 +53,7 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
 
     @Override
     public void postService(LeafAdapter<J> leaf, 
-            S service, 
+            CrudService<T> service, 
             HttpServletRequest request, 
             String namespace, 
             int operation, 
@@ -143,7 +143,7 @@ public class CrudListenerAdapter<J extends Serializable, T, ID extends Serializa
             String namespace, Serializable id) {
     }
 
-    protected void postGetPage(LeafAdapter<J> leaf, S service, HttpServletRequest request, 
+    protected void postGetPage(LeafAdapter<J> leaf, CrudService<T> service, HttpServletRequest request, 
             String namespace, JCursorPage<J> jPage, String cursorKey, JCursorPage<T> serviceResponse) {
     }
 

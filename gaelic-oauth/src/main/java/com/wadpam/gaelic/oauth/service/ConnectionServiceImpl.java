@@ -43,23 +43,12 @@ public class ConnectionServiceImpl extends MardaoCrudService<DConnection, Long, 
         boolean first = true;
         for (String s : from) {
             if (!first) {
-                to.append(ROLE_SEPARATOR);
+                to.append(DConnection.ROLE_SEPARATOR);
             }
             to.append(s.trim());
             first = false;
         }
         return to.toString();
-    }
-    
-    public static ArrayList<String> convertRoles(String from) {
-        final ArrayList<String> to = new ArrayList<String>();
-        if (null != from) {
-            final String roles[] = from.split(ROLE_SEPARATOR);
-            for (String r : roles) {
-                to.add(r.trim());
-            }
-        }
-        return to;
     }
 
 }

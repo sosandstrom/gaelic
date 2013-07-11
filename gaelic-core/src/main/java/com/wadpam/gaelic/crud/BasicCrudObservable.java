@@ -13,13 +13,13 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author sosandstrom
  */
-public class BasicCrudObservable<J extends Object, T, ID extends Serializable> implements CrudObservable {
+public class BasicCrudObservable<J extends Serializable, T> implements CrudObservable {
 
     protected final ArrayList<CrudListener> listeners = new ArrayList<CrudListener>();
-    private CrudService<T, ID> service;
+    private CrudService<T> service;
     private final LeafAdapter<J> leaf;
 
-    public BasicCrudObservable(LeafAdapter<J> leaf, CrudService<T, ID> service) {
+    public BasicCrudObservable(LeafAdapter<J> leaf, CrudService<T> service) {
         this.service = service;
         this.leaf = leaf;
     }
@@ -50,7 +50,7 @@ public class BasicCrudObservable<J extends Object, T, ID extends Serializable> i
         }
     }
 
-    public void setService(CrudService<T, ID> service) {
+    public void setService(CrudService<T> service) {
         this.service = service;
     }
 }

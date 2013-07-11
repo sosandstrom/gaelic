@@ -20,7 +20,7 @@ import com.wadpam.gaelic.oauth.domain.DOAuth2User;
 /**
  * The DOAuth2User domain-object specific finders and methods go in this POJO.
  * 
- * Generated on 2013-05-11T20:15:45.419+0700.
+ * Generated on 2013-07-11T18:39:40.213+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.lang.Long> 
@@ -335,7 +335,7 @@ public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified createdBy
 	 */
-	public final CursorPage<DOAuth2User, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
+	public final CursorPage<DOAuth2User> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDBY, createdBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -367,7 +367,7 @@ public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified createdDate
 	 */
-	public final CursorPage<DOAuth2User, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
+	public final CursorPage<DOAuth2User> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDDATE, createdDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -399,7 +399,7 @@ public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified displayName
 	 */
-	public final CursorPage<DOAuth2User, java.lang.Long> queryPageByDisplayName(java.lang.String displayName,
+	public final CursorPage<DOAuth2User> queryPageByDisplayName(java.lang.String displayName,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_DISPLAYNAME, displayName);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -451,7 +451,7 @@ public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified profileLink
 	 */
-	public final CursorPage<DOAuth2User, java.lang.Long> queryPageByProfileLink(java.lang.String profileLink,
+	public final CursorPage<DOAuth2User> queryPageByProfileLink(java.lang.String profileLink,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PROFILELINK, profileLink);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -483,7 +483,7 @@ public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified roles
 	 */
-	public final CursorPage<DOAuth2User, java.lang.Long> queryPageByRoles(java.lang.Object roles,
+	public final CursorPage<DOAuth2User> queryPageByRoles(java.lang.Object roles,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_ROLES, roles);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -515,7 +515,7 @@ public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified thumbnailUrl
 	 */
-	public final CursorPage<DOAuth2User, java.lang.Long> queryPageByThumbnailUrl(java.lang.String thumbnailUrl,
+	public final CursorPage<DOAuth2User> queryPageByThumbnailUrl(java.lang.String thumbnailUrl,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_THUMBNAILURL, thumbnailUrl);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -547,7 +547,7 @@ public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified updatedBy
 	 */
-	public final CursorPage<DOAuth2User, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
+	public final CursorPage<DOAuth2User> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDBY, updatedBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -579,7 +579,7 @@ public class GeneratedDOAuth2UserDaoImpl extends TypeDaoImpl<DOAuth2User, java.l
          * @param cursorString non-null if get next page
 	 * @return a Page of DOAuth2Users for the specified updatedDate
 	 */
-	public final CursorPage<DOAuth2User, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
+	public final CursorPage<DOAuth2User> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDDATE, updatedDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);

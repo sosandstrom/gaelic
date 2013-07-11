@@ -1,6 +1,8 @@
 package com.wadpam.gaelic.crud;
 
+import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.converter.MardaoConverter;
+import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.exception.RestException;
 import com.wadpam.gaelic.json.JCursorPage;
 import java.io.Serializable;
@@ -22,18 +24,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author os
  */
-public abstract class MardaoCrudService<
-        T extends Object,
-        ID extends Serializable,
-        D extends Dao<T, ID>> 
-    extends BasicCrudObservable<Void, T, ID>
-    implements CrudService<T, ID> {
+public abstract class MardaoCrudService<T extends Object,
+        ID extends Serializable, D extends Dao<T, ID>> 
+    extends BasicCrudObservable<Serializable, T>
+    implements CrudService<T> {
     
     protected static final Logger LOG = LoggerFactory.getLogger(MardaoCrudService.class);
     
-    protected final Class domainClass;
-    protected final Class idClass;
-    protected final Class daoClass;
+    protected final Class<T> domainClass;
+    protected final Class<ID> idClass;
+    protected final Class<Dao<T, ID>> daoClass;
     protected D dao;
 
     public MardaoCrudService(Class domainClass, Class idClass, Class daoClass) {
@@ -51,6 +51,89 @@ public abstract class MardaoCrudService<
         }
     }
     
+    /**
+     * Converts from String id to domain-specific ID class
+     * @param stringId String id, as used in API
+     * @return domain-specific ID class
+     */
+    protected ID getID(final String stringId) {
+        return getID(stringId, this.idClass);
+    }
+    
+    /**
+     * Converts from String id to specified ID class
+     * @param stringId String id, as used in API
+     * @param idClass class for the ID
+     * @return domain-specific ID class
+     */
+    public static <I extends Serializable> I getID(final String stringId, Class<I> idClass) {
+        I id = null;
+        
+        if (null != stringId) {
+            // if ID is Long, parse filename
+            if (Long.class.equals(idClass)) {
+                try {
+                    Long l = Long.parseLong(stringId);
+                    id = (I) l;
+                }
+                catch (NumberFormatException notLong) {
+                    throw new BadRequestException(GaelicServlet.ERROR_CODE_ID_LONG, stringId, null);
+                }
+            }
+            else {
+                id = (I) stringId;
+            }
+        }
+        
+        return id;
+    }
+    
+    /**
+     * Converts from domain-specific ID class to String
+     * @param id domain-specific ID
+     * @return String id, as used in API
+     */
+    protected String getStringId(final ID id) {
+        return getStringId(id, this.idClass);
+    }
+    
+    /**
+     * Converts from domain-specific ID class to String
+     * @param id domain-specific ID
+     * @return String id, as used in API
+     */
+    public static <I extends Serializable> String getStringId(final I id, Class<I> idClass) {
+        if (null == id || String.class.equals(idClass)) {
+            return (String) id;
+        }
+        
+        return id.toString();
+    }
+
+    protected List<ID> getIDs(final Iterable<String> stringIds) {
+        final ArrayList<ID> ids = new ArrayList<ID>();
+        for (String id : stringIds) {
+            ids.add(getID(id));
+        }
+        return ids;
+    }
+    
+    protected List<String> getStringIds(final Iterable<ID> ids) {
+        final ArrayList<String> stringIds = new ArrayList<String>();
+        for (ID id : ids) {
+            stringIds.add(getStringId(id));
+        }
+        return stringIds;
+    }
+    
+    protected CursorPage<String> getCursorPage(CursorPage<ID> page) {
+        final CursorPage p = page;
+        
+        // in-page conversion
+        p.setItems(getStringIds(page.getItems()));
+        
+        return p;
+    }
     
     @Override
     public T createDomain() {
@@ -82,7 +165,7 @@ public abstract class MardaoCrudService<
     }
     
     @Override
-    public ID create(T domain) {
+    public String create(T domain) {
         if (null == domain) {
             return null;
         }
@@ -98,7 +181,7 @@ public abstract class MardaoCrudService<
 
             commitTransaction(transaction);
             postService(null, null, CrudListener.CREATE, null, id, domain);
-            return id;
+            return getStringId(id);
         }
         finally {
             postDao();
@@ -107,13 +190,13 @@ public abstract class MardaoCrudService<
     }
     
     @Override
-    public void delete(Object parentKey, ID id) {
+    public void delete(Object parentKey, String id) {
         final Object transaction = beginTransaction();
         preDao();
         preService(null, null, CrudListener.DELETE, null, null, id);
         try {
             LOG.debug("deleting {} with ID {}/{}", new Object[] {dao.getTableName(), parentKey, id});
-            dao.delete(parentKey, id);
+            dao.delete(parentKey, getID(id));
             commitTransaction(transaction);
             postService(null, null, CrudListener.DELETE, null, id, null);
         }
@@ -124,14 +207,14 @@ public abstract class MardaoCrudService<
     }
 
     @Override
-    public void delete(Object parentKey, ID[] id) {
+    public void delete(Object parentKey, String[] id) {
         final Object transaction = beginTransaction();
         preDao();
         preService(null, null, CrudListener.DELETE_BATCH, null, null, id);
         try {
             final ArrayList<ID> ids = new ArrayList<ID>();
-            for (ID i : id) {
-                ids.add(i);
+            for (String i : id) {
+                ids.add(getID(i));
             }
             dao.delete(parentKey, ids);
             commitTransaction(transaction);
@@ -144,7 +227,7 @@ public abstract class MardaoCrudService<
     }
 
     @Override
-    public T get(Object parentKey, ID id) {
+    public T get(Object parentKey, String id) {
         if (null == id || "".equals(id)) {
             return null;
         }
@@ -152,7 +235,7 @@ public abstract class MardaoCrudService<
         preDao();
         preService(null, null, CrudListener.GET, null, null, id);
         try {
-            T domain = dao.findByPrimaryKey(parentKey, id);
+            T domain = dao.findByPrimaryKey(parentKey, getID(id));
             LOG.debug("GET {}/{}/{} returns {}", new Object[] {
                 dao.getTableName(), parentKey, id, domain});
 
@@ -169,12 +252,12 @@ public abstract class MardaoCrudService<
     }
     
     @Override
-    public Iterable<T> getByPrimaryKeys(Object parentKey, Collection<ID> ids) {
+    public Iterable<T> getByPrimaryKeys(Object parentKey, Collection<String> ids) {
         preDao();
         final Serializable idArray = ids.toArray(new Serializable[ids.size()]);
         preService(null, null, CrudListener.GET_BATCH, null, null, idArray);
         try {
-            final Iterable<T> entities = dao.queryByPrimaryKeys(parentKey, ids);
+            final Iterable<T> entities = dao.queryByPrimaryKeys(parentKey, getIDs(ids));
 
             postService(null, null, CrudListener.GET_BATCH, null, idArray, entities);
             return entities;
@@ -234,14 +317,13 @@ public abstract class MardaoCrudService<
     }
 
     @Override
-    public ID getSimpleKey(T domain) {
-        return dao.getSimpleKey(domain);
+    public String getSimpleKey(T domain) {
+        return getStringId(dao.getSimpleKey(domain));
     }
 
     @Override
     public String getSimpleKeyString(Object primaryKey) {
-        ID id = dao.getSimpleKeyByPrimaryKey(primaryKey);
-        return null != id ? id.toString() : null;
+        return getStringId(dao.getSimpleKeyByPrimaryKey(primaryKey));
     }
 
     @Override
@@ -265,12 +347,12 @@ public abstract class MardaoCrudService<
     }
     
     @Override
-    public ID update(T domain) {
+    public String update(T domain) {
         final Object transaction = beginTransaction();
         preDao();
         try {
             LOG.debug("Update {}", domain);
-            final ID id = dao.getSimpleKey(domain);
+            final String id = getSimpleKey(domain);
             if (null == domain || null == id) {
                 throw new IllegalArgumentException("ID cannot be null updating " + dao.getTableName());
             }
@@ -289,7 +371,7 @@ public abstract class MardaoCrudService<
     }
     
     @Override
-    public List<ID> upsert(Iterable<T> dEntities) {
+    public List<String> upsert(Iterable<T> dEntities) {
         final Object transaction = beginTransaction();
         
         // group entities by create or update:
@@ -323,7 +405,7 @@ public abstract class MardaoCrudService<
 
             // join future
             if (null != createFuture) {
-                Collection<ID> ids = dao.getSimpleKeys(createFuture);
+                dao.getSimpleKeys(createFuture);
     //            Iterator<ID> i = ids.iterator();
     //            for (T t : toCreate) {
     //                dao.setSimpleKey(t, i.next());
@@ -331,7 +413,7 @@ public abstract class MardaoCrudService<
             }
 
             // collect the IDs
-            final ArrayList<ID> body = new ArrayList<ID>();
+            final ArrayList<String> body = new ArrayList<String>();
             for (T d : dEntities) {
                 body.add(getSimpleKey(d));
             }
@@ -346,7 +428,7 @@ public abstract class MardaoCrudService<
     }
     
     @Override
-    public JCursorPage<ID> whatsChanged(Date since, int pageSize, String cursorKey) {
+    public JCursorPage<String> whatsChanged(Date since, int pageSize, String cursorKey) {
         preDao();
         preService(null, null, CrudListener.WHAT_CHANGED, null, null, cursorKey);
         try {
@@ -361,15 +443,15 @@ public abstract class MardaoCrudService<
         }
     }
     
-    public CursorPage<ID, ID> whatsChanged(Object parentKey, Date since, 
+    public CursorPage<String> whatsChanged(Object parentKey, Date since, 
             int pageSize, String cursorKey, Filter... filters) {
         preDao();
         preService(null, null, CrudListener.WHAT_CHANGED, null, null, cursorKey);
         try {
             // TODO: include deletes from Audit table
-            CursorPage<ID, ID> page = dao.whatsChanged(parentKey, since, pageSize, cursorKey, filters);
+            CursorPage<ID> page = dao.whatsChanged(parentKey, since, pageSize, cursorKey, filters);
             postService(null, null, CrudListener.WHAT_CHANGED, null, cursorKey, page);
-            return page;
+            return getCursorPage(page);
         }
         finally {
             postDao();
@@ -397,7 +479,7 @@ public abstract class MardaoCrudService<
         this.dao = dao;
     }
 
-    public D getDao() {
+    public Dao<T, ID> getDao() {
         return dao;
     }
     

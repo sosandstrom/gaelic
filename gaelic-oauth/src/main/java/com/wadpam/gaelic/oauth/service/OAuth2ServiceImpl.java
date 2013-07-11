@@ -6,6 +6,7 @@ package com.wadpam.gaelic.oauth.service;
 
 import com.wadpam.gaelic.crud.CrudListener;
 import com.wadpam.gaelic.crud.CrudObservable;
+import com.wadpam.gaelic.crud.MardaoCrudService;
 import com.wadpam.gaelic.exception.AuthenticationFailedException;
 import com.wadpam.gaelic.json.RestResponse;
 import com.wadpam.gaelic.oauth.dao.DConnectionDao;
@@ -169,7 +170,7 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
                 // existing user
                 if (null == user) {
                     Long userId = connectionDao.getSimpleKeyByPrimaryKey(userKey);
-                    user = oauth2UserService.get(null, userId);
+                    user = oauth2UserService.get(null, MardaoCrudService.getStringId(userId, Long.class));
                 }
                 
                 // copy roles to Connection

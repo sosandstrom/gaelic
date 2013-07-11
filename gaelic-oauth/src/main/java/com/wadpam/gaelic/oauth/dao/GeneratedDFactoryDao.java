@@ -12,7 +12,7 @@ import net.sf.mardao.core.geo.DLocation;
 /**
  * DAO interface with finder methods for DFactory entities.
  *
- * Generated on 2013-05-11T20:15:45.419+0700.
+ * Generated on 2013-07-11T18:39:40.213+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public interface GeneratedDFactoryDao extends Dao<DFactory, java.lang.String> {
@@ -78,7 +78,7 @@ public interface GeneratedDFactoryDao extends Dao<DFactory, java.lang.String> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified baseUrl
 	 */
-	CursorPage<DFactory, java.lang.String> queryPageByBaseUrl(java.lang.String baseUrl,
+	CursorPage<DFactory> queryPageByBaseUrl(java.lang.String baseUrl,
             int pageSize, String cursorString);
 
 
@@ -103,7 +103,7 @@ public interface GeneratedDFactoryDao extends Dao<DFactory, java.lang.String> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified clientId
 	 */
-	CursorPage<DFactory, java.lang.String> queryPageByClientId(java.lang.String clientId,
+	CursorPage<DFactory> queryPageByClientId(java.lang.String clientId,
             int pageSize, String cursorString);
 
 
@@ -128,7 +128,7 @@ public interface GeneratedDFactoryDao extends Dao<DFactory, java.lang.String> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified clientSecret
 	 */
-	CursorPage<DFactory, java.lang.String> queryPageByClientSecret(java.lang.String clientSecret,
+	CursorPage<DFactory> queryPageByClientSecret(java.lang.String clientSecret,
             int pageSize, String cursorString);
 
 
@@ -153,7 +153,7 @@ public interface GeneratedDFactoryDao extends Dao<DFactory, java.lang.String> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified createdBy
 	 */
-	CursorPage<DFactory, java.lang.String> queryPageByCreatedBy(java.lang.String createdBy,
+	CursorPage<DFactory> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString);
 
 
@@ -178,7 +178,7 @@ public interface GeneratedDFactoryDao extends Dao<DFactory, java.lang.String> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified createdDate
 	 */
-	CursorPage<DFactory, java.lang.String> queryPageByCreatedDate(java.util.Date createdDate,
+	CursorPage<DFactory> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString);
 
 
@@ -203,7 +203,7 @@ public interface GeneratedDFactoryDao extends Dao<DFactory, java.lang.String> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified updatedBy
 	 */
-	CursorPage<DFactory, java.lang.String> queryPageByUpdatedBy(java.lang.String updatedBy,
+	CursorPage<DFactory> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString);
 
 
@@ -228,7 +228,7 @@ public interface GeneratedDFactoryDao extends Dao<DFactory, java.lang.String> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DFactorys for the specified updatedDate
 	 */
-	CursorPage<DFactory, java.lang.String> queryPageByUpdatedDate(java.util.Date updatedDate,
+	CursorPage<DFactory> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString);
 
 

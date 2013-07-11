@@ -20,7 +20,7 @@ import com.wadpam.gaelic.domain.DProfile;
 /**
  * The DProfile domain-object specific finders and methods go in this POJO.
  * 
- * Generated on 2013-04-27T09:52:30.772+0700.
+ * Generated on 2013-07-11T18:55:13.149+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public class GeneratedDProfileDaoImpl extends TypeDaoImpl<DProfile, java.lang.Long> 
@@ -290,7 +290,7 @@ public class GeneratedDProfileDaoImpl extends TypeDaoImpl<DProfile, java.lang.Lo
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified createdBy
 	 */
-	public final CursorPage<DProfile, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
+	public final CursorPage<DProfile> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDBY, createdBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -322,7 +322,7 @@ public class GeneratedDProfileDaoImpl extends TypeDaoImpl<DProfile, java.lang.Lo
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified createdDate
 	 */
-	public final CursorPage<DProfile, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
+	public final CursorPage<DProfile> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_CREATEDDATE, createdDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -354,7 +354,7 @@ public class GeneratedDProfileDaoImpl extends TypeDaoImpl<DProfile, java.lang.Lo
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified phoneNumber
 	 */
-	public final CursorPage<DProfile, java.lang.Long> queryPageByPhoneNumber(java.lang.String phoneNumber,
+	public final CursorPage<DProfile> queryPageByPhoneNumber(java.lang.String phoneNumber,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_PHONENUMBER, phoneNumber);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -386,7 +386,7 @@ public class GeneratedDProfileDaoImpl extends TypeDaoImpl<DProfile, java.lang.Lo
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified updatedBy
 	 */
-	public final CursorPage<DProfile, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
+	public final CursorPage<DProfile> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDBY, updatedBy);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);
@@ -418,7 +418,7 @@ public class GeneratedDProfileDaoImpl extends TypeDaoImpl<DProfile, java.lang.Lo
          * @param cursorString non-null if get next page
 	 * @return a Page of DProfiles for the specified updatedDate
 	 */
-	public final CursorPage<DProfile, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
+	public final CursorPage<DProfile> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString) {
             final Filter filter = createEqualsFilter(COLUMN_NAME_UPDATEDDATE, updatedDate);
             return queryPage(false, pageSize, null, null, null, false, null, false, cursorString, filter);

@@ -102,6 +102,11 @@ public class LeafAdapter<J extends Object> extends Node {
         final J body = getRequestBody(request);
         
         if (null != jKey.getId()) {
+            // me alias
+            if ("me".equals(jKey.getId())) {
+                jKey.setId(getCurrentUsername());
+            }
+
             updateResource(request, response, jKey, body);
         }
         else {

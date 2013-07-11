@@ -12,7 +12,7 @@ import net.sf.mardao.core.geo.DLocation;
 /**
  * DAO interface with finder methods for DAppDomain entities.
  *
- * Generated on 2013-05-17T21:40:19.909+0700.
+ * Generated on 2013-07-11T17:23:21.353+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String> {
@@ -94,7 +94,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified analyticsTrackingCode
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByAnalyticsTrackingCode(java.lang.String analyticsTrackingCode,
+	CursorPage<DAppDomain> queryPageByAnalyticsTrackingCode(java.lang.String analyticsTrackingCode,
             int pageSize, String cursorString);
 
 
@@ -119,7 +119,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified appArg1
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByAppArg1(java.lang.String appArg1,
+	CursorPage<DAppDomain> queryPageByAppArg1(java.lang.String appArg1,
             int pageSize, String cursorString);
 
 
@@ -144,7 +144,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified appArg2
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByAppArg2(java.lang.String appArg2,
+	CursorPage<DAppDomain> queryPageByAppArg2(java.lang.String appArg2,
             int pageSize, String cursorString);
 
 
@@ -169,7 +169,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified createdBy
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByCreatedBy(java.lang.String createdBy,
+	CursorPage<DAppDomain> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString);
 
 
@@ -194,7 +194,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified createdDate
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByCreatedDate(java.util.Date createdDate,
+	CursorPage<DAppDomain> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString);
 
 
@@ -219,7 +219,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified description
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByDescription(java.lang.String description,
+	CursorPage<DAppDomain> queryPageByDescription(java.lang.String description,
             int pageSize, String cursorString);
 
 
@@ -244,7 +244,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified email
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByEmail(java.lang.String email,
+	CursorPage<DAppDomain> queryPageByEmail(java.lang.String email,
             int pageSize, String cursorString);
 
 
@@ -269,7 +269,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified password
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByPassword(java.lang.String password,
+	CursorPage<DAppDomain> queryPageByPassword(java.lang.String password,
             int pageSize, String cursorString);
 
 
@@ -294,7 +294,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified updatedBy
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByUpdatedBy(java.lang.String updatedBy,
+	CursorPage<DAppDomain> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString);
 
 
@@ -319,7 +319,7 @@ public interface GeneratedDAppDomainDao extends Dao<DAppDomain, java.lang.String
          * @param cursorString non-null if get next page
 	 * @return a Page of DAppDomains for the specified updatedDate
 	 */
-	CursorPage<DAppDomain, java.lang.String> queryPageByUpdatedDate(java.util.Date updatedDate,
+	CursorPage<DAppDomain> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString);
 
 

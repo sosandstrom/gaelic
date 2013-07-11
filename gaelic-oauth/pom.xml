@@ -10,10 +10,6 @@
     <packaging>jar</packaging>
     <name>Gaelic OAuth</name>
 
-    <!-- Specify hard-coded project properties here -->
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -84,31 +80,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <wtpversion>2.0</wtpversion>
-                </configuration>
-            </plugin>
-        </plugins>
-       
-    </build>
-
     <profiles>
         <profile>
             <id>mardao</id>
@@ -126,8 +97,6 @@
                                     <goal>compile</goal>
                                 </goals>
                                 <configuration>
-                                    <verbose>false</verbose>
-                                    <fork>true</fork>
                                     <includes>
                                         <include>**/domain/*.java</include>
                                     </includes>

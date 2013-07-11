@@ -12,7 +12,7 @@ import net.sf.mardao.core.geo.DLocation;
 /**
  * DAO interface with finder methods for DDate entities.
  *
- * Generated on 2013-05-06T09:20:59.186+0700.
+ * Generated on 2013-07-11T17:23:15.598+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public interface GeneratedDDateDao extends Dao<DDate, java.lang.Long> {
@@ -70,7 +70,7 @@ public interface GeneratedDDateDao extends Dao<DDate, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified createdBy
 	 */
-	CursorPage<DDate, java.lang.Long> queryPageByCreatedBy(java.lang.String createdBy,
+	CursorPage<DDate> queryPageByCreatedBy(java.lang.String createdBy,
             int pageSize, String cursorString);
 
 
@@ -95,7 +95,7 @@ public interface GeneratedDDateDao extends Dao<DDate, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified createdDate
 	 */
-	CursorPage<DDate, java.lang.Long> queryPageByCreatedDate(java.util.Date createdDate,
+	CursorPage<DDate> queryPageByCreatedDate(java.util.Date createdDate,
             int pageSize, String cursorString);
 
 
@@ -120,7 +120,7 @@ public interface GeneratedDDateDao extends Dao<DDate, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified startDate
 	 */
-	CursorPage<DDate, java.lang.Long> queryPageByStartDate(java.util.Date startDate,
+	CursorPage<DDate> queryPageByStartDate(java.util.Date startDate,
             int pageSize, String cursorString);
 
 
@@ -145,7 +145,7 @@ public interface GeneratedDDateDao extends Dao<DDate, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified updatedBy
 	 */
-	CursorPage<DDate, java.lang.Long> queryPageByUpdatedBy(java.lang.String updatedBy,
+	CursorPage<DDate> queryPageByUpdatedBy(java.lang.String updatedBy,
             int pageSize, String cursorString);
 
 
@@ -170,7 +170,7 @@ public interface GeneratedDDateDao extends Dao<DDate, java.lang.Long> {
          * @param cursorString non-null if get next page
 	 * @return a Page of DDates for the specified updatedDate
 	 */
-	CursorPage<DDate, java.lang.Long> queryPageByUpdatedDate(java.util.Date updatedDate,
+	CursorPage<DDate> queryPageByUpdatedDate(java.util.Date updatedDate,
             int pageSize, String cursorString);
 
 
