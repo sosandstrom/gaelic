@@ -24,7 +24,7 @@
     
     <properties>
         <gae.version>1.7.7</gae.version>
-        <mardao.version>2.3.3-SNAPSHOT</mardao.version>
+        <mardao.version>2.3.3</mardao.version>
     </properties>
 
     <distributionManagement>
