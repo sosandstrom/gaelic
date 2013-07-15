@@ -20,6 +20,11 @@ import org.slf4j.LoggerFactory;
  * @author sosandstrom
  */
 public class NetworkTemplate {
+    public static final String ACCEPT = "Accept";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String LOCATION = "Location";
+    
     public static final String MIME_JSON = "application/json";
     
     protected static final Logger LOG = LoggerFactory.getLogger(NetworkTemplate.class);
@@ -41,6 +46,11 @@ public class NetworkTemplate {
     }
     
     public <J> J exchange(String method, String url, Object requestBody, Class<J> responseClass) {
+        final NetworkResponse<J> response = exchangeForResponse(method, url, requestBody, responseClass);
+        return response.getBody();
+    }
+    
+    public <J> NetworkResponse<J> exchangeForResponse(String method, String url, Object requestBody, Class<J> responseClass) {
         try {
             // create the connection
             URL u = new URL(url);
@@ -53,31 +63,34 @@ public class NetworkTemplate {
 
             // Accept
             if (null != accept) {
-                con.addRequestProperty("Accept", accept);
+                con.addRequestProperty(ACCEPT, accept);
             }
             
             // Authorization
             if (null != authorization) {
-                con.addRequestProperty("Authorization", authorization);
+                con.addRequestProperty(AUTHORIZATION, authorization);
             }
 
             if (null != requestBody) {
-                con.addRequestProperty("Content-Type", MIME_JSON);
+                con.addRequestProperty(CONTENT_TYPE, MIME_JSON);
                 con.setDoOutput(true);
                 OutputStream out = con.getOutputStream();
                 GaelicServlet.MAPPER.writeValue(out, requestBody);
                 out.close();
             }
 
+            NetworkResponse<J> response = new NetworkResponse<J>(
+                    con.getResponseCode(),
+                    con.getHeaderFields(),
+                    con.getResponseMessage());
             InputStream in = con.getInputStream();
 
-            J responseBody = null;
             if (null == con.getContentType() || con.getContentType().startsWith(MIME_JSON)) {
-                responseBody = GaelicServlet.MAPPER.readValue(in, responseClass);
-                LOG.debug("Response JSON: {}", responseBody);
+                response.setBody(GaelicServlet.MAPPER.readValue(in, responseClass));
+                LOG.debug("Response JSON: {}", response.getBody());
             }
 
-            return responseBody;
+            return response;
         }
         catch (IOException ioe) {
             throw new RuntimeException("NetworkTemplate.exchange", ioe);
@@ -92,6 +105,11 @@ public class NetworkTemplate {
         return exchange(Node.METHOD_POST, url, requestBody, responseClass);
     }
 
+    public String postForLocation(String url, Object requestBody) {
+        NetworkResponse<Void> response = exchangeForResponse(Node.METHOD_POST, url, requestBody, Void.class);
+        return response.getHeader(LOCATION);
+    }
+    
     // --- getters and setters ---
     
     public String getBaseUrl() {

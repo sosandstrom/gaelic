@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.slf4j.Logger;
@@ -51,6 +52,7 @@ public class GaelicServlet extends HttpServlet {
     public static final ObjectMapper MAPPER = new ObjectMapper();
     static {
         MAPPER.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+        MAPPER.getDeserializationConfig().set(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
     
     static final Logger LOG = LoggerFactory.getLogger(GaelicServlet.class);

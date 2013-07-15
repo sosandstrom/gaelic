@@ -1,6 +1,10 @@
-package com.wadpam.gaelic.itest;
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+package ${package}.itest;
 
-import com.wadpam.gaelic.json.JProfile;
+import com.wadpam.gaelic.net.NetworkTemplate;
+import com.wadpam.gaelic.oauth.json.JConnection;
 import java.net.URI;
 
 import org.junit.After;
@@ -8,10 +12,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.web.client.RestTemplate;
 import static org.junit.Assert.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ${package}.json.JProfile;
 
 /**
  * Integration test for the CRUD leafs.
@@ -20,9 +24,12 @@ import org.slf4j.LoggerFactory;
 public class ProfileITest {
     static final Logger LOG = LoggerFactory.getLogger(ProfileITest.class);
 
-    protected static final String                  BASE_URL       = "http://localhost:8234/api/itest/";
+    protected static final String BASE_URL = "http://localhost:8080/api/itest";
+
+    protected static final String ACCESS_TOKEN = "John.I.Test";
+
+    NetworkTemplate                         template;
     
-    RestTemplate                         template;
     public ProfileITest() {
     }
 
@@ -36,7 +43,7 @@ public class ProfileITest {
 
     @Before
     public void setUp() {
-        template = new RestTemplate();
+        template = new NetworkTemplate();
         LOG.info("----------------- setUp() ---------------------------");
     }
 
@@ -47,6 +54,9 @@ public class ProfileITest {
     @Test
     public void testCreateProfile() {
         LOG.info("+ testCreateProfile():");
+        
+        registerFederated();
+        
         final String PHONE = "+85517222165";
         JProfile actual = createProfile(PHONE);
         assertNotNull("Assigned Profile ID", actual.getId());
@@ -56,13 +66,18 @@ public class ProfileITest {
     protected JProfile createProfile(String phone) {
         JProfile request = new JProfile();
         request.setPhoneNumber(phone);
-        URI uri = template.postForLocation(BASE_URL + "profile/v10", request);
+        JProfile actual = template.post(String.format(
+                "%s/profile/v10?access_token=%s", BASE_URL, ACCESS_TOKEN) , 
+                request, JProfile.class);
         
-        LOG.info("GET {}", uri);
-        JProfile actual = template.getForObject(uri, JProfile.class);
         return actual;
     }
 
+    protected void registerFederated() {
+        final String url = String.format("%s/federated/v11?providerId=itest&access_token=%s&expires_in=600",
+                BASE_URL, ACCESS_TOKEN);
+        template.get(url, JConnection.class);
+    }
     
 //    @Test
 //    public void testDeleteSample() {

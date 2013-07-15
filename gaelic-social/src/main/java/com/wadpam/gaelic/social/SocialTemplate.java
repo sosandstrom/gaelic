@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class SocialTemplate extends NetworkTemplate {
 
-    private final String access_token;
+    protected final String access_token;
 
     public SocialTemplate(String access_token) {
         this(access_token, "https://graph.facebook.com");
@@ -27,9 +27,13 @@ public class SocialTemplate extends NetworkTemplate {
         this.access_token = access_token;
     }
     
-    public static SocialTemplate create(String providerId, String access_token, String baseUrl) {
+    public static SocialTemplate create(String providerId, String access_token, 
+            String baseUrl, String domain) {
         if ("facebook".equals(providerId)) {
             return new SocialTemplate(access_token);
+        }
+        if ("itest".equals(providerId) && "itest".equals(domain)) {
+            return new ITestTemplate(access_token);
         }
         throw new IllegalArgumentException(String.format("No such provider %s.", providerId));
     }

@@ -82,7 +82,7 @@ public class OAuth2ServiceImpl implements OAuth2Service, CrudObservable {
         
         // use the connectionFactory
         final SocialTemplate socialTemplate = SocialTemplate.create(
-                providerId, access_token, appArg0);
+                providerId, access_token, appArg0, domain);
 
         SocialProfile profile = null;
         try {

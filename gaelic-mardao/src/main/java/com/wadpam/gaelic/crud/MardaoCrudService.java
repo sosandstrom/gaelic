@@ -479,7 +479,7 @@ public abstract class MardaoCrudService<T extends Object,
         this.dao = dao;
     }
 
-    public Dao<T, ID> getDao() {
+    public D getDao() {
         return dao;
     }
     

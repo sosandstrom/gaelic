@@ -17,7 +17,7 @@ import com.wadpam.gaelic.tree.CrudLeaf;
  *
  * @author sosandstrom
  */
-public class ProfileLeaf extends CrudLeaf<JProfile, DProfile, Long, CrudService<DProfile, Long>> {
+public class ProfileLeaf extends CrudLeaf<JProfile, DProfile, CrudService<DProfile>> {
     
     public static final ProfileConverter CONVERTER = new ProfileConverter();
 
