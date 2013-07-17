@@ -27,6 +27,11 @@
             <artifactId>gaelic-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gaelic-oauth2-provider</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -69,6 +74,12 @@
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.6.1</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
         </dependency>
         <!-- this is for Jetty and ITests 
         <dependency>

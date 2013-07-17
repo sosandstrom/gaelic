@@ -1,7 +1,6 @@
 package com.wadpam.gaelic.itest;
 
-import com.wadpam.gaelic.json.JProfile;
-import java.net.URI;
+import com.wadpam.gaelic.oauth.provider.json.Jo2pProfile;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -20,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileITest {
     static final Logger LOG = LoggerFactory.getLogger(ProfileITest.class);
 
-    protected static final String                  BASE_URL       = "http://localhost:8234/api/itest/";
+    protected static final String                  BASE_URL       = "http://localhost:8485/api/itest/";
     
     RestTemplate                         template;
     public ProfileITest() {
@@ -47,75 +46,21 @@ public class ProfileITest {
     @Test
     public void testCreateProfile() {
         LOG.info("+ testCreateProfile():");
-        final String PHONE = "+85517222165";
-        JProfile actual = createProfile(PHONE);
+        final String EMAIL = "+85517222165";
+        Jo2pProfile actual = createProfile(EMAIL);
         assertNotNull("Assigned Profile ID", actual.getId());
-        assertEquals("Created name", PHONE, actual.getPhoneNumber());
+        assertNull("Exposed password", actual.getPassword());
+        assertEquals("Created email", EMAIL, actual.getEmail());
+        assertEquals("Created username", EMAIL, actual.getUsername());
     }
     
-    protected JProfile createProfile(String phone) {
-        JProfile request = new JProfile();
-        request.setPhoneNumber(phone);
-        URI uri = template.postForLocation(BASE_URL + "profile/v10", request);
-        
-        LOG.info("GET {}", uri);
-        JProfile actual = template.getForObject(uri, JProfile.class);
+    protected Jo2pProfile createProfile(String email) {
+        Jo2pProfile request = new Jo2pProfile();
+        request.setEmail(email);
+        request.setUsername(email);
+        request.setPassword(email);
+        Jo2pProfile actual = template.postForObject(BASE_URL + "profile/v10", request, Jo2pProfile.class);
         return actual;
     }
 
-    
-//    @Test
-//    public void testDeleteSample() {
-//        final String NAME = "mySampleName";
-//        JSample request = new JSample();
-//        request.setName(NAME);
-//        URI uri = template.postForLocation(BASE_URL + "sample/v10", request);
-//        
-//        template.delete(uri);
-//        
-//        try {
-//            JSample actual = template.getForObject(uri, JSample.class);
-//            fail("Expected NOT_FOUND");
-//        }
-//        catch (HttpClientErrorException expected) {
-//            assertEquals("Delete status", "404 Not Found", expected.getMessage());
-//        }
-//    }
-//    
-//    @Test
-//    public void testUpdateSample() {
-//        final String NAME = "mySampleName";
-//        JSample request = new JSample();
-//        request.setName("initialName");
-//        URI uri = template.postForLocation(BASE_URL + "sample/v10", request);
-//        request = template.getForObject(uri, JSample.class);
-//        
-//        // update
-//        request.setName(NAME);
-//        ResponseEntity entity = template.postForEntity(uri, request, JSample.class);
-//        assertEquals(HttpStatus.NO_CONTENT, entity.getStatusCode());
-//        
-//        JSample actual = template.getForObject(uri, JSample.class);
-//        assertEquals("Updated name", NAME, actual.getName());
-//        assertTrue("UpdatedDate", actual.getCreatedDate() < actual.getUpdatedDate());
-//    }
-//    
-//    @Test
-//    public void testUpdateSampleForLocation() {
-//        final String NAME = "mySampleName";
-//        JSample request = new JSample();
-//        request.setName("initialName");
-//        URI uri = template.postForLocation(BASE_URL + "sample/v10", request);
-//        request = template.getForObject(uri, JSample.class);
-//        
-//        // update
-//        request.setName(NAME);
-//        URI updatedUri = template.postForLocation(uri.toString() + "?_expects=302", request);
-//        assertEquals(uri, updatedUri);
-//        
-//        JSample actual = template.getForObject(uri, JSample.class);
-//        assertEquals("Updated name", NAME, actual.getName());
-//        assertTrue("UpdatedDate", actual.getCreatedDate() < actual.getUpdatedDate());
-//    }
-//    
 }

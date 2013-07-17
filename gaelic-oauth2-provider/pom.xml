@@ -1,0 +1,124 @@
+ 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.wadpam.gaelic</groupId>
+        <artifactId>gaelic</artifactId>
+        <version>1.0.7-SNAPSHOT</version>
+    </parent>
+    <artifactId>gaelic-oauth2-provider</artifactId>
+    <packaging>jar</packaging>
+    <name>Gaelic OAuth2 Provider</name>
+
+    <!-- Specify hard-coded project properties here -->
+    <properties>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gaelic-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gaelic-mardao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.sf.mardao</groupId>
+            <artifactId>mardao-core</artifactId>
+            <version>${mardao.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.mardao</groupId>
+            <artifactId>mardao-gae</artifactId>
+            <version>${mardao.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>${gae.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.8</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>mardao</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <!-- extra compile step of domain classes before mardao generator processing -->
+                            <execution>
+                                <id>compile-entities</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/domain/*.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+            
+                    <plugin>
+                        <groupId>net.sf.mardao</groupId>
+                        <artifactId>mardao-maven-plugin</artifactId>
+                        <version>${mardao.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-daos</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>process-classes</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <basePackage>com.wadpam.gaelic.oauth.provider</basePackage>
+                            <targetFolder>${project.basedir}/src/main/java</targetFolder>
+                        </configuration>
+                    </plugin>
+                </plugins>                
+            </build>
+        </profile>
+        
+    </profiles>
+
+</project>

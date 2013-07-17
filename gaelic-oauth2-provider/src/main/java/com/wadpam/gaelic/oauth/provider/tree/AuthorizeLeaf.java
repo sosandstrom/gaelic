@@ -1,0 +1,98 @@
+/*
+ * INSERT COPYRIGHT HERE
+ */
+
+package com.wadpam.gaelic.oauth.provider.tree;
+
+import com.wadpam.gaelic.Node;
+import com.wadpam.gaelic.exception.BadRequestException;
+import com.wadpam.gaelic.net.NetworkTemplate;
+import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
+import com.wadpam.gaelic.oauth.provider.service.ProviderService;
+import java.io.IOException;
+import java.util.HashMap;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Implements the Authorization Endpoint.
+ * http://tools.ietf.org/html/rfc6749#section-3.1
+ * @author sosandstrom
+ */
+public class AuthorizeLeaf extends Node {
+
+    public static final String PARAM_ACCESS_TOKEN = "access_token";
+    public static final String PARAM_CLIENT_ID = "client_id";
+    public static final String PARAM_CODE = "code";
+    public static final String PARAM_ERROR = "error";
+    public static final String PARAM_REDIRECT_URI = "redirect_uri";
+    public static final String PARAM_RESPONSE_TYPE = "response_type";
+    public static final String PARAM_STATE = "state";
+    public static final String PARAM_TOKEN_TYPE = "token_type";
+    
+    public static final String RESPONSE_TYPE_CODE = PARAM_CODE;
+    public static final String RESPONSE_TYPE_TOKEN = "token";
+    public static final String LOGIN_URI_DEFAULT = "/oauth/login.html";
+    
+    private ProviderService providerService;
+    private String loginUri = LOGIN_URI_DEFAULT;
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final String redirectUri = request.getParameter(PARAM_REDIRECT_URI);
+        if (null == redirectUri) {
+            throw new BadRequestException();
+        }
+        
+        HashMap<String, Object> paramMap = new HashMap<String, Object>();
+
+        final String state = request.getParameter(PARAM_STATE);
+        if (null != state) {
+            paramMap.put(PARAM_STATE, state);
+        }
+        
+        final String responseType = request.getParameter(PARAM_RESPONSE_TYPE);
+        final String clientId = request.getParameter(PARAM_CLIENT_ID);
+        
+        // required parameters present?
+        if (null != clientId && null != responseType) {
+            
+            // authenticate
+            Do2pProfile do2pProfile = providerService.authenticate(request);
+            if (null == do2pProfile) {
+                paramMap.put(PARAM_REDIRECT_URI, redirectUri);
+                paramMap.put(PARAM_CLIENT_ID, clientId);
+                paramMap.put(PARAM_RESPONSE_TYPE, responseType);
+                
+                redirect(request, response, NetworkTemplate.expandUrl(loginUri, paramMap));
+                return;
+            }
+            
+            // which response type?
+            if (RESPONSE_TYPE_CODE.equals(responseType)) {
+                paramMap.put(PARAM_CODE, "sTaTiCoDe");
+
+            }
+            else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
+                final String accessToken = providerService.getImplicitToken(clientId, redirectUri, do2pProfile);
+                paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
+                paramMap.put(PARAM_TOKEN_TYPE, "implicit");
+            }
+            else {
+                paramMap.put(PARAM_ERROR, "unsupported_response_type");
+            }
+        }
+        else {
+            paramMap.put(PARAM_ERROR, "invalid_request");
+        }
+
+        final String url = NetworkTemplate.expandUrl(redirectUri, paramMap);
+        redirect(request, response, url);
+    }
+
+    public void setProviderService(ProviderService providerService) {
+        this.providerService = providerService;
+    }
+    
+}

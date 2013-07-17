@@ -26,7 +26,9 @@ public class Node extends HttpServlet {
     
     public static final String METHOD_DELETE = "DELETE";
     public static final String METHOD_GET = "GET";
+    public static final String METHOD_PATCH = "PATCH";
     public static final String METHOD_POST = "POST";
+    public static final String METHOD_PUT = "PUT";
     
     public static final String PATH_DOMAIN = "{domain}";
     
@@ -80,6 +82,7 @@ public class Node extends HttpServlet {
     protected static void redirect(HttpServletRequest request, HttpServletResponse response, 
             String redirectPath) throws ServletException, IOException {
         LOG.debug("redirecting to Location: {}", redirectPath);
+        setResponseBody(request, HttpServletResponse.SC_FOUND, null);
         response.sendRedirect(redirectPath);
     }
 
@@ -139,7 +142,7 @@ public class Node extends HttpServlet {
         return sb.toString();
     }
     
-    protected void setResponseBody(HttpServletRequest request, Integer status, Object body) {
+    protected static void setResponseBody(HttpServletRequest request, Integer status, Object body) {
         request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSEBODY, body);
         if (null != status) {
             request.setAttribute(GaelicServlet.REQUEST_ATTR_RESPONSESTATUS, status);

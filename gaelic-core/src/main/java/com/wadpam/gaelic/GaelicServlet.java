@@ -99,6 +99,7 @@ public class GaelicServlet extends HttpServlet {
         
         // for redirect and forward:
         if (response.isCommitted()) {
+            LOG.trace("response already committed.");
             return;
         }
         

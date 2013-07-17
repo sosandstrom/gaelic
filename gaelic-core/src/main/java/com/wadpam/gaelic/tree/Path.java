@@ -41,6 +41,11 @@ public class Path extends Node {
     public Node getServingNode(HttpServletRequest request, LinkedList<String> pathList, int pathIndex) {
         currentRequest.set(request);
         servingChild.remove();
+        
+        if (pathList.isEmpty()) {
+            return null;
+        }
+        
         final String path = pathList.get(pathIndex);
         LOG.trace("mapping {} for {}({})", new Object[] {
             path, pathIndex, pathList.size()});
