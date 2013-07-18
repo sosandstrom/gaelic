@@ -1,6 +1,7 @@
 package com.wadpam.gaelic.itest;
 
 import com.wadpam.gaelic.net.NetworkTemplate;
+import com.wadpam.gaelic.oauth.provider.json.Jo2pClient;
 import com.wadpam.gaelic.oauth.provider.json.Jo2pProfile;
 import com.wadpam.gaelic.oauth.provider.tree.AuthorizeLeaf;
 import java.util.Map;
@@ -62,6 +63,17 @@ public class OAuthProviderITest {
         return actual;
     }
     
+    protected Jo2pClient createClient(String name) {
+        Jo2pClient request = new Jo2pClient();
+        request.setDescription(String.format("Description of %s", name));
+        request.setName(name);
+        request.setRedirectUri(BASE_REDIRECT_URI);
+        
+        Jo2pClient actual = template.post(String.format("%s/client/v10", BASE_URL), 
+                request, Jo2pClient.class);
+        return actual;
+    }
+    
     @Test
     public void testNoClientId() {
         LOG.info("+ testNoClientId() +");
@@ -101,10 +113,11 @@ public class OAuthProviderITest {
     public void testAuthorizeImplicit() {
         LOG.info("+ testAuthorizeImplicit() +");
         
-        createProfile(USERNAME);
+        Jo2pClient client = createClient("testAuthorizeImplicit");
+        Jo2pProfile profile = createProfile(USERNAME);
         String url = String.format("%s/authorize?response_type=token",
                 BASE_URL);
-        Map requestBody = NetworkTemplate.asMap("client_id", CLIENT_ID, 
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
                 "redirect_uri", BASE_REDIRECT_URI,
                 "state", STATE,
                 "username", USERNAME,
@@ -122,10 +135,10 @@ public class OAuthProviderITest {
     @Test
     public void testNoCredentials() {
         LOG.info("+ testNoCredentials() +");
-        
+        Jo2pClient client = createClient("testNoCredentials");
         String url = String.format("%s/authorize?response_type=token",
                 BASE_URL);
-        Map requestBody = NetworkTemplate.asMap("client_id", CLIENT_ID, 
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
                 "redirect_uri", BASE_REDIRECT_URI,
                 "state", STATE);
         

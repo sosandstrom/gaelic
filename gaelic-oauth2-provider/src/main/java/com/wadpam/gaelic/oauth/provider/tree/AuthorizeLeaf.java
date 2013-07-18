@@ -7,6 +7,7 @@ package com.wadpam.gaelic.oauth.provider.tree;
 import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.net.NetworkTemplate;
+import com.wadpam.gaelic.oauth.provider.domain.Do2pClient;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
 import com.wadpam.gaelic.oauth.provider.service.ProviderService;
 import java.io.IOException;
@@ -59,30 +60,38 @@ public class AuthorizeLeaf extends Node {
         // required parameters present?
         if (null != clientId && null != responseType) {
             
-            // authenticate
-            Do2pProfile do2pProfile = providerService.authenticate(request);
-            if (null == do2pProfile) {
-                paramMap.put(PARAM_REDIRECT_URI, redirectUri);
-                paramMap.put(PARAM_CLIENT_ID, clientId);
-                paramMap.put(PARAM_RESPONSE_TYPE, responseType);
-                
-                redirect(request, response, NetworkTemplate.expandUrl(loginUri, paramMap));
-                return;
-            }
-            
-            // which response type?
-            if (RESPONSE_TYPE_CODE.equals(responseType)) {
-                paramMap.put(PARAM_CODE, "sTaTiCoDe");
+            // authenticate client
+            Do2pClient client = providerService.getClient(clientId);
+            if (null != client) {
 
-            }
-            else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
-                final String accessToken = providerService.getImplicitToken(clientId, redirectUri, do2pProfile);
-                separator = NetworkTemplate.SEPARATOR_FRAGMENT;
-                paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
-                paramMap.put(PARAM_TOKEN_TYPE, "implicit");
+                // authenticate the user
+                Do2pProfile do2pProfile = providerService.authenticate(request);
+                if (null == do2pProfile) {
+                    paramMap.put(PARAM_REDIRECT_URI, redirectUri);
+                    paramMap.put(PARAM_CLIENT_ID, clientId);
+                    paramMap.put(PARAM_RESPONSE_TYPE, responseType);
+
+                    redirect(request, response, NetworkTemplate.expandUrl(loginUri, paramMap));
+                    return;
+                }
+
+                // which response type?
+                if (RESPONSE_TYPE_CODE.equals(responseType)) {
+                    paramMap.put(PARAM_CODE, "sTaTiCoDe");
+
+                }
+                else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
+                    final String accessToken = providerService.getImplicitToken(clientId, redirectUri, do2pProfile);
+                    separator = NetworkTemplate.SEPARATOR_FRAGMENT;
+                    paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
+                    paramMap.put(PARAM_TOKEN_TYPE, "implicit");
+                }
+                else {
+                    paramMap.put(PARAM_ERROR, "unsupported_response_type");
+                }
             }
             else {
-                paramMap.put(PARAM_ERROR, "unsupported_response_type");
+                paramMap.put(PARAM_ERROR, "unauthorized_client");
             }
         }
         else {

@@ -12,7 +12,7 @@ import net.sf.mardao.core.geo.DLocation;
 /**
  * DAO interface with finder methods for Do2pProfile entities.
  *
- * Generated on 2013-07-17T19:10:35.416+0700.
+ * Generated on 2013-07-18T12:02:44.205+0700.
  * @author mardao DAO generator (net.sf.mardao.plugin.ProcessDomainMojo)
  */
 public interface GeneratedDo2pProfileDao extends Dao<Do2pProfile, java.lang.Long> {

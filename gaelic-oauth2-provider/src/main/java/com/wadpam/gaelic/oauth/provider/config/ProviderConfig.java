@@ -6,12 +6,17 @@ package com.wadpam.gaelic.oauth.provider.config;
 
 import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.oauth.provider.dao.DaoConfig;
+import com.wadpam.gaelic.oauth.provider.dao.Do2pClientDao;
+import com.wadpam.gaelic.oauth.provider.dao.Do2pClientDaoBean;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pProfileDao;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pProfileDaoBean;
+import com.wadpam.gaelic.oauth.provider.domain.Do2pClient;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
+import com.wadpam.gaelic.oauth.provider.service.ClientService;
 import com.wadpam.gaelic.oauth.provider.service.ProfileService;
 import com.wadpam.gaelic.oauth.provider.service.ProviderService;
 import com.wadpam.gaelic.oauth.provider.tree.AuthorizeLeaf;
+import com.wadpam.gaelic.oauth.provider.tree.ClientLeaf;
 import com.wadpam.gaelic.oauth.provider.tree.ProfileLeaf;
 import com.wadpam.gaelic.tree.ForwardLeaf;
 import java.util.HashMap;
@@ -31,12 +36,22 @@ public class ProviderConfig {
         Do2pProfileDao profileDao = (Do2pProfileDaoBean) DAO_MAP.get(Do2pProfile.class);
         ProfileService profileService = new ProfileService();
         profileService.setDao(profileDao);
+        
+        Do2pClientDao clientDao = (Do2pClientDaoBean) DAO_MAP.get(Do2pClient.class);
+        ClientService clientService = new ClientService();
+        clientService.setDao(clientDao);
+        
         ProviderService providerService = new ProviderService();
         providerService.setProfileDao(profileDao);
+        providerService.setClientDao(clientDao);
         
         ProfileLeaf profileLeaf = new ProfileLeaf();
         profileLeaf.setService(profileService);
         LEAF_MAP.put(ProfileLeaf.class, profileLeaf);
+        
+        ClientLeaf clientLeaf = new ClientLeaf();
+        clientLeaf.setService(clientService);
+        LEAF_MAP.put(ClientLeaf.class, clientLeaf);
         
         AuthorizeLeaf authorizeLeaf = new AuthorizeLeaf();
         authorizeLeaf.setProviderService(providerService);

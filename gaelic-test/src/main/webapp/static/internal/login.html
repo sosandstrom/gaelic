@@ -5,6 +5,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
+        <h3 id="clientName">clientName</h3>
+        <div id="clientDescription">Lorem ipsum dolor...</div>
+        
         <form method="POST" action="authorize">
             <fieldset>
                 <h5>Sign in</h5>
@@ -51,6 +54,9 @@ $(function() {
     $("#redirect_uri").val(getParameterByName("redirect_uri"));
     $("#client_id").val(getParameterByName("client_id"));
     $("#response_type").val(getParameterByName("response_type"));
+
+    $("#clientName").val(getParameterByName("name"));
+    $("#clientDescription").val(getParameterByName("descr"));
 });
         </script>
         

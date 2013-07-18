@@ -5,7 +5,9 @@
 package com.wadpam.gaelic.oauth.provider.service;
 
 import com.wadpam.gaelic.GaelicServlet;
+import com.wadpam.gaelic.oauth.provider.dao.Do2pClientDao;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pProfileDao;
+import com.wadpam.gaelic.oauth.provider.domain.Do2pClient;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
 import java.util.UUID;
 import javax.servlet.http.Cookie;
@@ -24,6 +26,7 @@ public class ProviderService {
     public static final int ERR_BASE = GaelicServlet.ERROR_CODE_OAUTH2_PROVIDER_BASE;
     public static final int ERR_MISSING_REDIRECT_URI = ERR_BASE;
     
+    private Do2pClientDao clientDao;
     private Do2pProfileDao profileDao;
 
     public Do2pProfile authenticate(HttpServletRequest request) {
@@ -61,6 +64,12 @@ public class ProviderService {
         return hash;
     }
 
+    public Do2pClient getClient(String clientId) {
+        Long id = Long.parseLong(clientId);
+        Do2pClient client = clientDao.findByPrimaryKey(id);
+        return client;
+    }
+
     public String getImplicitToken(String clientId, String redirectUri, Do2pProfile do2pProfile) {
         UUID uuid = UUID.randomUUID();
         final String accessToken = uuid.toString();
@@ -70,6 +79,10 @@ public class ProviderService {
 
     public void setProfileDao(Do2pProfileDao profileDao) {
         this.profileDao = profileDao;
+    }
+
+    public void setClientDao(Do2pClientDao clientDao) {
+        this.clientDao = clientDao;
     }
 
 }
