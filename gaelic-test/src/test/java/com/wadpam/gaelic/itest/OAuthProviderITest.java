@@ -1,6 +1,5 @@
 package com.wadpam.gaelic.itest;
 
-import static com.wadpam.gaelic.itest.ProfileITest.BASE_URL;
 import com.wadpam.gaelic.net.NetworkTemplate;
 import com.wadpam.gaelic.oauth.provider.json.Jo2pProfile;
 import com.wadpam.gaelic.oauth.provider.tree.AuthorizeLeaf;
@@ -58,7 +57,8 @@ public class OAuthProviderITest {
         request.setEmail(email);
         request.setUsername(email);
         request.setPassword(email);
-        Jo2pProfile actual = template.post("http://localhost:8485/api/itest/profile/v10", request, Jo2pProfile.class);
+        Jo2pProfile actual = template.post(String.format("%s/profile/v10", BASE_URL), 
+                request, Jo2pProfile.class);
         return actual;
     }
     

@@ -42,7 +42,7 @@ public class AuthorizeLeaf extends Node {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final String redirectUri = request.getParameter(PARAM_REDIRECT_URI);
         if (null == redirectUri) {
-            throw new BadRequestException();
+            throw new BadRequestException(ProviderService.ERR_MISSING_REDIRECT_URI, "Missing redirect_uri", "http://tools.ietf.org/html/rfc6749#section-4");
         }
         
         HashMap<String, Object> paramMap = new HashMap<String, Object>();
@@ -54,6 +54,7 @@ public class AuthorizeLeaf extends Node {
         
         final String responseType = request.getParameter(PARAM_RESPONSE_TYPE);
         final String clientId = request.getParameter(PARAM_CLIENT_ID);
+        String separator = NetworkTemplate.SEPARATOR_QUERY;
         
         // required parameters present?
         if (null != clientId && null != responseType) {
@@ -76,6 +77,7 @@ public class AuthorizeLeaf extends Node {
             }
             else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
                 final String accessToken = providerService.getImplicitToken(clientId, redirectUri, do2pProfile);
+                separator = NetworkTemplate.SEPARATOR_FRAGMENT;
                 paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
                 paramMap.put(PARAM_TOKEN_TYPE, "implicit");
             }
@@ -87,8 +89,20 @@ public class AuthorizeLeaf extends Node {
             paramMap.put(PARAM_ERROR, "invalid_request");
         }
 
-        final String url = NetworkTemplate.expandUrl(redirectUri, paramMap);
+        final String url = NetworkTemplate.expandUrl(redirectUri, separator, paramMap);
         redirect(request, response, url);
+    }
+
+    /**
+     * Support the Login form POST
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
     }
 
     public void setProviderService(ProviderService providerService) {

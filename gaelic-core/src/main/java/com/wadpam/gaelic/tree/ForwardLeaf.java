@@ -18,6 +18,13 @@ public class ForwardLeaf extends Node {
     
     private String forwardPath;
 
+    public ForwardLeaf() {
+    }
+
+    public ForwardLeaf(String forwardPath) {
+        this.forwardPath = forwardPath;
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         processRequest(req, resp);

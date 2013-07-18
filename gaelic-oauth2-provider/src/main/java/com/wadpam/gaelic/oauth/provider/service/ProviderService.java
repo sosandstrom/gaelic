@@ -4,8 +4,10 @@
 
 package com.wadpam.gaelic.oauth.provider.service;
 
+import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pProfileDao;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
+import java.util.UUID;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -15,9 +17,12 @@ import org.apache.commons.codec.digest.DigestUtils;
  * @author sosandstrom
  */
 public class ProviderService {
+    public static final String COOKIE_SIGNIN = "_gaelic_signin";
     public static final String PARAM_USERNAME = "username";
     public static final String PARAM_PASSWORD = "password";
-    public static final String COOKIE_SIGNIN = "_gaelic_signin";
+    
+    public static final int ERR_BASE = GaelicServlet.ERROR_CODE_OAUTH2_PROVIDER_BASE;
+    public static final int ERR_MISSING_REDIRECT_URI = ERR_BASE;
     
     private Do2pProfileDao profileDao;
 
@@ -57,7 +62,10 @@ public class ProviderService {
     }
 
     public String getImplicitToken(String clientId, String redirectUri, Do2pProfile do2pProfile) {
-        return "iMpLiCiTtOkEn";
+        UUID uuid = UUID.randomUUID();
+        final String accessToken = uuid.toString();
+        
+        return accessToken;
     }
 
     public void setProfileDao(Do2pProfileDao profileDao) {

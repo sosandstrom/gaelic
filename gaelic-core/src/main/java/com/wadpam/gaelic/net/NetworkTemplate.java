@@ -36,6 +36,9 @@ public class NetworkTemplate {
     
     public static final String MIME_JSON = "application/json";
     
+    public static final String SEPARATOR_QUERY = "?";
+    public static final String SEPARATOR_FRAGMENT = "#";
+    
     static final List<String> CONTENT_METHODS_LIST = Arrays.asList(Node.METHOD_POST, Node.METHOD_PUT);
     static final Set<String> CONTENT_METHODS = new HashSet<String>(CONTENT_METHODS_LIST);
     
@@ -144,10 +147,14 @@ public class NetworkTemplate {
     }
     
     public static String expandUrl(final String url, Map<String, Object> paramMap) {
+        return expandUrl(url, SEPARATOR_QUERY, paramMap);
+    }
+    
+    public static String expandUrl(final String url, final String separator, Map<String, Object> paramMap) {
         StringBuffer sb = new StringBuffer(url);
 
         for (Entry<String, Object> entry : paramMap.entrySet()) {
-            sb.append(-1 < sb.indexOf("?") ? '&' : '?');
+            sb.append(-1 < sb.indexOf(separator) ? "&" : separator);
             sb.append(entry.getKey());
             sb.append('=');
             try {

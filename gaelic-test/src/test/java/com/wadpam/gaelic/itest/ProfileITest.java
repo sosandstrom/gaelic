@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileITest {
     static final Logger LOG = LoggerFactory.getLogger(ProfileITest.class);
 
-    protected static final String                  BASE_URL       = "http://localhost:8485/api/itest/";
+    protected static final String                  BASE_URL       = "http://localhost:8485/oauth/";
     
     RestTemplate                         template;
     public ProfileITest() {
