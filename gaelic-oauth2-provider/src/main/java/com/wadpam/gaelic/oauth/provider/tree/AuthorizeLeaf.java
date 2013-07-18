@@ -81,7 +81,7 @@ public class AuthorizeLeaf extends Node {
 
                 }
                 else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
-                    final String accessToken = providerService.getImplicitToken(clientId, redirectUri, do2pProfile);
+                    final String accessToken = providerService.getImplicitToken(client, redirectUri, do2pProfile);
                     separator = NetworkTemplate.SEPARATOR_FRAGMENT;
                     paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
                     paramMap.put(PARAM_TOKEN_TYPE, "implicit");

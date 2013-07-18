@@ -10,8 +10,11 @@ import com.wadpam.gaelic.oauth.provider.dao.Do2pClientDao;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pClientDaoBean;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pProfileDao;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pProfileDaoBean;
+import com.wadpam.gaelic.oauth.provider.dao.Do2pTokenDao;
+import com.wadpam.gaelic.oauth.provider.dao.Do2pTokenDaoBean;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pClient;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
+import com.wadpam.gaelic.oauth.provider.domain.Do2pToken;
 import com.wadpam.gaelic.oauth.provider.service.ClientService;
 import com.wadpam.gaelic.oauth.provider.service.ProfileService;
 import com.wadpam.gaelic.oauth.provider.service.ProviderService;
@@ -33,17 +36,20 @@ public class ProviderConfig {
         final Map<Class, Node> LEAF_MAP= new HashMap<Class, Node>();
         final Map<Class, DaoImpl> DAO_MAP = DaoConfig.createDaos();
         
-        Do2pProfileDao profileDao = (Do2pProfileDaoBean) DAO_MAP.get(Do2pProfile.class);
-        ProfileService profileService = new ProfileService();
-        profileService.setDao(profileDao);
-        
         Do2pClientDao clientDao = (Do2pClientDaoBean) DAO_MAP.get(Do2pClient.class);
         ClientService clientService = new ClientService();
         clientService.setDao(clientDao);
         
+        Do2pProfileDao profileDao = (Do2pProfileDaoBean) DAO_MAP.get(Do2pProfile.class);
+        ProfileService profileService = new ProfileService();
+        profileService.setDao(profileDao);
+        
+        Do2pTokenDao tokenDao = (Do2pTokenDaoBean) DAO_MAP.get(Do2pToken.class);
+        
         ProviderService providerService = new ProviderService();
-        providerService.setProfileDao(profileDao);
         providerService.setClientDao(clientDao);
+        providerService.setProfileDao(profileDao);
+        providerService.setTokenDao(tokenDao);
         
         ProfileLeaf profileLeaf = new ProfileLeaf();
         profileLeaf.setService(profileService);

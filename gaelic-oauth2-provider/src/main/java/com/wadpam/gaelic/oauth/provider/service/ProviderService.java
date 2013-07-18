@@ -7,8 +7,11 @@ package com.wadpam.gaelic.oauth.provider.service;
 import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pClientDao;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pProfileDao;
+import com.wadpam.gaelic.oauth.provider.dao.Do2pTokenDao;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pClient;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
+import com.wadpam.gaelic.oauth.provider.domain.Do2pToken;
+import java.util.Date;
 import java.util.UUID;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +31,10 @@ public class ProviderService {
     
     private Do2pClientDao clientDao;
     private Do2pProfileDao profileDao;
+    private Do2pTokenDao tokenDao;
+    
+    /** Implicit access tokens should live for 90 minutes */
+    private long implicitTTL = 90L*3600L*1000L;
 
     public Do2pProfile authenticate(HttpServletRequest request) {
         // is this the form POST ?
@@ -70,9 +77,12 @@ public class ProviderService {
         return client;
     }
 
-    public String getImplicitToken(String clientId, String redirectUri, Do2pProfile do2pProfile) {
+    public String getImplicitToken(Do2pClient client, String redirectUri, Do2pProfile do2pProfile) {
         UUID uuid = UUID.randomUUID();
         final String accessToken = uuid.toString();
+        
+        Date expiryDate = new Date(System.currentTimeMillis() + implicitTTL);
+        Do2pToken token = tokenDao.persist(accessToken, client.getId(), expiryDate, null, null);
         
         return accessToken;
     }
@@ -83,6 +93,10 @@ public class ProviderService {
 
     public void setClientDao(Do2pClientDao clientDao) {
         this.clientDao = clientDao;
+    }
+
+    public void setTokenDao(Do2pTokenDao tokenDao) {
+        this.tokenDao = tokenDao;
     }
 
 }
