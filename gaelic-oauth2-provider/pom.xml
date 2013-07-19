@@ -26,6 +26,11 @@
             <artifactId>gaelic-mardao</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gaelic-oauth</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
         <dependency>
             <groupId>net.sf.mardao</groupId>

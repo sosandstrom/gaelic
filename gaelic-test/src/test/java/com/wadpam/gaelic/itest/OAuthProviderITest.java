@@ -28,7 +28,7 @@ public class OAuthProviderITest {
     protected static final String ACCESS_TOKEN = "John.I.Test";
     protected static final String CLIENT_ID = "s6BhdRkqt3";
     protected static final String STATE = "myNiceState";
-    protected static final String USERNAME = "john.doe@acme.com";
+//    protected static final String USERNAME = "john.doe@acme.com";
 
     NetworkTemplate                         template;
     
@@ -111,9 +111,10 @@ public class OAuthProviderITest {
     
     @Test
     public void testAuthorizeImplicit() {
-        LOG.info("+ testAuthorizeImplicit() +");
+        final String USERNAME = "testAuthorizeImplicit";
+        LOG.info("+ {}() +", USERNAME);
         
-        Jo2pClient client = createClient("testAuthorizeImplicit");
+        Jo2pClient client = createClient(USERNAME);
         Jo2pProfile profile = createProfile(USERNAME);
         String url = String.format("%s/authorize?response_type=token",
                 BASE_URL);
@@ -134,8 +135,9 @@ public class OAuthProviderITest {
     
     @Test
     public void testNoCredentials() {
-        LOG.info("+ testNoCredentials() +");
-        Jo2pClient client = createClient("testNoCredentials");
+        final String USERNAME = "testNoCredentials";
+        LOG.info("+ {}() +", USERNAME);
+        Jo2pClient client = createClient(USERNAME);
         String url = String.format("%s/authorize?response_type=token",
                 BASE_URL);
         Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
@@ -148,6 +150,61 @@ public class OAuthProviderITest {
         assertTrue("starts with /oauth/login.html", actual.startsWith(AuthorizeLeaf.LOGIN_URI_DEFAULT));
         assertTrue("state", actual.contains(String.format("state=%s", STATE)));
         assertTrue("contains redirect_uri", actual.contains("redirect_uri="));
+    }
+    
+    @Test
+    public void testGetProfileNoToken() {
+        final String USERNAME = "testGetProfileNoToken";
+        LOG.info("+ {}() +", USERNAME);
+        
+        Jo2pClient client = createClient(USERNAME);
+        Jo2pProfile profile = createProfile(USERNAME);
+        String url = String.format("%s/authorize?response_type=token",
+                BASE_URL);
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
+                "redirect_uri", BASE_REDIRECT_URI,
+                "state", STATE,
+                "username", USERNAME,
+                "password", USERNAME);
+        
+        String actual = template.getForLocation(url, requestBody);
+        LOG.info("actual URL: {}", actual);
+        
+        assertTrue("starts with redirect_uri", actual.startsWith(BASE_REDIRECT_URI));
+        assertTrue("state", actual.contains(String.format("state=%s", STATE)));
+        assertTrue("contains token", actual.contains("access_token="));
+        assertTrue("contains token_type", actual.contains("token_type=implicit"));
+    }
+    
+    @Test
+    public void testGetProfile() {
+        final String USERNAME = "testGetProfile";
+        LOG.info("+ {}() +", USERNAME);
+        
+        Jo2pClient client = createClient(USERNAME);
+        Jo2pProfile profile = createProfile(USERNAME);
+        String url = String.format("%s/authorize?response_type=token",
+                BASE_URL);
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
+                "redirect_uri", BASE_REDIRECT_URI,
+                "state", STATE,
+                "username", USERNAME,
+                "password", USERNAME);
+        
+        String redirectUrl = template.getForLocation(url, requestBody);
+        LOG.info("Redirect URL: {}", redirectUrl);
+        
+        final String prefix = "access_token=";
+        int beginIndex = redirectUrl.indexOf(prefix) + prefix.length();
+        int endIndex = redirectUrl.indexOf('&', beginIndex);
+        
+        final String accessToken = -1 < endIndex ? 
+                redirectUrl.substring(beginIndex, endIndex) :
+                redirectUrl.substring(beginIndex);
+        
+        Jo2pProfile actual = template.get(String.format("%s/profile/v10/me?access_token=%s", 
+                BASE_URL, accessToken), Jo2pProfile.class);
+        assertEquals("ProfileId", profile.getId(), actual.getId());
     }
     
 }

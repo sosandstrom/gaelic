@@ -76,6 +76,7 @@ public class LeafAdapter<J extends Object> extends Node {
             // me alias
             if ("me".equals(jKey.getId())) {
                 jKey.setId(getCurrentUsername());
+                LOG.debug("Resolved alias 'me' to {}", jKey.getId());
             }
 
             getResourceByKey(request, response, jKey);

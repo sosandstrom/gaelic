@@ -29,6 +29,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>gaelic-oauth</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>gaelic-oauth2-provider</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -251,7 +256,7 @@
                         <id>start-gae</id>
                         <phase>pre-integration-test</phase>
                         <goals>
-                            <!--<goal>stop</goal>-->
+                            <goal>unpack</goal>
                             <goal>start</goal>
                         </goals>
                     </execution>

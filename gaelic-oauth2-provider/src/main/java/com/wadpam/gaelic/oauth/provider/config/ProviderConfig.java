@@ -21,7 +21,9 @@ import com.wadpam.gaelic.oauth.provider.service.ProviderService;
 import com.wadpam.gaelic.oauth.provider.tree.AuthorizeLeaf;
 import com.wadpam.gaelic.oauth.provider.tree.ClientLeaf;
 import com.wadpam.gaelic.oauth.provider.tree.ProfileLeaf;
+import com.wadpam.gaelic.oauth.web.OAuth2Interceptor;
 import com.wadpam.gaelic.tree.ForwardLeaf;
+import com.wadpam.gaelic.tree.InterceptedPath;
 import java.util.HashMap;
 import java.util.Map;
 import net.sf.mardao.core.dao.DaoImpl;
@@ -32,8 +34,8 @@ import net.sf.mardao.core.dao.DaoImpl;
  */
 public class ProviderConfig {
 
-    public static Map<Class, Node> createLeaves() {
-        final Map<Class, Node> LEAF_MAP= new HashMap<Class, Node>();
+    public static Map<Class, Object> createLeaves() {
+        final Map<Class, Object> LEAF_MAP= new HashMap<Class, Object>();
         final Map<Class, DaoImpl> DAO_MAP = DaoConfig.createDaos();
         
         Do2pClientDao clientDao = (Do2pClientDaoBean) DAO_MAP.get(Do2pClient.class);
@@ -62,6 +64,13 @@ public class ProviderConfig {
         AuthorizeLeaf authorizeLeaf = new AuthorizeLeaf();
         authorizeLeaf.setProviderService(providerService);
         LEAF_MAP.put(AuthorizeLeaf.class, authorizeLeaf);
+        
+        // OAuth2 interceptor protecting /oauth/profile
+        OAuth2Interceptor oauth2Interceptor = new OAuth2Interceptor();
+        oauth2Interceptor.setSecurityDetailsService(providerService);
+//        InterceptedPath interceptedPath = new InterceptedPath();
+//        interceptedPath.setInterceptor(oauth2Interceptor);
+        LEAF_MAP.put(OAuth2Interceptor.class, oauth2Interceptor);
         
         // forwards to login.html
         ForwardLeaf forwardLeaf = new ForwardLeaf("/internal/login.html");

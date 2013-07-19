@@ -27,6 +27,7 @@ public class AuthorizeLeaf extends Node {
     public static final String PARAM_CLIENT_ID = "client_id";
     public static final String PARAM_CODE = "code";
     public static final String PARAM_ERROR = "error";
+    public static final String PARAM_EXPIRES_IN = "expires_in";
     public static final String PARAM_REDIRECT_URI = "redirect_uri";
     public static final String PARAM_RESPONSE_TYPE = "response_type";
     public static final String PARAM_STATE = "state";
@@ -82,8 +83,10 @@ public class AuthorizeLeaf extends Node {
                 }
                 else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
                     final String accessToken = providerService.getImplicitToken(client, redirectUri, do2pProfile);
+                    long expiresInMillis = providerService.getImplicitTTL();
                     separator = NetworkTemplate.SEPARATOR_FRAGMENT;
                     paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
+                    paramMap.put(PARAM_EXPIRES_IN, Long.toString(expiresInMillis / 1000L));
                     paramMap.put(PARAM_TOKEN_TYPE, "implicit");
                 }
                 else {
