@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * http://tools.ietf.org/html/rfc6749#section-3.1
  * @author sosandstrom
  */
-public class AuthorizeLeaf extends Node {
+public class AuthorizeEndpointLeaf extends Node {
 
     public static final String PARAM_ACCESS_TOKEN = "access_token";
     public static final String PARAM_CLIENT_ID = "client_id";
@@ -78,8 +78,8 @@ public class AuthorizeLeaf extends Node {
 
                 // which response type?
                 if (RESPONSE_TYPE_CODE.equals(responseType)) {
-                    paramMap.put(PARAM_CODE, "sTaTiCoDe");
-
+                    final String code = providerService.getAuthorizationCode(client, redirectUri, do2pProfile);
+                    paramMap.put(PARAM_CODE, code);
                 }
                 else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
                     final String accessToken = providerService.getImplicitToken(client, redirectUri, do2pProfile);
@@ -87,7 +87,7 @@ public class AuthorizeLeaf extends Node {
                     separator = NetworkTemplate.SEPARATOR_FRAGMENT;
                     paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
                     paramMap.put(PARAM_EXPIRES_IN, Long.toString(expiresInMillis / 1000L));
-                    paramMap.put(PARAM_TOKEN_TYPE, "implicit");
+                    paramMap.put(PARAM_TOKEN_TYPE, ProviderService.TOKEN_TYPE);
                 }
                 else {
                     paramMap.put(PARAM_ERROR, "unsupported_response_type");

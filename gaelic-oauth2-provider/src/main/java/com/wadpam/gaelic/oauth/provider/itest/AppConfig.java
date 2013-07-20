@@ -7,7 +7,7 @@ package com.wadpam.gaelic.oauth.provider.itest;
 import com.wadpam.gaelic.GaelicConfig;
 import com.wadpam.gaelic.GaelicServlet;
 import com.wadpam.gaelic.Node;
-import com.wadpam.gaelic.oauth.provider.tree.AuthorizeLeaf;
+import com.wadpam.gaelic.oauth.provider.tree.AuthorizeEndpointLeaf;
 import javax.servlet.ServletConfig;
 
 /**
@@ -21,7 +21,7 @@ public class AppConfig implements GaelicConfig {
         
         BUILDER.root()
                 .path("oauth")
-                    .add("authorize", AuthorizeLeaf.class).named("AuthorizeEndpoint");
+                    .add("authorize", AuthorizeEndpointLeaf.class).named("AuthorizeEndpoint");
         
         return BUILDER.build();
     }

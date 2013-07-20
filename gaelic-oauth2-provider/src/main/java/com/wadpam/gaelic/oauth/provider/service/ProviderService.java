@@ -11,14 +11,21 @@ import com.wadpam.gaelic.oauth.provider.dao.Do2pTokenDao;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pClient;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pToken;
+import com.wadpam.gaelic.oauth.provider.json.JAccessTokenResponse;
 import com.wadpam.gaelic.security.SecurityDetails;
 import com.wadpam.gaelic.security.SecurityDetailsService;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Level;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.jsr107cache.Cache;
+import net.sf.jsr107cache.CacheException;
+import net.sf.jsr107cache.CacheFactory;
+import net.sf.jsr107cache.CacheManager;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +39,8 @@ public class ProviderService implements SecurityDetailsService {
     public static final String PARAM_USERNAME = "username";
     public static final String PARAM_PASSWORD = "password";
     
+    public static final String TOKEN_TYPE = "OAuth";
+    
     public static final int ERR_BASE = GaelicServlet.ERROR_CODE_OAUTH2_PROVIDER_BASE;
     public static final int ERR_MISSING_REDIRECT_URI = ERR_BASE;
     public static final int ERR_USERNAME_CONFLICT = ERR_BASE+1;
@@ -44,8 +53,21 @@ public class ProviderService implements SecurityDetailsService {
     private Do2pTokenDao tokenDao;
     
     /** Implicit access tokens should live for 90 minutes */
-    private long implicitTTL = 90L*3600L*1000L;
+    private long implicitTTL = 90L*60L*1000L;
+    /** Implicit access tokens should live for 14 days */
+    private long confidentialTTL = 14L*24L*60L*60L*1000L;
+    
+    private Cache cache;
 
+    public ProviderService() {
+        try {
+            CacheFactory factory = CacheManager.getInstance().getCacheFactory();
+            cache = factory.createCache(Collections.EMPTY_MAP);
+        } catch (CacheException ex) {
+            LOG.error("Could not initialize cache", ex);
+        }
+    }
+    
     public Do2pProfile authenticate(HttpServletRequest request) {
         // is this the form POST ?
         String username = request.getParameter(PARAM_USERNAME);
@@ -81,6 +103,31 @@ public class ProviderService implements SecurityDetailsService {
         return hash;
     }
 
+    public void exchangeCodeForToken(String code, String redirectUri, 
+            Do2pClient client, JAccessTokenResponse body) {
+        final AuthorizationHolder holder = (AuthorizationHolder) cache.remove(code);
+        if (null != holder && client.getId().equals(holder.getClientId()) && 
+                redirectUri.equals(holder.getRedirect_uri())) {
+            
+            UUID uuid = UUID.randomUUID();
+            body.setAccess_token(uuid.toString());
+            uuid = UUID.randomUUID();
+            body.setRefresh_token(uuid.toString());
+            body.setExpires_in((int) confidentialTTL / 1000);
+            body.setToken_type(TOKEN_TYPE);
+        }
+    }
+    
+    public String getAuthorizationCode(Do2pClient client, String redirectUri, Do2pProfile do2pProfile) {
+        final UUID uuid = UUID.randomUUID();
+        final String code = uuid.toString().substring(0, 8);
+        
+        final AuthorizationHolder holder = new AuthorizationHolder(client.getId(), code, redirectUri);
+        cache.put(code, holder);
+        
+        return code;
+    }
+
     public Do2pClient getClient(String clientId) {
         Long id = Long.parseLong(clientId);
         Do2pClient client = clientDao.findByPrimaryKey(id);
@@ -88,7 +135,7 @@ public class ProviderService implements SecurityDetailsService {
     }
 
     public String getImplicitToken(Do2pClient client, String redirectUri, Do2pProfile do2pProfile) {
-        UUID uuid = UUID.randomUUID();
+        final UUID uuid = UUID.randomUUID();
         final String accessToken = uuid.toString();
         
         Date expiryDate = new Date(System.currentTimeMillis() + implicitTTL);
@@ -119,8 +166,37 @@ public class ProviderService implements SecurityDetailsService {
                 .build();
     }
 
+    public static class AuthorizationHolder implements Serializable {
+        private final Long clientId;
+        private final String code;
+        private final String redirect_uri;
+
+        public AuthorizationHolder(Long clientId, String code, String redirect_uri) {
+            this.clientId = clientId;
+            this.code = code;
+            this.redirect_uri = redirect_uri;
+        }
+
+        public Long getClientId() {
+            return clientId;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public String getRedirect_uri() {
+            return redirect_uri;
+        }
+        
+    }
+
     public long getImplicitTTL() {
         return implicitTTL;
+    }
+
+    public long getConfidentialTTL() {
+        return confidentialTTL;
     }
 
     public void setProfileDao(Do2pProfileDao profileDao) {

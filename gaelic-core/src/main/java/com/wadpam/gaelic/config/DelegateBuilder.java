@@ -23,7 +23,9 @@ public class DelegateBuilder extends ConfigBuilder {
         LOG.trace("adding child {} to this {} for ignored path {}", new Object[] {
             child, node, ignored});
         ((NodeDelegate) node).setDelegate(child);
-        return to(child);
+        ConfigBuilder builder = to(child);
+        mapBuilder(ignored, builder);
+        return builder;
     }
 
 }

@@ -1,10 +1,12 @@
 package com.wadpam.gaelic.itest;
 
 import com.wadpam.gaelic.net.NetworkTemplate;
+import com.wadpam.gaelic.oauth.provider.json.JAccessTokenResponse;
 import com.wadpam.gaelic.oauth.provider.json.Jo2pClient;
 import com.wadpam.gaelic.oauth.provider.json.Jo2pProfile;
-import com.wadpam.gaelic.oauth.provider.tree.AuthorizeLeaf;
+import com.wadpam.gaelic.oauth.provider.tree.AuthorizeEndpointLeaf;
 import java.util.Map;
+import org.apache.commons.codec.binary.Base64;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -52,6 +54,12 @@ public class OAuthProviderITest {
     @After
     public void tearDown() {
     }
+    
+    protected static String createBasicAuthorization(String username, String password) {
+        final String plain = String.format("%s:%s", username, password);
+        final String encoded = Base64.encodeBase64String(plain.getBytes());
+        return String.format("Basic %s", encoded);
+    }
 
     protected Jo2pProfile createProfile(String email) {
         Jo2pProfile request = new Jo2pProfile();
@@ -91,23 +99,125 @@ public class OAuthProviderITest {
         assertTrue("invalid_request", actual.contains("error=invalid_request"));
     }
     
-//    @Test
-//    public void testAuthorizeCodeGrant() {
-//        LOG.info("+ testAuthorizeCodeGrant() +");
-//        
-//        String url = String.format("%s/authorize?response_type=code",
-//                BASE_URL);
-//        Map requestBody = NetworkTemplate.asMap("client_id", CLIENT_ID, 
-//                "redirect_uri", BASE_REDIRECT_URI,
-//                "state", STATE);
-//        
-//        String actual = template.getForLocation(url, requestBody);
-//        LOG.info("actual URL: {}", actual);
-//        
-//        assertTrue("starts with redirect_uri", actual.startsWith(BASE_REDIRECT_URI));
-//        assertTrue("state", actual.contains(String.format("state=%s", STATE)));
-//        assertTrue("contains code", actual.contains("code=sTaTiCoDe"));
-//    }
+    @Test
+    public void testAuthorizeCodeGrantNoCredentials() {
+        final String USERNAME = "testAuthorizeCodeGrantNoCredentials";
+        LOG.info("+ {}() +", USERNAME);
+        
+        Jo2pClient client = createClient(USERNAME);
+        String url = String.format("%s/authorize?response_type=code",
+                BASE_URL);
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
+                "redirect_uri", BASE_REDIRECT_URI,
+                "state", STATE);
+        
+        String actual = template.getForLocation(url, requestBody);
+        LOG.info("actual URL: {}", actual);
+        
+        assertTrue("starts with /oauth/login.html", actual.startsWith("/oauth/login.html"));
+        assertTrue("state", actual.contains(String.format("state=%s", STATE)));
+    }
+    
+    @Test
+    public void testAuthorizeCodeGrant() {
+        final String USERNAME = "testAuthorizeCodeGrant";
+        LOG.info("+ {}() +", USERNAME);
+        
+        Jo2pClient client = createClient(USERNAME);
+        Jo2pProfile profile = createProfile(USERNAME);
+        String url = String.format("%s/authorize?response_type=code",
+                BASE_URL);
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
+                "redirect_uri", BASE_REDIRECT_URI,
+                "state", STATE,
+                "username", USERNAME,
+                "password", USERNAME);
+        
+        String actual = template.getForLocation(url, requestBody);
+        LOG.info("actual URL: {}", actual);
+        
+        assertTrue("starts with redirect_uri", actual.startsWith(BASE_REDIRECT_URI));
+        assertTrue("state", actual.contains(String.format("state=%s", STATE)));
+        assertTrue("contains code", actual.contains("code="));
+    }
+    
+    @Test
+    public void testAccessTokenNoClientCredentials() {
+        final String USERNAME = "testAccessTokenNoClientCredentials";
+        LOG.info("+ {}() +", USERNAME);
+        
+        Jo2pClient client = createClient(USERNAME);
+        Jo2pProfile profile = createProfile(USERNAME);
+        String url = String.format("%s/authorize?response_type=code",
+                BASE_URL);
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
+                "redirect_uri", BASE_REDIRECT_URI,
+                "state", STATE,
+                "username", USERNAME,
+                "password", USERNAME);
+        
+        String actual = template.getForLocation(url, requestBody);
+        LOG.info("actual URL: {}", actual);
+        
+        assertTrue("starts with redirect_uri", actual.startsWith(BASE_REDIRECT_URI));
+        assertTrue("state", actual.contains(String.format("state=%s", STATE)));
+        assertTrue("contains code", actual.contains("code="));
+        
+        final String code = getParameterByName(actual, "code");
+        url = String.format("%s/token", BASE_URL);        
+        requestBody = NetworkTemplate.asMap("grant_type", "authorization_code",
+                "code", code,
+                "redirect_uri", BASE_REDIRECT_URI,
+                "client_id", client.getId());
+        try {
+            JAccessTokenResponse token = template.post(url, requestBody, JAccessTokenResponse.class);
+            fail("Expected 401 exception");
+        }
+        catch (RuntimeException expected) {
+            assertTrue(expected.getMessage().contains("401"));
+        }
+    }
+    
+    @Test
+    public void testAccessToken() {
+        final String USERNAME = "testAccessToken";
+        LOG.info("+ {}() +", USERNAME);
+        
+        Jo2pClient client = createClient(USERNAME);
+        Jo2pProfile profile = createProfile(USERNAME);
+        String url = String.format("%s/authorize?response_type=code",
+                BASE_URL);
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
+                "redirect_uri", BASE_REDIRECT_URI,
+                "state", STATE,
+                "username", USERNAME,
+                "password", USERNAME);
+        
+        String actual = template.getForLocation(url, requestBody);
+        LOG.info("actual URL: {}", actual);
+        
+        assertTrue("starts with redirect_uri", actual.startsWith(BASE_REDIRECT_URI));
+        assertTrue("state", actual.contains(String.format("state=%s", STATE)));
+        assertTrue("contains code", actual.contains("code="));
+        
+        final String code = getParameterByName(actual, "code");
+        url = String.format("%s/token", BASE_URL);        
+        requestBody = NetworkTemplate.asMap("grant_type", "authorization_code",
+                "code", code,
+                "redirect_uri", BASE_REDIRECT_URI,
+                "client_id", client.getId());
+        template.setAuthorization(createBasicAuthorization(client.getId(), client.getSecret()));
+        
+        // POST form-encoded instead of JSON
+        Map<String, String> requestHeaders = NetworkTemplate.asMap(
+                                    NetworkTemplate.CONTENT_TYPE, NetworkTemplate.MIME_FORM);
+        JAccessTokenResponse token = template.post(url, requestHeaders, 
+                requestBody, JAccessTokenResponse.class);
+        template.setAuthorization(null);
+        assertNotNull(token);
+        assertNotNull(token.getAccess_token());
+        assertNotNull(token.getRefresh_token());
+    }
     
     @Test
     public void testAuthorizeImplicit() {
@@ -130,7 +240,7 @@ public class OAuthProviderITest {
         assertTrue("starts with redirect_uri", actual.startsWith(BASE_REDIRECT_URI));
         assertTrue("state", actual.contains(String.format("state=%s", STATE)));
         assertTrue("contains token", actual.contains("access_token="));
-        assertTrue("contains token_type", actual.contains("token_type=implicit"));
+        assertTrue("contains token_type", actual.contains("token_type="));
     }
     
     @Test
@@ -147,7 +257,7 @@ public class OAuthProviderITest {
         String actual = template.getForLocation(url, requestBody);
         LOG.info("actual URL: {}", actual);
         
-        assertTrue("starts with /oauth/login.html", actual.startsWith(AuthorizeLeaf.LOGIN_URI_DEFAULT));
+        assertTrue("starts with /oauth/login.html", actual.startsWith(AuthorizeEndpointLeaf.LOGIN_URI_DEFAULT));
         assertTrue("state", actual.contains(String.format("state=%s", STATE)));
         assertTrue("contains redirect_uri", actual.contains("redirect_uri="));
     }
@@ -173,7 +283,7 @@ public class OAuthProviderITest {
         assertTrue("starts with redirect_uri", actual.startsWith(BASE_REDIRECT_URI));
         assertTrue("state", actual.contains(String.format("state=%s", STATE)));
         assertTrue("contains token", actual.contains("access_token="));
-        assertTrue("contains token_type", actual.contains("token_type=implicit"));
+        assertTrue("contains token_type", actual.contains("token_type="));
     }
     
     @Test
@@ -194,17 +304,24 @@ public class OAuthProviderITest {
         String redirectUrl = template.getForLocation(url, requestBody);
         LOG.info("Redirect URL: {}", redirectUrl);
         
-        final String prefix = "access_token=";
-        int beginIndex = redirectUrl.indexOf(prefix) + prefix.length();
-        int endIndex = redirectUrl.indexOf('&', beginIndex);
-        
-        final String accessToken = -1 < endIndex ? 
-                redirectUrl.substring(beginIndex, endIndex) :
-                redirectUrl.substring(beginIndex);
+        String accessToken = getParameterByName(redirectUrl, "access_token");
         
         Jo2pProfile actual = template.get(String.format("%s/profile/v10/me?access_token=%s", 
                 BASE_URL, accessToken), Jo2pProfile.class);
         assertEquals("ProfileId", profile.getId(), actual.getId());
+    }
+
+    public static String getParameterByName(String url, String name) {
+        final String prefix = String.format("%s=", name);
+        int beginIndex = url.indexOf(prefix) + prefix.length();
+        int endIndex = url.indexOf('&', beginIndex);
+        if (endIndex < 0) {
+            endIndex = url.indexOf('#', beginIndex);
+        }
+        final String accessToken = -1 < endIndex ? 
+                url.substring(beginIndex, endIndex) :
+                url.substring(beginIndex);
+        return accessToken;
     }
     
 }

@@ -9,6 +9,7 @@ import com.wadpam.gaelic.Node;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -35,6 +36,7 @@ public class NetworkTemplate {
     public static final String LOCATION = "Location";
     
     public static final String MIME_JSON = "application/json";
+    public static final String MIME_FORM = "application/x-www-form-urlencoded";
     
     public static final String SEPARATOR_QUERY = "?";
     public static final String SEPARATOR_FRAGMENT = "#";
@@ -69,15 +71,20 @@ public class NetworkTemplate {
     }
     
     public <J> J  delete(String url, Class<J> responseClass) {
-        return exchange(Node.METHOD_DELETE, url, null, responseClass);
+        return exchange(Node.METHOD_DELETE, url, null, null, responseClass);
     }
     
-    public <J> J exchange(String method, String url, Object requestBody, Class<J> responseClass) {
-        final NetworkResponse<J> response = exchangeForResponse(method, url, requestBody, responseClass, true);
+    public <J> J exchange(String method, String url, 
+            Map<String, String> requestHeaders,
+            Object requestBody, Class<J> responseClass) {
+        final NetworkResponse<J> response = exchangeForResponse(method, url, 
+                requestHeaders, requestBody, responseClass, true);
         return response.getBody();
     }
     
-    public <J> NetworkResponse<J> exchangeForResponse(String method, String url, Object requestBody, Class<J> responseClass, boolean followRedirects) {
+    public <J> NetworkResponse<J> exchangeForResponse(String method, String url, 
+            Map<String, String> requestHeaders,
+            Object requestBody, Class<J> responseClass, boolean followRedirects) {
         
         try {
             
@@ -102,6 +109,7 @@ public class NetworkTemplate {
             // Accept
             if (null != accept) {
                 con.addRequestProperty(ACCEPT, accept);
+                LOG.trace("{}: {}", ACCEPT, accept);
             }
             
             // Authorization
@@ -109,13 +117,41 @@ public class NetworkTemplate {
                 con.addRequestProperty(AUTHORIZATION, authorization);
                 LOG.trace("{}: {}", AUTHORIZATION, authorization);
             }
+            
+            // other request headers:
+            String contentType = null;
+            if (null != requestHeaders) {
+                for (Entry<String, String> entry : requestHeaders.entrySet()) {
+                    con.addRequestProperty(entry.getKey(), entry.getValue());
+                    LOG.info("{}: {}", entry.getKey(), entry.getValue());
+                    if (CONTENT_TYPE.equalsIgnoreCase(entry.getKey())) {
+                        contentType = entry.getValue();
+                    }
+                }
+            }
 
             if (null != requestBody) {
                 if (CONTENT_METHODS.contains(method)) {
-                    con.addRequestProperty(CONTENT_TYPE, MIME_JSON);
+                    
+                    // content-type not specified in request headers?
+                    if (null == contentType) {
+                        contentType = MIME_JSON;
+                        con.addRequestProperty(CONTENT_TYPE, MIME_JSON);
+                    }
                     con.setDoOutput(true);
                     OutputStream out = con.getOutputStream();
-                    GaelicServlet.MAPPER.writeValue(out, requestBody);
+                    if (MIME_JSON.equals(contentType)) {
+                        GaelicServlet.MAPPER.writeValue(out, requestBody);
+                    }
+                    else {
+                        // application/www-form-urlencoded
+                        Map<String, Object> params = GaelicServlet.MAPPER.convertValue(requestBody, Map.class);
+                        PrintWriter writer = new PrintWriter(out);
+                        String content = expandUrl("", params);
+                        writer.print(content.substring(1));
+                        writer.flush();
+                        LOG.info("Content: {}", content.substring(1));
+                    }
                     out.close();
                 }
             }
@@ -142,7 +178,7 @@ public class NetworkTemplate {
             return response;
         }
         catch (IOException ioe) {
-            throw new RuntimeException("NetworkTemplate.exchange", ioe);
+            throw new RuntimeException(String.format("NetworkTemplate.exchange: %s", ioe.getMessage()), ioe);
         }
     }
     
@@ -169,22 +205,44 @@ public class NetworkTemplate {
     }
     
     public <J> J  get(String url, Class<J> responseClass, Object... requestBody) {
+        return get(url, null, responseClass, requestBody);
+    }
+    
+    public <J> J  get(String url, Map<String, String> requestHeaders, 
+            Class<J> responseClass, Object... requestBody) {
         final Object requestParams = null != requestBody && 1 == requestBody.length ? requestBody[0] : null;
-        return exchange(Node.METHOD_GET, url, requestParams, responseClass);
+        return exchange(Node.METHOD_GET, url, requestHeaders, requestParams, responseClass);
     }
     
     public String getForLocation(String url, Object... requestBody) {
+        return getForLocationWithHeaders(url, null, requestBody);
+    }
+    
+    public String getForLocationWithHeaders(String url, Map<String, String> requestHeaders, 
+            Object... requestBody) {
         final Object requestParams = null != requestBody && 1 == requestBody.length ? requestBody[0] : null;
-        NetworkResponse<Void> response = exchangeForResponse(Node.METHOD_GET, url, requestParams, Void.class, false);
+        NetworkResponse<Void> response = exchangeForResponse(Node.METHOD_GET, url, 
+                requestHeaders, requestParams, Void.class, false);
         return response.getHeader(LOCATION);
     }
     
     public <J> J  post(String url, Object requestBody, Class<J> responseClass) {
-        return exchange(Node.METHOD_POST, url, requestBody, responseClass);
+        return post(url, null, requestBody, responseClass);
+    }
+    
+    public <J> J  post(String url, Map<String, String> requestHeaders,
+            Object requestBody, Class<J> responseClass) {
+        return exchange(Node.METHOD_POST, url, requestHeaders, requestBody, responseClass);
     }
 
     public String postForLocation(String url, Object requestBody) {
-        NetworkResponse<Void> response = exchangeForResponse(Node.METHOD_POST, url, requestBody, Void.class, false);
+        return postForLocationWithHeaders(url, null, requestBody);
+    }
+    
+    public String postForLocationWithHeaders(String url, Map<String, String> requestHeaders, 
+            Object requestBody) {
+        NetworkResponse<Void> response = exchangeForResponse(Node.METHOD_POST, url, 
+                requestHeaders, requestBody, Void.class, false);
         return response.getHeader(LOCATION);
     }
     

@@ -86,7 +86,9 @@ public class ConfigBuilder {
     }
     
     public static ConfigBuilder from(String name) {
-        return BUILDER_MAP.get(name);
+        final ConfigBuilder builder = BUILDER_MAP.get(name);
+        LOG.trace(" -> from({}) gives {}", name, builder);
+        return builder;
     }
     
     public static Node get(String name) {
@@ -97,7 +99,9 @@ public class ConfigBuilder {
         InterceptorDelegate delegate = new InterceptorDelegate();
         delegate.setInterceptor(interceptor);
         add(path, delegate);
-        return new DelegateBuilder(delegate);
+        DelegateBuilder builder = new DelegateBuilder(delegate);
+        mapBuilder(path, builder);
+        return builder;
     }
 
     public ConfigBuilder interceptedPath(String path, Interceptor interceptor) {
@@ -147,5 +151,10 @@ public class ConfigBuilder {
     public static ConfigBuilder to(Node node) {
         return new ConfigBuilder(node);
     }
-    
+
+    @Override
+    public String toString() {
+        return String.format("%s{%s}", getClass().getSimpleName(), node);
+    }
+
 }

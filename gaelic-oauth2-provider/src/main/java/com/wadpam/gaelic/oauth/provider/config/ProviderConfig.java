@@ -18,10 +18,12 @@ import com.wadpam.gaelic.oauth.provider.domain.Do2pToken;
 import com.wadpam.gaelic.oauth.provider.service.ClientService;
 import com.wadpam.gaelic.oauth.provider.service.ProfileService;
 import com.wadpam.gaelic.oauth.provider.service.ProviderService;
-import com.wadpam.gaelic.oauth.provider.tree.AuthorizeLeaf;
+import com.wadpam.gaelic.oauth.provider.tree.AuthorizeEndpointLeaf;
 import com.wadpam.gaelic.oauth.provider.tree.ClientLeaf;
 import com.wadpam.gaelic.oauth.provider.tree.ProfileLeaf;
+import com.wadpam.gaelic.oauth.provider.tree.TokenEndpointLeaf;
 import com.wadpam.gaelic.oauth.web.OAuth2Interceptor;
+import com.wadpam.gaelic.security.SecurityInterceptor;
 import com.wadpam.gaelic.tree.ForwardLeaf;
 import com.wadpam.gaelic.tree.InterceptedPath;
 import java.util.HashMap;
@@ -52,6 +54,7 @@ public class ProviderConfig {
         providerService.setClientDao(clientDao);
         providerService.setProfileDao(profileDao);
         providerService.setTokenDao(tokenDao);
+        LEAF_MAP.put(ProviderService.class, providerService);
         
         ProfileLeaf profileLeaf = new ProfileLeaf();
         profileLeaf.setService(profileService);
@@ -61,15 +64,22 @@ public class ProviderConfig {
         clientLeaf.setService(clientService);
         LEAF_MAP.put(ClientLeaf.class, clientLeaf);
         
-        AuthorizeLeaf authorizeLeaf = new AuthorizeLeaf();
-        authorizeLeaf.setProviderService(providerService);
-        LEAF_MAP.put(AuthorizeLeaf.class, authorizeLeaf);
+        AuthorizeEndpointLeaf authorizeEndpointLeaf = new AuthorizeEndpointLeaf();
+        authorizeEndpointLeaf.setProviderService(providerService);
+        LEAF_MAP.put(AuthorizeEndpointLeaf.class, authorizeEndpointLeaf);
+        
+        TokenEndpointLeaf tokenEndpointLeaf = new TokenEndpointLeaf();
+        tokenEndpointLeaf.setProviderService(providerService);
+        LEAF_MAP.put(TokenEndpointLeaf.class, tokenEndpointLeaf);
+        
+        // Basic Authentication interceptor protecting /oauth/token
+        SecurityInterceptor basicInterceptor = new SecurityInterceptor();
+        basicInterceptor.setSecurityDetailsService(clientService);
+        LEAF_MAP.put(SecurityInterceptor.class, basicInterceptor);
         
         // OAuth2 interceptor protecting /oauth/profile
         OAuth2Interceptor oauth2Interceptor = new OAuth2Interceptor();
         oauth2Interceptor.setSecurityDetailsService(providerService);
-//        InterceptedPath interceptedPath = new InterceptedPath();
-//        interceptedPath.setInterceptor(oauth2Interceptor);
         LEAF_MAP.put(OAuth2Interceptor.class, oauth2Interceptor);
         
         // forwards to login.html
