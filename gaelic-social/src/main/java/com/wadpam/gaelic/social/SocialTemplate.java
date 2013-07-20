@@ -44,7 +44,9 @@ public class SocialTemplate extends NetworkTemplate {
     }
 
     @Override
-    public <J> J exchange(String method, String url, Object requestBody, Class<J> responseClass) {
+    public <J> J exchange(String method, String url, 
+            Map<String,String> requestHeaders, 
+            Object requestBody, Class<J> responseClass) {
         
         // OAuth access_token
         if (null != access_token) {
@@ -52,7 +54,8 @@ public class SocialTemplate extends NetworkTemplate {
                     url, url.contains("?") ? "&" : "?", access_token);
         }
         
-        return super.exchange(method, url, requestBody, responseClass); //To change body of generated methods, choose Tools | Templates.
+        return super.exchange(method, url, 
+                requestHeaders, requestBody, responseClass);
     }
     
     /**
