@@ -27,19 +27,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class TokenEndpointLeaf extends Node {
     
-    public static final String PARAM_GRANT_TYPE = "grant_type";
     public static final String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
     public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+    public static final String PARAM_GRANT_TYPE = "grant_type";
+    public static final String PARAM_REFRESH_TOKEN = GRANT_TYPE_REFRESH_TOKEN;
 
     private ProviderService providerService;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final String redirectUri = request.getParameter(PARAM_REDIRECT_URI);
-        if (null == redirectUri) {
-            throw new BadRequestException(ProviderService.ERR_MISSING_REDIRECT_URI, "Missing redirect_uri", "http://tools.ietf.org/html/rfc6749#section-4");
-        }
-
         final JAccessTokenResponse body = new JAccessTokenResponse();
         final String state = request.getParameter(PARAM_STATE);
         if (null != state) {
@@ -50,9 +46,28 @@ public class TokenEndpointLeaf extends Node {
         if (null != client) {
         
             final String grantType = request.getParameter(PARAM_GRANT_TYPE);
+            
             if (GRANT_TYPE_AUTHORIZATION_CODE.equals(grantType)) {
+                
+                final String redirectUri = request.getParameter(PARAM_REDIRECT_URI);
+                if (null == redirectUri) {
+                    throw new BadRequestException(ProviderService.ERR_MISSING_REDIRECT_URI, "Missing redirect_uri", "http://tools.ietf.org/html/rfc6749#section-4");
+                }
+
                 final String code = request.getParameter(AuthorizeEndpointLeaf.PARAM_CODE);
                 providerService.exchangeCodeForToken(code, redirectUri, client, body);
+                if (null != body.getAccess_token()) {
+                    setResponseBody(request, HttpServletResponse.SC_OK, body);
+                }
+                else {
+                    TreeMap<String, Object> error = new TreeMap<String, Object>();
+                    error.put("error", "invalid_grant");
+                    setResponseBody(request, HttpServletResponse.SC_BAD_REQUEST, error);
+                }
+            }
+            else if (GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
+                final String refreshToken = request.getParameter(PARAM_REFRESH_TOKEN);
+                providerService.refreshToken(refreshToken, client, body);
                 if (null != body.getAccess_token()) {
                     setResponseBody(request, HttpServletResponse.SC_OK, body);
                 }

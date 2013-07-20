@@ -172,6 +172,22 @@ public class ProviderService implements SecurityDetailsService {
                 .build();
     }
 
+    public void refreshToken(String refreshToken, Do2pClient client, JAccessTokenResponse body) {
+        final Do2pToken token = tokenDao.findByRefreshToken(refreshToken);
+        
+        if (null != token && client.getId().equals(token.getClientId())) {
+            UUID uuid = UUID.randomUUID();
+            body.setAccess_token(uuid.toString());
+            body.setRefresh_token(refreshToken);
+            body.setExpires_in((int) confidentialTTL / 1000);
+            body.setToken_type(TOKEN_TYPE);
+            
+            token.setAccessToken(body.getAccess_token());
+            token.setExpiryDate(new Date(System.currentTimeMillis() + confidentialTTL));
+            tokenDao.update(token);
+        }
+    }
+
     public static class AuthorizationHolder implements Serializable {
         private final Long clientId;
         private final String code;
