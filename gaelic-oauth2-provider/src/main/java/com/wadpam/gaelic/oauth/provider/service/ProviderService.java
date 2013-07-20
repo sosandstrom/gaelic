@@ -115,6 +115,12 @@ public class ProviderService implements SecurityDetailsService {
             body.setRefresh_token(uuid.toString());
             body.setExpires_in((int) confidentialTTL / 1000);
             body.setToken_type(TOKEN_TYPE);
+            
+            Object profileKey = profileDao.getPrimaryKey(null, holder.getProfileId());
+            Date expiryDate = new Date(System.currentTimeMillis() + confidentialTTL);
+            Do2pToken token = tokenDao.persist(profileKey, null,
+                    body.getAccess_token(), client.getId(), expiryDate, 
+                    body.getRefresh_token(), null);
         }
     }
     
@@ -122,7 +128,8 @@ public class ProviderService implements SecurityDetailsService {
         final UUID uuid = UUID.randomUUID();
         final String code = uuid.toString().substring(0, 8);
         
-        final AuthorizationHolder holder = new AuthorizationHolder(client.getId(), code, redirectUri);
+        final AuthorizationHolder holder = new AuthorizationHolder(client.getId(), 
+                code, redirectUri, profileDao.getSimpleKey(do2pProfile));
         cache.put(code, holder);
         
         return code;
@@ -140,7 +147,6 @@ public class ProviderService implements SecurityDetailsService {
         
         Date expiryDate = new Date(System.currentTimeMillis() + implicitTTL);
         Object profileKey = profileDao.getPrimaryKey(do2pProfile);
-//        LOG.debug("  profileKey is {} for profile {}", profileKey, do2pProfile);
         Do2pToken token = tokenDao.persist(profileKey, null,
                 accessToken, client.getId(), expiryDate, null, null);
         
@@ -170,11 +176,14 @@ public class ProviderService implements SecurityDetailsService {
         private final Long clientId;
         private final String code;
         private final String redirect_uri;
+        private final Long profileId;
 
-        public AuthorizationHolder(Long clientId, String code, String redirect_uri) {
+        public AuthorizationHolder(Long clientId, String code, String redirect_uri,
+                Long profileId) {
             this.clientId = clientId;
             this.code = code;
             this.redirect_uri = redirect_uri;
+            this.profileId = profileId;
         }
 
         public Long getClientId() {
@@ -187,6 +196,10 @@ public class ProviderService implements SecurityDetailsService {
 
         public String getRedirect_uri() {
             return redirect_uri;
+        }
+
+        public Long getProfileId() {
+            return profileId;
         }
         
     }
