@@ -220,6 +220,52 @@ public class OAuthProviderITest {
     }
     
     @Test
+    public void testAccessConfidentialProfile() {
+        final String USERNAME = "testAccessConfidentialProfile";
+        LOG.info("+ {}() +", USERNAME);
+        
+        Jo2pClient client = createClient(USERNAME);
+        Jo2pProfile profile = createProfile(USERNAME);
+        String url = String.format("%s/authorize?response_type=code",
+                BASE_URL);
+        Map requestBody = NetworkTemplate.asMap("client_id", client.getId(), 
+                "redirect_uri", BASE_REDIRECT_URI,
+                "state", STATE,
+                "username", USERNAME,
+                "password", USERNAME);
+        
+        String actual = template.getForLocation(url, requestBody);
+        LOG.info("actual URL: {}", actual);
+        
+        assertTrue("starts with redirect_uri", actual.startsWith(BASE_REDIRECT_URI));
+        assertTrue("state", actual.contains(String.format("state=%s", STATE)));
+        assertTrue("contains code", actual.contains("code="));
+        
+        final String code = getParameterByName(actual, "code");
+        url = String.format("%s/token", BASE_URL);        
+        requestBody = NetworkTemplate.asMap("grant_type", "authorization_code",
+                "code", code,
+                "redirect_uri", BASE_REDIRECT_URI,
+                "client_id", client.getId());
+        template.setAuthorization(createBasicAuthorization(client.getId(), client.getSecret()));
+        
+        // POST form-encoded instead of JSON
+        Map<String, String> requestHeaders = NetworkTemplate.asMap(
+                                    NetworkTemplate.CONTENT_TYPE, NetworkTemplate.MIME_FORM);
+        JAccessTokenResponse token = template.post(url, requestHeaders, 
+                requestBody, JAccessTokenResponse.class);
+        template.setAuthorization(null);
+        assertNotNull(token);
+        assertNotNull(token.getAccess_token());
+        assertNotNull(token.getRefresh_token());
+        
+        Jo2pProfile p = template.get(String.format("%s/profile/v10/me?access_token=%s", 
+                BASE_URL, token.getAccess_token()), Jo2pProfile.class);
+        assertEquals("ProfileId", profile.getId(), p.getId());
+        
+    }
+    
+    @Test
     public void testAuthorizeImplicit() {
         final String USERNAME = "testAuthorizeImplicit";
         LOG.info("+ {}() +", USERNAME);
