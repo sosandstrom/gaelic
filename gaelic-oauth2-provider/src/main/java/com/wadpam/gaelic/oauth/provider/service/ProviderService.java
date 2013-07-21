@@ -83,6 +83,7 @@ public class ProviderService implements SecurityDetailsService {
         }
         
         if (null == username || null == password) {
+            LOG.debug("No credentials in request.");
             return null;
         }
         
@@ -92,6 +93,10 @@ public class ProviderService implements SecurityDetailsService {
             if (secret.equals(profile.getSecret())) {
                 return profile;
             }
+            LOG.debug("Password mismatch.");
+        }
+        else {
+            LOG.debug("No such user for {}", username);
         }
         return null;
     }

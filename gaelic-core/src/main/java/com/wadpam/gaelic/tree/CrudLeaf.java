@@ -327,6 +327,10 @@ public class CrudLeaf<J extends Serializable, T, S extends CrudService<T>> exten
     public void setConverter(BaseConverter<J, T> converter) {
         this.converter = converter;
     }
+
+    public S getService() {
+        return service;
+    }
     
     public void setService(S service) {
         this.service = service;
