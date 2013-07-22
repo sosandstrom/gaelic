@@ -114,7 +114,7 @@ public class OAuthProviderITest {
         String actual = template.getForLocation(url, requestBody);
         LOG.info("actual URL: {}", actual);
         
-        assertTrue("starts with /oauth/login.html", actual.startsWith("/oauth/login.html"));
+        assertTrue("redirect contains login.html", actual.contains("login.html"));
         assertTrue("state", actual.contains(String.format("state=%s", STATE)));
     }
     

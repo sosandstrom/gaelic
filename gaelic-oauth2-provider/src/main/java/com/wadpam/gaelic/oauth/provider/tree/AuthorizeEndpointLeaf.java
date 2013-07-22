@@ -35,7 +35,7 @@ public class AuthorizeEndpointLeaf extends Node {
     
     public static final String RESPONSE_TYPE_CODE = PARAM_CODE;
     public static final String RESPONSE_TYPE_TOKEN = "token";
-    public static final String LOGIN_URI_DEFAULT = "/oauth/login.html";
+    public static final String LOGIN_URI_DEFAULT = "login.html";
     
     private ProviderService providerService;
     private String loginUri = LOGIN_URI_DEFAULT;
