@@ -217,6 +217,12 @@ public class SecurityInterceptor extends InterceptorAdapter {
         }
         catch (AuthenticationFailedException noSuchUser) {
         }
+        catch (RuntimeException ignoreIfWhitelisted) {
+            if (!skipPath && !whitelisted) {
+                throw ignoreIfWhitelisted;
+            }
+        }
+        
         LOG.debug("details {}", details);
         if (null == details) {
             return populateAnonymousUser(request, skipPath, whitelisted);

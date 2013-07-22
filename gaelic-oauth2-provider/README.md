@@ -26,6 +26,10 @@ as an init-param in web.xml:
             <param-value>com.example.config.AppConfig</param-value> 
         </init-param> 
     </servlet>
+    <servlet-mapping>
+        <servlet-name>GaelicServlet</servlet-name>
+        <url-pattern>/accounts/*</url-pattern>
+    </servlet-mapping>
     
 The Configuration is instantiated and the 
     
@@ -60,8 +64,8 @@ Here's a simple Config example:
                 // the OAuth2 Provider part of the URL tree:
                 BUILDER.from("root")
                     .interceptor("accounts", domainNamespaceInterceptor)
-                    .interceptorPath("accounts", basicClientInterceptor)
-                        .interceptorPath("{tenant}", oauth2ProviderInterceptor)
+                    .interceptedPath("accounts", basicClientInterceptor)
+                        .interceptedPath("{tenant}", oauth2ProviderInterceptor)
                             .interceptedPath("oauth", new MardaoPrincipalInterceptor())
                                 .add("authorize", (Node) LEAF_MAP.get(AuthorizeEndpointLeaf.class)).named("AuthorizeEndpoint");
                             BUILDER.from("oauth")
