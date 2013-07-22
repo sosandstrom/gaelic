@@ -38,6 +38,7 @@ Supported Features
 * [Security](#security) out-of-the-box with Basic Authentication and OAuth2
 * [CRUD resources](#crud-resources) with Leaf, Service and mardao Dao
 * [App Domain](#app-domain) management mapping to GAE Namespace
+* [OAuth2 Provider](#oauth2-provider) implementation
 
 and non-functional requirements:
 
@@ -159,3 +160,6 @@ Basic Authentication.
 An App Domain also has a tracking code property, allowing to send tracking for /api/bmw
 to a bmw-dedicated Analytics Account (e.g. Google Analytics).
 
+OAuth2 Provider
+---------------
+Look at the sub-module `gaelic-oauth2-provider` [README](https://github.com/sosandstrom/gaelic/tree/master/gaelic-oauth2-provider) page for more information on OAuth2 Provider implementation.
