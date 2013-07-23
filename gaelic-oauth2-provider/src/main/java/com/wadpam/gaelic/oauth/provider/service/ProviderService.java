@@ -101,9 +101,9 @@ public class ProviderService implements SecurityDetailsService {
         return null;
     }
     
-    public static String encryptPassword(String password, Long id) {
+    public static String encryptPassword(String plain, long salt) {
         final String base = String.format("%dSaltyPeas%sAndNonsense%d",
-                id, password, id);
+                salt, plain, salt);
         final String hash = DigestUtils.sha1Hex(base);
         return hash;
     }

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sign up</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <!-- expected to be accessed via /accounts/{domain}/oauth/profile/signup.html -->
+        <form method="POST" action="v10">
+            <fieldset>
+                <h5>Sign up</h5>
+                
+                <!-- For many use cases, username and email should be identical,
+                     to avoid confusion -->
+                <div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Username"/>
+                </div>
+
+                <!-- if you want to send out confirmation email, add a listener to 
+                     ProfileLeaf, and listen to postCreate -->
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Email"/>
+                </div>
+
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" />
+                </div>
+                
+                <!-- add javascript for validation -->
+                <div>
+                    <label for="passwordConfirm">Confirm</label>
+                    <input type="password" id="passwordConfirm" placeholder="Again" />
+                </div>
+                
+                <div>
+                    <input type="submit" value="Sign up" />
+                </div>
+            </fieldset>
+        </form>
+        
+    </body>
+</html>

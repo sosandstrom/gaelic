@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sign in</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <h3 id="clientName">clientName</h3>
+        <div id="clientDescription">Lorem ipsum dolor...</div>
+        
+        <form method="POST" action="authorize">
+            <fieldset>
+                <h5>Sign in</h5>
+                
+                <input type="hidden" id="redirect_uri" name="redirect_uri" value="#" />
+                <input type="hidden" id="client_id" name="client_id" value="#" />
+                <input type="hidden" id="response_type" name="response_type" value="#" />
+                
+                <div>
+                    <label for="username">Email</label>
+                    <input type="email" id="username" name="username" placeholder="Email"/>
+                </div>
+
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" />
+                </div>
+                
+                <div>
+                    <input type="submit" value="Sign in" />
+                </div>
+            </fieldset>
+        </form>
+
+        <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript">
+function getFragmentByName(name) {
+
+	var match = RegExp('[&#]' + name + '=([^&]*)')
+			.exec(window.location.hash);
+
+	return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function getParameterByName(name) {
+
+	var match = RegExp('[?&]' + name + '=([^&]*)')
+						.exec(window.location.search);
+
+	return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+$(function() { 
+    $("#redirect_uri").val(getParameterByName("redirect_uri"));
+    $("#client_id").val(getParameterByName("client_id"));
+    $("#response_type").val(getParameterByName("response_type"));
+
+    $("#clientName").val(getParameterByName("name"));
+    $("#clientDescription").val(getParameterByName("descr"));
+});
+        </script>
+        
+    </body>
+</html>
