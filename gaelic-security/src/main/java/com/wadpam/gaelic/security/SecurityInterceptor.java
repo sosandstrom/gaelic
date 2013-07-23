@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -120,11 +121,14 @@ public class SecurityInterceptor extends InterceptorAdapter {
         if (null == value) {
             
             // consider header next:
-            String authorization = request.getHeader(HEADER_AUTHORIZATION);
-            if (null != authorization && authorization.startsWith(authenticationMechanism)) {
-                
-                // strip auth mechanism from header value
-                value = authorization.substring(authenticationMechanism.length());
+            String authorization;
+            for (Enumeration<String> e = request.getHeaders(HEADER_AUTHORIZATION); e.hasMoreElements(); ) {
+                authorization = e.nextElement();
+                if (null != authorization && authorization.startsWith(authenticationMechanism)) {
+
+                    // strip auth mechanism from header value
+                    value = authorization.substring(authenticationMechanism.length());
+                }
             }
             
             if (null == value) {
