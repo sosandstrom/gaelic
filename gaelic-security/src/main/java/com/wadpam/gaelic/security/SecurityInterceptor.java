@@ -124,10 +124,13 @@ public class SecurityInterceptor extends InterceptorAdapter {
             String authorization;
             for (Enumeration<String> e = request.getHeaders(HEADER_AUTHORIZATION); e.hasMoreElements(); ) {
                 authorization = e.nextElement();
-                if (null != authorization && authorization.startsWith(authenticationMechanism)) {
-
+                if (null != authorization && -1 < authorization.indexOf(authenticationMechanism)) {
                     // strip auth mechanism from header value
-                    value = authorization.substring(authenticationMechanism.length());
+                    int beginIndex = authorization.indexOf(authenticationMechanism) + authenticationMechanism.length();
+                    int endIndex = authorization.indexOf(',', beginIndex);
+                    
+                    value = beginIndex <= endIndex ? authorization.substring(beginIndex, endIndex) :
+                            authorization.substring(beginIndex);
                 }
             }
             
