@@ -85,6 +85,35 @@ public class CrudLeafTest {
     }
     
     @Test
+    public void testCreateFromForm()  throws ServletException, IOException {
+        LOG.info("---------------- testCreateFromForm() -------------------------------");
+
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        MockHttpServletResponse res = new MockHttpServletResponse();
+
+        req.setMethod("POST");
+        req.setRequestURI("/api/gaelic/crud/v10");
+        req.setContentType("application/x-www-form-urlencoded");
+        req.setContent("startDate=12345678&ignore=value".getBytes());
+        req.setParameter("startDate", new String[] {"12345678"});
+        req.setParameter("ignore", new String[] {"value"});
+        
+        servlet.service(req, res);
+        assertEquals(201, res.getStatus());
+        assertNotNull(res.getContentAsString());
+        JDate jDate = GaelicServlet.MAPPER.readValue(res.getContentAsString(), JDate.class);
+        
+        assertEquals("12345678", jDate.getId());
+        assertEquals((Long)12345678L, jDate.getStartDate());
+
+        request.setMethod("GET");
+        request.setRequestURI(String.format("/api/gaelic/crud/v10/%s", jDate.getId()));
+        
+        servlet.service(request, response);
+        assertEquals(200, response.getStatus());
+    }
+    
+    @Test
     public void testDelete()  throws ServletException, IOException {
         LOG.info("---------------- testDelete() -------------------------------");
 

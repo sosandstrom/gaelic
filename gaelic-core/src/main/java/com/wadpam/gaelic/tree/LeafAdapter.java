@@ -12,7 +12,10 @@ import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.exception.MethodNotAllowedException;
 import com.wadpam.gaelic.json.JKeyFactory;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -121,6 +124,15 @@ public class LeafAdapter<J extends Object> extends Node {
         if (request.getContentType().startsWith(GaelicServlet.MEDIA_TYPE_JSON)) {
             ServletInputStream in = request.getInputStream();
             body = (J) GaelicServlet.MAPPER.readValue(in, jsonClass);
+        }
+        else if (request.getContentType().startsWith(GaelicServlet.MEDIA_TYPE_FORM)) {
+            Map<String,String[]> paramValuesMap = request.getParameterMap();
+            HashMap<String,String> paramMap = new HashMap(paramValuesMap.size());
+            for (Entry<String,String[]> entry : paramValuesMap.entrySet()) {
+                paramMap.put(entry.getKey(), 1 == entry.getValue().length ? 
+                        entry.getValue()[0] : "");
+            }
+            body = (J) GaelicServlet.MAPPER.convertValue(paramMap, jsonClass);
         }
         LOG.debug("Parsed request Content-Type: {} into {}", request.getContentType(), body);
         

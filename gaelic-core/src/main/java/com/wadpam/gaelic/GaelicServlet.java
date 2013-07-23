@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 public class GaelicServlet extends HttpServlet {
     
     public static final String MEDIA_TYPE_JSON = "application/json";
+    public static final String MEDIA_TYPE_FORM = "application/x-www-form-urlencoded";
     
     public static final String INIT_PARAM_CONFIG = "com.wadpam.gaelic.Config";
     public static final String REQUEST_ATTR_PATHSTACK = "com.wadpam.gaelic.PathStack";

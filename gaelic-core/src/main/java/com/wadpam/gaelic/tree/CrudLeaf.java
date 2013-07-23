@@ -198,18 +198,6 @@ public class CrudLeaf<J extends Serializable, T, S extends CrudService<T>> exten
         setResponseBody(request, 200, body);
     }
     
-    protected J getRequestBody(HttpServletRequest request) throws IOException {
-        J body = null;
-        
-        if (request.getContentType().startsWith(GaelicServlet.MEDIA_TYPE_JSON)) {
-            ServletInputStream in = request.getInputStream();
-            body = (J) GaelicServlet.MAPPER.readValue(in, jsonClass);
-        }
-        LOG.debug("Parsed request Content-Type: {} into {}", request.getContentType(), body);
-        
-        return body;
-    }
-    
     protected void getSchema(HttpServletRequest request, HttpServletResponse response) {
         final TreeMap<String, Object> body = new TreeMap<String, Object>();
         body.put("tableName", service.getTableName());
