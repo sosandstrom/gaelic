@@ -10,6 +10,7 @@ import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.crud.BasicCrudObservable;
 import com.wadpam.gaelic.exception.BadRequestException;
 import com.wadpam.gaelic.exception.MethodNotAllowedException;
+import com.wadpam.gaelic.json.JBaseObject;
 import com.wadpam.gaelic.json.JKeyFactory;
 import java.io.IOException;
 import java.util.HashMap;
@@ -111,6 +112,14 @@ public class LeafAdapter<J extends Object> extends Node {
                 jKey.setId(getCurrentUsername());
             }
 
+            // patch missing ID in Contents:
+            if (body instanceof JBaseObject) {
+                JBaseObject jBase = (JBaseObject) body;
+                if (null == jBase.getId()) {
+                    jBase.setId(jKey.getId());
+                }
+            }
+            
             updateResource(request, response, jKey, body);
         }
         else {
