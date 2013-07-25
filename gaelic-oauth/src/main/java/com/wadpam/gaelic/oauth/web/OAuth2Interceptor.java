@@ -39,6 +39,7 @@ public class OAuth2Interceptor extends DomainSecurityInterceptor implements Secu
         super();
         setAuthenticationMechanism(AUTH_TYPE_OAUTH);
         setSecurityDetailsService(this);
+        overwritePrincipal = true;
     }
 
 //    @Override

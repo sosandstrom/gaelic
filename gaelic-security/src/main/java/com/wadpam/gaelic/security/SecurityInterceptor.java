@@ -64,6 +64,7 @@ public class SecurityInterceptor extends InterceptorAdapter {
     private String authenticationMechanism = AUTH_TYPE_BASIC;
     private String realmName = "open-server SecurityInterceptor";
     private SecurityDetailsService securityDetailsService;
+    protected boolean overwritePrincipal = false;
     
     // Paths
     private final ArrayList<Entry<Pattern, Set<String>>> WHITELISTED_METHODS = 
@@ -240,7 +241,7 @@ public class SecurityInterceptor extends InterceptorAdapter {
                 authValue, username, details);
         LOG.debug("principalName {}", principalName);
         if (null != principalName) {
-            if (null != request) {
+            if (null != request && (null != request.getAttribute(ATTR_NAME_USERNAME) || overwritePrincipal)) {
                 request.setAttribute(ATTR_NAME_USERNAME, details.getUsername());
                 request.setAttribute(ATTR_NAME_PRINCIPAL, details);
                 
@@ -355,26 +356,33 @@ public class SecurityInterceptor extends InterceptorAdapter {
         this.realmName = realmName;
     }
 
-    private String populateAnonymousUser(HttpServletRequest request, boolean skipPath, boolean whitelisted) {
+    protected String populateAnonymousUser(HttpServletRequest request, boolean skipPath, boolean whitelisted) {
         if (skipPath && null != request) {
             // populate request
         }
         
         if (whitelisted && null != request) {
-            // populate request
-            request.setAttribute(ATTR_NAME_USERNAME, USERNAME_ANONYMOUS);
-//            request.setAttribute(ATTR_NAME_PRINCIPAL, USERNAME_ANONYMOUS);
+            if (null == request.getAttribute(ATTR_NAME_USERNAME) || overwritePrincipal) {
 
-            // combine roles
-            TreeSet<String> combinedRoles = new TreeSet<String>();
-            Collection<String> previousRoles = (Collection<String>) request.getAttribute(ATTR_NAME_ROLES);
-            if (null != previousRoles) {
-                combinedRoles.addAll(previousRoles);
+                // populate request
+                request.setAttribute(ATTR_NAME_USERNAME, USERNAME_ANONYMOUS);
+    //            request.setAttribute(ATTR_NAME_PRINCIPAL, USERNAME_ANONYMOUS);
+
+                // combine roles
+                TreeSet<String> combinedRoles = new TreeSet<String>();
+                Collection<String> previousRoles = (Collection<String>) request.getAttribute(ATTR_NAME_ROLES);
+                if (null != previousRoles) {
+                    combinedRoles.addAll(previousRoles);
+                }
+                combinedRoles.add(SecurityDetailsService.ROLE_ANONYMOUS);
+                request.setAttribute(ATTR_NAME_ROLES, combinedRoles);
             }
-            combinedRoles.add(SecurityDetailsService.ROLE_ANONYMOUS);
-            request.setAttribute(ATTR_NAME_ROLES, combinedRoles);
         }
         return (skipPath || whitelisted) ? USERNAME_ANONYMOUS : null;
     }
 
+    public void setOverwritePrincipal(boolean overwritePrincipal) {
+        this.overwritePrincipal = overwritePrincipal;
+    }
+    
 }
