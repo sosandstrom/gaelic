@@ -27,6 +27,7 @@ public class AuthorizeEndpointLeaf extends Node {
     public static final String PARAM_CLIENT_ID = "client_id";
     public static final String PARAM_CODE = "code";
     public static final String PARAM_ERROR = "error";
+    public static final String PARAM_ERROR_DESCRIPTION = "error_description";
     public static final String PARAM_EXPIRES_IN = "expires_in";
     public static final String PARAM_REDIRECT_URI = "redirect_uri";
     public static final String PARAM_RESPONSE_TYPE = "response_type";
@@ -64,34 +65,43 @@ public class AuthorizeEndpointLeaf extends Node {
             // authenticate client
             Do2pClient client = providerService.getClient(clientId);
             if (null != client) {
+                
+                // verify redirect_uri match
+                if (null == client.getRedirectUri() || redirectUri.startsWith(client.getRedirectUri())) {
 
-                // authenticate the user
-                Do2pProfile do2pProfile = providerService.authenticate(request);
-                if (null == do2pProfile) {
-                    paramMap.put(PARAM_REDIRECT_URI, redirectUri);
-                    paramMap.put(PARAM_CLIENT_ID, clientId);
-                    paramMap.put(PARAM_RESPONSE_TYPE, responseType);
+                    // authenticate the user
+                    Do2pProfile do2pProfile = providerService.authenticate(request);
+                    if (null == do2pProfile) {
+                        paramMap.put(PARAM_REDIRECT_URI, redirectUri);
+                        paramMap.put(PARAM_CLIENT_ID, clientId);
+                        paramMap.put(PARAM_RESPONSE_TYPE, responseType);
 
-                    redirect(request, response, NetworkTemplate.expandUrl(loginUri, paramMap));
-                    return;
-                }
+                        redirect(request, response, NetworkTemplate.expandUrl(loginUri, paramMap));
+                        return;
+                    }
 
-                // which response type?
-                if (RESPONSE_TYPE_CODE.equals(responseType)) {
-                    final String code = providerService.getAuthorizationCode(client, redirectUri, do2pProfile);
-                    paramMap.put(PARAM_CODE, code);
-                }
-                else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
-                    final String accessToken = providerService.getImplicitToken(client, redirectUri, do2pProfile);
-                    long expiresInMillis = providerService.getImplicitTTL();
-                    separator = NetworkTemplate.SEPARATOR_FRAGMENT;
-                    paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
-                    paramMap.put(PARAM_EXPIRES_IN, Long.toString(expiresInMillis / 1000L));
-                    paramMap.put(PARAM_TOKEN_TYPE, ProviderService.TOKEN_TYPE);
+                    // which response type?
+                    if (RESPONSE_TYPE_CODE.equals(responseType)) {
+                        final String code = providerService.getAuthorizationCode(client, redirectUri, do2pProfile);
+                        paramMap.put(PARAM_CODE, code);
+                    }
+                    else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
+                        final String accessToken = providerService.getImplicitToken(client, redirectUri, do2pProfile);
+                        long expiresInMillis = providerService.getImplicitTTL();
+                        separator = NetworkTemplate.SEPARATOR_FRAGMENT;
+                        paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
+                        paramMap.put(PARAM_EXPIRES_IN, Long.toString(expiresInMillis / 1000L));
+                        paramMap.put(PARAM_TOKEN_TYPE, ProviderService.TOKEN_TYPE);
+                    }
+                    else {
+                        paramMap.put(PARAM_ERROR, "unsupported_response_type");
+                    }
                 }
                 else {
-                    paramMap.put(PARAM_ERROR, "unsupported_response_type");
+                    paramMap.put(PARAM_ERROR, "invalid_request");
+                    paramMap.put(PARAM_ERROR_DESCRIPTION, "redirect_uri mismatch");
                 }
+
             }
             else {
                 paramMap.put(PARAM_ERROR, "unauthorized_client");

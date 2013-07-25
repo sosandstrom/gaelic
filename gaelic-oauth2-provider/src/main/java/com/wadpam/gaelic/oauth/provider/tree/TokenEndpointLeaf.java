@@ -10,11 +10,8 @@ import com.wadpam.gaelic.oauth.provider.domain.Do2pClient;
 import com.wadpam.gaelic.oauth.provider.json.JAccessTokenResponse;
 import com.wadpam.gaelic.oauth.provider.service.ClientService;
 import com.wadpam.gaelic.oauth.provider.service.ProviderService;
-import static com.wadpam.gaelic.oauth.provider.tree.AuthorizeEndpointLeaf.PARAM_CLIENT_ID;
 import static com.wadpam.gaelic.oauth.provider.tree.AuthorizeEndpointLeaf.PARAM_REDIRECT_URI;
-import static com.wadpam.gaelic.oauth.provider.tree.AuthorizeEndpointLeaf.PARAM_RESPONSE_TYPE;
 import static com.wadpam.gaelic.oauth.provider.tree.AuthorizeEndpointLeaf.PARAM_STATE;
-import com.wadpam.gaelic.security.SecurityInterceptor;
 import java.io.IOException;
 import java.util.TreeMap;
 import javax.servlet.ServletException;
@@ -53,17 +50,27 @@ public class TokenEndpointLeaf extends Node {
                 if (null == redirectUri) {
                     throw new BadRequestException(ProviderService.ERR_MISSING_REDIRECT_URI, "Missing redirect_uri", "http://tools.ietf.org/html/rfc6749#section-4");
                 }
-
-                final String code = request.getParameter(AuthorizeEndpointLeaf.PARAM_CODE);
-                providerService.exchangeCodeForToken(code, redirectUri, client, body);
-                if (null != body.getAccess_token()) {
-                    setResponseBody(request, HttpServletResponse.SC_OK, body);
+                
+                // verify redirect_uri match client config
+                if (null == client.getRedirectUri() || redirectUri.startsWith(client.getRedirectUri())) {
+                    final String code = request.getParameter(AuthorizeEndpointLeaf.PARAM_CODE);
+                    providerService.exchangeCodeForToken(code, redirectUri, client, body);
+                    if (null != body.getAccess_token()) {
+                        setResponseBody(request, HttpServletResponse.SC_OK, body);
+                    }
+                    else {
+                        TreeMap<String, Object> error = new TreeMap<String, Object>();
+                        error.put("error", "invalid_grant");
+                        setResponseBody(request, HttpServletResponse.SC_BAD_REQUEST, error);
+                    }
                 }
                 else {
                     TreeMap<String, Object> error = new TreeMap<String, Object>();
-                    error.put("error", "invalid_grant");
+                    error.put(AuthorizeEndpointLeaf.PARAM_ERROR, "invalid_request");
+                    error.put(AuthorizeEndpointLeaf.PARAM_ERROR_DESCRIPTION, "redirect_uri mismatch");
                     setResponseBody(request, HttpServletResponse.SC_BAD_REQUEST, error);
                 }
+
             }
             else if (GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
                 final String refreshToken = request.getParameter(PARAM_REFRESH_TOKEN);

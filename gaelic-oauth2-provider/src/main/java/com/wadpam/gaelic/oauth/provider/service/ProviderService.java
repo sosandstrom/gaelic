@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
-import java.util.logging.Level;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +44,10 @@ public class ProviderService implements SecurityDetailsService {
     public static final int ERR_MISSING_REDIRECT_URI = ERR_BASE;
     public static final int ERR_USERNAME_CONFLICT = ERR_BASE+1;
     public static final int ERR_USERNAME_REQUIRED = ERR_BASE+2;
+    
+    public static final Long STATE_PROFILE_SUSPENDED = -1L;
+    public static final Long STATE_PROFILE_PENDING = 0L;
+    public static final Long STATE_PROFILE_ACTIVE = 1L;
     
     static final Logger LOG = LoggerFactory.getLogger(ProviderService.class);
     
@@ -89,6 +92,15 @@ public class ProviderService implements SecurityDetailsService {
         
         final Do2pProfile profile = profileDao.findByUsername(username);
         if (null != profile) {
+            if (STATE_PROFILE_PENDING.equals(profile.getState())) {
+                LOG.debug("Profile not verified.");
+                return null;
+            }
+            if (STATE_PROFILE_SUSPENDED.equals(profile.getState())) {
+                LOG.debug("Profile suspended.");
+                return null;
+            }
+            
             final String secret = encryptPassword(password, profile.getId());
             if (secret.equals(profile.getSecret())) {
                 return profile;
