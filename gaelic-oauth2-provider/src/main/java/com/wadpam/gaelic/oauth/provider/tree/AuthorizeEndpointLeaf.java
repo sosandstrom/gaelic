@@ -98,6 +98,7 @@ public class AuthorizeEndpointLeaf extends Node {
                     }
                 }
                 else {
+                    LOG.warn("redirect_uri mismatch: expected {} actual {}", client.getRedirectUri(), redirectUri);
                     paramMap.put(PARAM_ERROR, "invalid_request");
                     paramMap.put(PARAM_ERROR_DESCRIPTION, "redirect_uri mismatch");
                 }
