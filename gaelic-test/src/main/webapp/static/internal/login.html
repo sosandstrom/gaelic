@@ -29,6 +29,7 @@
                 <div>
                     <input type="submit" value="Sign in" />
                 </div>
+                <div id="feedback" style="color: red"></div>
             </fieldset>
         </form>
 
@@ -57,6 +58,10 @@ $(function() {
 
     $("#clientName").val(getParameterByName("name"));
     $("#clientDescription").val(getParameterByName("descr"));
+    
+    var errDesc = getParameterByName("error_description");
+    var feedback = (errDesc == 'invalid_credentials') ? "Invalid username or password." : "Enter email and password, then click Sign in.";
+    $("#feedback").text(feedback);
 });
         </script>
         
