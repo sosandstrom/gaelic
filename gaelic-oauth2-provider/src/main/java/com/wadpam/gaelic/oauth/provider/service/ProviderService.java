@@ -5,6 +5,8 @@
 package com.wadpam.gaelic.oauth.provider.service;
 
 import com.wadpam.gaelic.GaelicServlet;
+import com.wadpam.gaelic.exception.ConflictException;
+import com.wadpam.gaelic.exception.ForbiddenException;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pClientDao;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pProfileDao;
 import com.wadpam.gaelic.oauth.provider.dao.Do2pTokenDao;
@@ -94,11 +96,11 @@ public class ProviderService implements SecurityDetailsService {
         if (null != profile) {
             if (STATE_PROFILE_PENDING.equals(profile.getState())) {
                 LOG.debug("Profile not verified.");
-                return null;
+                throw new ConflictException();
             }
             if (STATE_PROFILE_SUSPENDED.equals(profile.getState())) {
                 LOG.debug("Profile suspended.");
-                return null;
+                throw new ConflictException();
             }
             
             final String secret = encryptPassword(password, profile.getId());
@@ -110,7 +112,7 @@ public class ProviderService implements SecurityDetailsService {
         else {
             LOG.debug("No such user for {}", username);
         }
-        return null;
+        throw new ForbiddenException();
     }
     
     public static String encryptPassword(String plain, long salt) {

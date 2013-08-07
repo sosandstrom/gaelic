@@ -6,6 +6,7 @@ package com.wadpam.gaelic.oauth.provider.tree;
 
 import com.wadpam.gaelic.Node;
 import com.wadpam.gaelic.exception.BadRequestException;
+import com.wadpam.gaelic.exception.ForbiddenException;
 import com.wadpam.gaelic.net.NetworkTemplate;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pClient;
 import com.wadpam.gaelic.oauth.provider.domain.Do2pProfile;
@@ -37,6 +38,8 @@ public class AuthorizeEndpointLeaf extends Node {
     public static final String RESPONSE_TYPE_CODE = PARAM_CODE;
     public static final String RESPONSE_TYPE_TOKEN = "token";
     public static final String LOGIN_URI_DEFAULT = "login.html";
+    public static final String ERROR_DESC_LOGIN_MISSING_CREDENTIALS = "missing_credentials";
+    public static final String ERROR_DESC_LOGIN_INVALID_CREDENTIALS = "invalid_credentials";
     
     private ProviderService providerService;
     private String loginUri = LOGIN_URI_DEFAULT;
@@ -69,32 +72,44 @@ public class AuthorizeEndpointLeaf extends Node {
                 // verify redirect_uri match
                 if (null == client.getRedirectUri() || redirectUri.startsWith(client.getRedirectUri())) {
 
-                    // authenticate the user
-                    Do2pProfile do2pProfile = providerService.authenticate(request);
-                    if (null == do2pProfile) {
+                    try {
+                        // authenticate the user
+                        Do2pProfile do2pProfile = providerService.authenticate(request);
+                        if (null == do2pProfile) {
+                            paramMap.put(PARAM_REDIRECT_URI, redirectUri);
+                            paramMap.put(PARAM_CLIENT_ID, clientId);
+                            paramMap.put(PARAM_RESPONSE_TYPE, responseType);
+                            paramMap.put(PARAM_ERROR_DESCRIPTION, ERROR_DESC_LOGIN_MISSING_CREDENTIALS);
+
+                            redirect(request, response, NetworkTemplate.expandUrl(loginUri, paramMap));
+                            return;
+                        }
+
+                        // which response type?
+                        if (RESPONSE_TYPE_CODE.equals(responseType)) {
+                            final String code = providerService.getAuthorizationCode(client, redirectUri, do2pProfile);
+                            paramMap.put(PARAM_CODE, code);
+                        }
+                        else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
+                            final String accessToken = providerService.getImplicitToken(client, redirectUri, do2pProfile);
+                            long expiresInMillis = providerService.getImplicitTTL();
+                            separator = NetworkTemplate.SEPARATOR_FRAGMENT;
+                            paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
+                            paramMap.put(PARAM_EXPIRES_IN, Long.toString(expiresInMillis / 1000L));
+                            paramMap.put(PARAM_TOKEN_TYPE, ProviderService.TOKEN_TYPE);
+                        }
+                        else {
+                            paramMap.put(PARAM_ERROR, "unsupported_response_type");
+                        }
+                    }
+                    catch (ForbiddenException badCredentials) {
                         paramMap.put(PARAM_REDIRECT_URI, redirectUri);
                         paramMap.put(PARAM_CLIENT_ID, clientId);
                         paramMap.put(PARAM_RESPONSE_TYPE, responseType);
+                        paramMap.put(PARAM_ERROR_DESCRIPTION, ERROR_DESC_LOGIN_INVALID_CREDENTIALS);
 
                         redirect(request, response, NetworkTemplate.expandUrl(loginUri, paramMap));
                         return;
-                    }
-
-                    // which response type?
-                    if (RESPONSE_TYPE_CODE.equals(responseType)) {
-                        final String code = providerService.getAuthorizationCode(client, redirectUri, do2pProfile);
-                        paramMap.put(PARAM_CODE, code);
-                    }
-                    else if (RESPONSE_TYPE_TOKEN.equals(responseType)) {
-                        final String accessToken = providerService.getImplicitToken(client, redirectUri, do2pProfile);
-                        long expiresInMillis = providerService.getImplicitTTL();
-                        separator = NetworkTemplate.SEPARATOR_FRAGMENT;
-                        paramMap.put(PARAM_ACCESS_TOKEN, accessToken);
-                        paramMap.put(PARAM_EXPIRES_IN, Long.toString(expiresInMillis / 1000L));
-                        paramMap.put(PARAM_TOKEN_TYPE, ProviderService.TOKEN_TYPE);
-                    }
-                    else {
-                        paramMap.put(PARAM_ERROR, "unsupported_response_type");
                     }
                 }
                 else {
